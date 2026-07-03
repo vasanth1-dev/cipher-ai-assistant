@@ -16,7 +16,7 @@ WAKE_WORD = "hey cipher"
 # Whisper
 # ------------------------------------------
 
-WHISPER_MODEL = "base.en"
+WHISPER_MODEL = "small.en"
 DEVICE = "cpu"
 COMPUTE_TYPE = "int8"
 
@@ -24,8 +24,8 @@ COMPUTE_TYPE = "int8"
 # Audio
 # ------------------------------------------
 
-SAMPLE_RATE = 16000
-CHANNELS = 1
+SAMPLE_RATE = 44100
+CHANNELS = 2
 LISTEN_SECONDS = 5
 
 # ------------------------------------------

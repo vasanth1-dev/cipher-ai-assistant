@@ -11,9 +11,9 @@ class WakeWord:
             "cipher",
             "cypher",
             "safer",
-            "safe her",
+            "software",
             "cifer",
-            "sifer",
+            "yes sir",
         ]
 
     def detect(self, text: str) -> bool:

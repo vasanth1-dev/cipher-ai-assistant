@@ -57,7 +57,9 @@ class Listener:
 
                 segments, info = model.transcribe(
                     temp.name,
-                    beam_size=1,
+                    language="en",
+                    beam_size=5,
+                    best_of=5,
                     vad_filter=True,
                 )
 
@@ -80,8 +82,8 @@ class Listener:
                 "google chrome": "chrome",
 
                 # Wake word variations
-                "safer": "cipher",
-                "safe her": "cipher",
+                "yes sir": "cipher",
+                "software": "cipher",
                 "cypher": "cipher",
                 "sifer": "cipher",
                 "cifer": "cipher",
