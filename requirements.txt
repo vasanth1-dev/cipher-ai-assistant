@@ -1,0 +1,35 @@
+# ==========================
+# CIPHER v2 REQUIREMENTS
+# ==========================
+
+# Offline AI
+ollama
+
+# Speech To Text
+faster-whisper
+ctranslate2
+av
+
+# Wake Word
+openwakeword
+onnxruntime
+
+# Audio
+sounddevice
+soundfile
+numpy
+
+# Text To Speech
+pyttsx3
+
+# Browser & HTTP
+requests
+
+# Utilities
+python-dotenv
+psutil
+rich
+
+# Optional Vision (Future)
+opencv-python
+pillow
