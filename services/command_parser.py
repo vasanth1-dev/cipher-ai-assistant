@@ -6,18 +6,12 @@ class CommandParser:
     def __init__(self):
 
         self.replacements = {
-            # Polite words
             "please": "",
             "kindly": "",
             "could you": "",
             "can you": "",
             "would you": "",
             "for me": "",
-
-            # Articles
-            "the": "",
-            "a": "",
-            "an": "",
         }
 
     def parse(self, command: str):
@@ -30,9 +24,9 @@ class CommandParser:
         # Remove punctuation
         command = re.sub(r"[^\w\s]", "", command)
 
-        # Remove unwanted words
+        # Remove polite words (word-level)
         for old, new in self.replacements.items():
-            command = command.replace(old, new)
+            command = re.sub(rf"\b{re.escape(old)}\b", new, command)
 
         command = re.sub(r"\s+", " ", command).strip()
 
@@ -40,15 +34,15 @@ class CommandParser:
         # OPEN
         # -------------------------
 
-        command = command.replace("launch", "open")
-        command = command.replace("start", "open")
+        command = re.sub(r"\blaunch\b", "open", command)
+        command = re.sub(r"\bstart\b", "open", command)
 
         # -------------------------
         # CLOSE
         # -------------------------
 
-        command = command.replace("exit", "close")
-        command = command.replace("quit", "close")
+        command = re.sub(r"\bexit\b", "close", command)
+        command = re.sub(r"\bquit\b", "close", command)
 
         # -------------------------
         # Browser shortcuts
@@ -63,7 +57,7 @@ class CommandParser:
             command = f"search youtube {query}"
 
         # -------------------------
-        # Indian English corrections
+        # Common speech corrections
         # -------------------------
 
         corrections = {
@@ -72,7 +66,7 @@ class CommandParser:
             "visual studio": "vscode",
             "google chrome": "chrome",
 
-            # Whisper mistakes
+            # Wake word mistakes
             "safer": "cipher",
             "safe her": "cipher",
             "cypher": "cipher",
@@ -81,7 +75,7 @@ class CommandParser:
         }
 
         for old, new in corrections.items():
-            command = command.replace(old, new)
+            command = re.sub(rf"\b{re.escape(old)}\b", new, command)
 
         return command
 

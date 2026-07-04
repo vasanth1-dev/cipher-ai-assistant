@@ -1,33 +1,4 @@
-from pathlib import Path
-
-MEMORY_FILE = Path("data/memory.txt")
-
-
-def save_memory(text: str):
-
-    MEMORY_FILE.parent.mkdir(parents=True, exist_ok=True)
-
-    with open(MEMORY_FILE, "a", encoding="utf-8") as file:
-        file.write(text.strip() + "\n")
-
-
-def read_memory():
-
-    if not MEMORY_FILE.exists():
-        return "I don't have any saved memories."
-
-    with open(MEMORY_FILE, "r", encoding="utf-8") as file:
-
-        lines = [
-            line.strip()
-            for line in file.readlines()
-            if line.strip()
-        ]
-
-    if not lines:
-        return "I don't have any saved memories."
-
-    return "\n".join(lines)
+from services.memory_service import memory_service
 
 
 def handle(command: str):
@@ -37,33 +8,80 @@ def handle(command: str):
 
     command = command.lower().strip()
 
-    # -------------------------
+    # ---------------------------------------
     # Remember
-    # -------------------------
+    # Example:
+    # remember my bike is duke 125
+    # ---------------------------------------
 
     if command.startswith("remember "):
 
         text = command.replace("remember ", "", 1).strip()
 
-        if not text:
-            return "What should I remember?"
+        if " is " not in text:
+            return "Please say it like: remember my bike is Duke 125."
 
-        save_memory(text)
+        key, value = text.split(" is ", 1)
 
-        return "I'll remember that."
+        key = key.strip()
+        value = value.strip()
 
-    # -------------------------
+        memory_service.remember(key, value)
+
+        return f"I'll remember your {key}."
+
+    # ---------------------------------------
     # Recall
-    # -------------------------
+    # Example:
+    # what is my bike
+    # ---------------------------------------
+
+    if command.startswith("what is "):
+
+        key = command.replace("what is ", "", 1).strip()
+
+        value = memory_service.recall(key)
+
+        if value:
+            return f"Your {key} is {value}."
+
+        return f"I don't know your {key}."
+
+    # ---------------------------------------
+    # Forget
+    # Example:
+    # forget my bike
+    # ---------------------------------------
+
+    if command.startswith("forget "):
+
+        key = command.replace("forget ", "", 1).strip()
+
+        if memory_service.forget(key):
+            return f"I forgot your {key}."
+
+        return f"I don't know your {key}."
+
+    # ---------------------------------------
+    # Show Memory
+    # ---------------------------------------
 
     if command in (
-        "what do you remember",
         "show memory",
         "show memories",
-        "my memories",
-        "remembered things",
+        "what do you remember",
     ):
 
-        return read_memory()
+        data = memory_service.all()
+
+        if not data:
+            return "I don't remember anything yet."
+
+        result = []
+
+        for key, value in data.items():
+            result.append(f"{key} : {value}")
+
+        return "\n".join(result)
 
     return None

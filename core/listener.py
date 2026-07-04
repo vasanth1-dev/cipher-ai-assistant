@@ -2,6 +2,7 @@ import tempfile
 
 import sounddevice as sd
 import soundfile as sf
+import speech_recognition as sr
 from faster_whisper import WhisperModel
 
 from config import (
@@ -27,17 +28,51 @@ print("Whisper model loaded.")
 class Listener:
 
     def __init__(self):
-        self.sample_rate = SAMPLE_RATE
 
-    def listen(self):
+        self.recognizer = sr.Recognizer()
+        self.recognizer.energy_threshold = 300
+        self.recognizer.dynamic_energy_threshold = True
+        self.recognizer.pause_threshold = 0.8
+
+    def google_stt(self):
 
         try:
 
-            print("🎤 Listening...")
+            with sr.Microphone(sample_rate=16000) as source:
+
+                print("🎤 Listening...")
+
+                self.recognizer.adjust_for_ambient_noise(
+                    source,
+                    duration=0.5,
+                )
+
+                audio = self.recognizer.listen(
+                    source,
+                    timeout=5,
+                    phrase_time_limit=6,
+                )
+
+            text = self.recognizer.recognize_google(
+                audio,
+                language="en-IN",
+            )
+
+            print(f"Recognized (Google): {text}")
+
+            return text.lower().strip()
+
+        except Exception:
+
+            return None
+
+    def whisper_stt(self):
+
+        try:
 
             audio = sd.rec(
-                int(LISTEN_SECONDS * self.sample_rate),
-                samplerate=self.sample_rate,
+                int(LISTEN_SECONDS * SAMPLE_RATE),
+                samplerate=SAMPLE_RATE,
                 channels=CHANNELS,
                 dtype="float32",
             )
@@ -52,15 +87,16 @@ class Listener:
                 sf.write(
                     temp.name,
                     audio,
-                    self.sample_rate,
+                    SAMPLE_RATE,
                 )
 
-                segments, info = model.transcribe(
+                segments, _ = model.transcribe(
                     temp.name,
                     language="en",
                     beam_size=5,
                     best_of=5,
                     vad_filter=True,
+                    condition_on_previous_text=False,
                 )
 
             text = " ".join(
@@ -68,38 +104,25 @@ class Listener:
                 for segment in segments
             ).strip()
 
-            if not text:
-                return ""
+            if text:
+                print(f"Recognized (Whisper): {text}")
 
-            text = text.lower()
+            return text.lower()
 
-            # ---------- Indian Accent Corrections ----------
+        except Exception:
 
-            corrections = {
-                "fire fox": "firefox",
-                "vs code": "vscode",
-                "visual studio": "vscode",
-                "google chrome": "chrome",
+            return ""
 
-                # Wake word variations
-                "yes sir": "cipher",
-                "software": "cipher",
-                "cypher": "cipher",
-                "sifer": "cipher",
-                "cifer": "cipher",
-            }
+    def listen(self):
 
-            for old, new in corrections.items():
-                text = text.replace(old, new)
+        text = self.google_stt()
 
-            print(f"Recognized: {text}")
-
+        if text:
             return text
 
-        except Exception as e:
+        print("Google STT failed. Using Whisper...")
 
-            print(f"Listener Error: {e}")
-            return ""
+        return self.whisper_stt()
 
 
 listener = Listener()

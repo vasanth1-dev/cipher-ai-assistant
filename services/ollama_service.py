@@ -3,6 +3,7 @@ import requests
 from config import (
     OLLAMA_URL,
     OLLAMA_MODEL,
+    AI_PERSONALITY,
 )
 
 
@@ -24,6 +25,7 @@ class OllamaService:
                 json={
                     "model": self.model,
                     "prompt": prompt,
+                    "system": AI_PERSONALITY,
                     "stream": False,
                 },
                 timeout=120,

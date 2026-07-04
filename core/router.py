@@ -6,6 +6,7 @@ from skills.weather import handle as weather
 from skills.memory import handle as memory
 from skills.history import handle as history
 from skills.notification import handle as notification
+from skills.vision import handle as vision
 from skills.ai import handle as ai
 
 
@@ -23,6 +24,7 @@ class Router:
             memory,
             history,
             notification,
+            vision,
         ]
 
     def route(self, command: str):
