@@ -11,7 +11,7 @@ class CipherLogger:
 
         self.logger = logging.getLogger("Cipher")
 
-        if self.logger.hasHandlers():
+        if self.logger.handlers:
             return
 
         self.logger.setLevel(logging.INFO)
@@ -22,7 +22,7 @@ class CipherLogger:
 
         file_handler = logging.FileHandler(
             log_dir / "app.log",
-            encoding="utf-8",
+            encoding="utf-8"
         )
 
         file_handler.setFormatter(formatter)

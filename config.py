@@ -10,7 +10,10 @@ USER_NAME = "Vasanth"
 # Wake Word
 # ------------------------------------------
 
-WAKE_WORD = "hey cipher"
+WAKE_WORD = [
+    "hey cipher",
+    "cipher",
+]
 
 # ========================
 WAKEWORD_MODEL = None
@@ -111,3 +114,11 @@ Rules:
 - Don't say "As an AI language model...".
 - If you don't know something, say it honestly.
 """
+
+
+EXIT_COMMANDS = [
+    "exit",
+    "quit",
+    "goodbye",
+    "stop",
+    ]

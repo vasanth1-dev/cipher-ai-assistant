@@ -13,6 +13,7 @@ from config import (
     ASSISTANT_NAME,
     USER_NAME,
     SESSION_TIMEOUT,
+    EXIT_COMMANDS,
 )
 
 
@@ -36,7 +37,7 @@ class Cipher:
 
     def process(self, command):
 
-        if not command:
+        if not command or not command.strip():
             return
 
         self.last_activity = time.time()
@@ -57,7 +58,9 @@ class Cipher:
 
         history_service.add(command, response)
 
-        logger.info(f"CIPHER : {response}")
+        if response:
+
+            logger.info(f"CIPHER : {response}")
 
         if response:
             speaker.speak(response)
@@ -96,12 +99,7 @@ class Cipher:
                 continue
 
             # Exit
-            if text in (
-                "exit",
-                "quit",
-                "goodbye",
-                "stop",
-            ):
+            if text in EXIT_COMMANDS:
                 speaker.speak("Goodbye.")
                 break
 

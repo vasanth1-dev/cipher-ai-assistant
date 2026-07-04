@@ -46,7 +46,8 @@ class GeminiService:
 
         except Exception as e:
 
-            return f"Gemini Error: {e}"
+            if "RESOURCE_EXHAUSTED" in str(e):
+                return None
 
 
 gemini_service = GeminiService()
