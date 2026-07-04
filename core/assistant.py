@@ -1,39 +1,36 @@
 import time
 
+from core.listener import listener
+from core.speaker import speaker
+from core.router import router
+from core.wakeword import wakeword
+from core.error_handler import error_handler
+from core.logger import logger
+
+from services.history_service import history_service
+
 from config import (
     ASSISTANT_NAME,
     USER_NAME,
     SESSION_TIMEOUT,
 )
 
-from core.listener import listener
-from core.speaker import speaker
-from core.router import router
-from core.wakeword import wakeword
-from skills.history import save_history
-
-from services.command_parser import parser
-from services.command_executor import executor
-
 
 class Cipher:
 
     def __init__(self):
-
         self.active = False
         self.last_activity = time.time()
 
     def activate(self):
-
         self.active = True
         self.last_activity = time.time()
 
         speaker.speak(
-            f"Hello {USER_NAME}. How can I help you?"
+            f"Hello {USER_NAME}. I am {ASSISTANT_NAME}. How can I help you?"
         )
 
     def sleep(self):
-
         self.active = False
         speaker.speak("Going to sleep.")
 
@@ -44,13 +41,23 @@ class Cipher:
 
         self.last_activity = time.time()
 
-        command = parser.parse(command)
-        command = executor.normalize(command)
-
         print(f"\nYou : {command}")
-        save_history(command)
 
-        response = router.route(command)
+        logger.info(f"USER : {command}")
+
+        try:
+            response = router.route(command)
+
+        except Exception as e:
+
+            response = error_handler.handle(
+                e,
+                context="Router",
+            )
+
+        history_service.add(command, response)
+
+        logger.info(f"CIPHER : {response}")
 
         if response:
             speaker.speak(response)
@@ -65,6 +72,7 @@ class Cipher:
 
                 if time.time() - self.last_activity > SESSION_TIMEOUT:
                     self.sleep()
+                    continue
 
             text = listener.listen()
 
@@ -73,8 +81,7 @@ class Cipher:
 
             text = text.lower().strip()
 
-            # ---------- Wake Word ----------
-
+            # Wake mode
             if not self.active:
 
                 if wakeword.detect(text):
@@ -88,29 +95,23 @@ class Cipher:
 
                 continue
 
-            # ---------- Exit ----------
-
+            # Exit
             if text in (
                 "exit",
                 "quit",
                 "goodbye",
                 "stop",
             ):
-
                 speaker.speak("Goodbye.")
                 break
 
-            # ---------- Sleep ----------
-
+            # Sleep
             if text in (
                 "sleep",
                 "go to sleep",
                 "stop listening",
             ):
-
                 self.sleep()
                 continue
-
-            # ---------- Process ----------
 
             self.process(text)

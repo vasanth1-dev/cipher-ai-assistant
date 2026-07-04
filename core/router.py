@@ -1,55 +1,42 @@
+from services.intent_service import intent_service
+from core.action_engine import action_engine
+
 from skills.apps import handle as apps
 from skills.browser import handle as browser
 from skills.system import handle as system
-from skills.volume import handle as volume
-from skills.weather import handle as weather
 from skills.memory import handle as memory
-from skills.history import handle as history
-from skills.notification import handle as notification
-from skills.vision import handle as vision
 from skills.ai import handle as ai
+from skills.vision import handle as vision
 
 
 class Router:
 
     def __init__(self):
 
-        # Local handlers (Fast)
-        self.handlers = [
-            apps,
-            browser,
-            system,
-            volume,
-            weather,
-            memory,
-            history,
-            notification,
-            vision,
-        ]
+        action_engine.register("open_app", apps)
+        action_engine.register("close_app", apps)
 
-    def route(self, command: str):
+        action_engine.register("google_search", browser)
+        action_engine.register("youtube_search", browser)
 
-        if not command:
-            return None
+        action_engine.register("memory", memory)
 
-        command = command.lower().strip()
+        action_engine.register("system", system)
+
+        action_engine.register("camera", vision)
+        action_engine.register("vision", vision)
+
+    def route(self, command):
 
         print(f"[ROUTER] {command}")
 
-        # ---------- Local Skills ----------
-        for handler in self.handlers:
+        intent = intent_service.detect(command)
 
-            try:
+        response = action_engine.execute(intent, command)
 
-                response = handler(command)
+        if response is not None:
+            return response
 
-                if response:
-                    return response
-
-            except Exception as e:
-                print(f"[{handler.__module__}] {e}")
-
-        # ---------- AI Fallback ----------
         return ai(command)
 
 
