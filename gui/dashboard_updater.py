@@ -4,10 +4,6 @@ from services.system_monitor import system_monitor
 
 
 class DashboardUpdater(QObject):
-    """
-    Updates the DashboardWidget periodically with
-    live system information.
-    """
 
     def __init__(self, dashboard):
         super().__init__()
@@ -15,7 +11,7 @@ class DashboardUpdater(QObject):
         self.dashboard = dashboard
 
         self.timer = QTimer(self)
-        self.timer.setInterval(1000)  # 1 second
+        self.timer.setInterval(1000)
         self.timer.timeout.connect(self.update)
 
     # --------------------------------------------------
@@ -35,11 +31,19 @@ class DashboardUpdater(QObject):
 
     def update(self):
 
-        self._update_cpu()
-        self._update_ram()
-        self._update_disk()
-        self._update_network()
+        try:
+            self._update_cpu()
+            self._update_ram()
+            self._update_disk()
+            self._update_network()
+            self._update_battery()
+            self._update_uptime()
 
+        except Exception as e:
+            print("Dashboard Update Error:", e)
+
+    # --------------------------------------------------
+    # CPU
     # --------------------------------------------------
 
     def _update_cpu(self):
@@ -51,6 +55,8 @@ class DashboardUpdater(QObject):
         )
 
     # --------------------------------------------------
+    # RAM
+    # --------------------------------------------------
 
     def _update_ram(self):
 
@@ -60,6 +66,8 @@ class DashboardUpdater(QObject):
             f"{data['percent']:.0f}%"
         )
 
+    # --------------------------------------------------
+    # Disk
     # --------------------------------------------------
 
     def _update_disk(self):
@@ -71,34 +79,67 @@ class DashboardUpdater(QObject):
         )
 
     # --------------------------------------------------
+    # Network
+    # --------------------------------------------------
 
     def _update_network(self):
 
         data = system_monitor.network()
 
-        sent = data["sent_mb"]
-        received = data["received_mb"]
-
         self.dashboard.set_network(
-            f"↑{sent:.0f} ↓{received:.0f}"
+            f"↑{data['sent_mb']:.0f} ↓{data['received_mb']:.0f}"
         )
 
+    # --------------------------------------------------
+    # Battery
+    # --------------------------------------------------
+
+    def _update_battery(self):
+
+        data = system_monitor.battery()
+
+        if not data["available"]:
+
+            self.dashboard.set_battery("--")
+
+            return
+
+        self.dashboard.set_battery(
+            f"{data['percent']:.0f}%"
+        )
+
+    # --------------------------------------------------
+    # Uptime
+    # --------------------------------------------------
+
+    def _update_uptime(self):
+
+        data = system_monitor.uptime()
+
+        self.dashboard.set_uptime(
+            data["text"]
+        )
+
+    # --------------------------------------------------
+    # AI Status
     # --------------------------------------------------
 
     def set_ai_online(self):
 
         self.dashboard.set_ai_status(
             "Online",
-            "AI model connected",
+            "Ollama Connected",
         )
 
     def set_ai_offline(self):
 
         self.dashboard.set_ai_status(
             "Offline",
-            "AI model unavailable",
+            "Ollama Disconnected",
         )
 
+    # --------------------------------------------------
+    # Voice Status
     # --------------------------------------------------
 
     def set_voice_idle(self):
@@ -112,12 +153,12 @@ class DashboardUpdater(QObject):
 
         self.dashboard.set_voice_status(
             "Listening",
-            "Microphone active",
+            "Microphone Active",
         )
 
     def set_voice_speaking(self):
 
         self.dashboard.set_voice_status(
             "Speaking",
-            "Generating speech",
+            "Generating response",
         )
