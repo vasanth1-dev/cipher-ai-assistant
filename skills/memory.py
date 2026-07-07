@@ -1,70 +1,94 @@
 from services.memory_service import memory_service
 
 
+INTENT = "memory"
+
+
+def _normalize(text):
+
+    return " ".join(
+        text.strip().split()
+    )
+
+
 def handle(command: str):
 
     if not command:
         return None
 
-    command = command.lower().strip()
+    original = _normalize(command)
+    command = original.lower()
 
-    # ---------------------------------------
+    # -------------------------------------------------
     # Remember
     # Example:
-    # remember my bike is duke 125
-    # ---------------------------------------
+    # remember my bike is Duke 125
+    # -------------------------------------------------
 
     if command.startswith("remember "):
 
-        text = command.replace("remember ", "", 1).strip()
+        text = original[len("remember "):].strip()
 
-        if " is " not in text:
-            return "Please say it like: remember my bike is Duke 125."
+        lower_text = text.lower()
 
-        key, value = text.split(" is ", 1)
+        if " is " not in lower_text:
+            return (
+                "Please say it like: "
+                "remember my bike is Duke 125."
+            )
 
-        key = key.strip()
-        value = value.strip()
+        index = lower_text.find(" is ")
+
+        key = text[:index].strip()
+        value = text[index + 4:].strip()
+
+        if not key or not value:
+            return (
+                "Please tell me both the name "
+                "and the value to remember."
+            )
 
         memory_service.remember(key, value)
 
         return f"I'll remember your {key}."
 
-    # ---------------------------------------
+    # -------------------------------------------------
     # Recall
-    # Example:
-    # what is my bike
-    # ---------------------------------------
+    # -------------------------------------------------
 
     if command.startswith("what is "):
 
-        key = command.replace("what is ", "", 1).strip()
+        key = original[len("what is "):].strip()
+
+        if not key:
+            return "What would you like me to recall?"
 
         value = memory_service.recall(key)
 
-        if value:
+        if value is not None:
             return f"Your {key} is {value}."
 
         return f"I don't know your {key}."
 
-    # ---------------------------------------
+    # -------------------------------------------------
     # Forget
-    # Example:
-    # forget my bike
-    # ---------------------------------------
+    # -------------------------------------------------
 
     if command.startswith("forget "):
 
-        key = command.replace("forget ", "", 1).strip()
+        key = original[len("forget "):].strip()
+
+        if not key:
+            return "What should I forget?"
 
         if memory_service.forget(key):
             return f"I forgot your {key}."
 
         return f"I don't know your {key}."
 
-    # ---------------------------------------
+    # -------------------------------------------------
     # Show Memory
-    # ---------------------------------------
+    # -------------------------------------------------
 
     if command in (
         "show memory",
@@ -77,11 +101,11 @@ def handle(command: str):
         if not data:
             return "I don't remember anything yet."
 
-        result = []
+        lines = []
 
-        for key, value in data.items():
-            result.append(f"{key} : {value}")
+        for key in sorted(data):
+            lines.append(f"{key}: {data[key]}")
 
-        return "\n".join(result)
+        return "\n".join(lines)
 
     return None

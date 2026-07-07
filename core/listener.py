@@ -1,4 +1,6 @@
+import os
 import tempfile
+import threading
 
 import sounddevice as sd
 import soundfile as sf
@@ -13,6 +15,13 @@ from config import (
     CHANNELS,
     LISTEN_SECONDS,
 )
+
+# --------------------------------------------------
+# Listener Control
+# --------------------------------------------------
+
+LISTEN_ENABLED = threading.Event()
+LISTEN_ENABLED.set()
 
 print("Loading Whisper model...")
 
@@ -29,14 +38,24 @@ class Listener:
 
     def __init__(self):
 
+        self.on_listening = None
+        self.on_processing = None
+        self.on_idle = None
+
         self.recognizer = sr.Recognizer()
+
         self.recognizer.energy_threshold = 300
         self.recognizer.dynamic_energy_threshold = True
         self.recognizer.pause_threshold = 0.8
 
+    # --------------------------------------------------
+
     def google_stt(self):
 
         try:
+
+            if self.on_listening:
+                self.on_listening()
 
             with sr.Microphone(sample_rate=16000) as source:
 
@@ -53,22 +72,39 @@ class Listener:
                     phrase_time_limit=6,
                 )
 
+            if self.on_processing:
+                self.on_processing()
+
             text = self.recognizer.recognize_google(
                 audio,
                 language="en-IN",
             )
 
-            print(f"Recognized (Google): {text}")
+            if text:
+                print(f"Recognized (Google): {text}")
+                return text.lower().strip()
 
-            return text.lower().strip()
+            return ""
 
         except Exception:
 
-            return None
+            return ""
+
+        finally:
+
+            if self.on_idle:
+                self.on_idle()
+
+    # --------------------------------------------------
 
     def whisper_stt(self):
 
+        filename = None
+
         try:
+
+            if self.on_listening:
+                self.on_listening()
 
             audio = sd.rec(
                 int(LISTEN_SECONDS * SAMPLE_RATE),
@@ -84,20 +120,25 @@ class Listener:
                 delete=False,
             ) as temp:
 
-                sf.write(
-                    temp.name,
-                    audio,
-                    SAMPLE_RATE,
-                )
+                filename = temp.name
 
-                segments, _ = model.transcribe(
-                    temp.name,
-                    language="en",
-                    beam_size=5,
-                    best_of=5,
-                    vad_filter=True,
-                    condition_on_previous_text=False,
-                )
+            sf.write(
+                filename,
+                audio,
+                SAMPLE_RATE,
+            )
+
+            if self.on_processing:
+                self.on_processing()
+
+            segments, _ = model.transcribe(
+                filename,
+                language="en",
+                beam_size=5,
+                best_of=5,
+                vad_filter=True,
+                condition_on_previous_text=False,
+            )
 
             text = " ".join(
                 segment.text.strip()
@@ -105,15 +146,32 @@ class Listener:
             ).strip()
 
             if text:
+
                 print(f"Recognized (Whisper): {text}")
 
-            return text.lower()
-
-        except Exception:
+                return text.lower()
 
             return ""
 
+        except Exception as e:
+
+            print("Whisper Error:", e)
+
+            return ""
+
+        finally:
+
+            if filename and os.path.exists(filename):
+                os.remove(filename)
+
+            if self.on_idle:
+                self.on_idle()
+
+    # --------------------------------------------------
+
     def listen(self):
+
+        LISTEN_ENABLED.wait()
 
         text = self.google_stt()
 
@@ -126,3 +184,11 @@ class Listener:
 
 
 listener = Listener()
+
+
+def pause_listening():
+    LISTEN_ENABLED.clear()
+
+
+def resume_listening():
+    LISTEN_ENABLED.set()

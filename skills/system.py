@@ -1,14 +1,45 @@
 import subprocess
 
+from core.logger import logger
+
+
+INTENT = "system"
+
+
+def _run(command):
+
+    try:
+
+        subprocess.Popen(
+            command,
+            stdout=subprocess.DEVNULL,
+            stderr=subprocess.DEVNULL,
+            start_new_session=True,
+        )
+
+        logger.info(f"[SYSTEM] {' '.join(command)}")
+
+        return True
+
+    except Exception as e:
+
+        logger.exception(e)
+
+        return False
+
 
 def handle(command: str):
 
     if not command:
         return None
 
-    command = command.lower().strip()
+    command = " ".join(
+        command.lower().strip().split()
+    )
 
-    # ---------------- Shutdown ----------------
+    # -------------------------------------------------
+    # Shutdown
+    # -------------------------------------------------
 
     if command in (
         "shutdown",
@@ -16,20 +47,28 @@ def handle(command: str):
         "turn off computer",
     ):
 
-        #subprocess.Popen(["shutdown", "-h", "now"])
+        # Uncomment when you are ready to enable it.
+        # _run(["shutdown", "-h", "now"])
+
         return "Shutting down the computer."
 
-    # ---------------- Restart ----------------
+    # -------------------------------------------------
+    # Restart
+    # -------------------------------------------------
 
     if command in (
         "restart",
         "reboot",
     ):
 
-        subprocess.Popen(["shutdown", "-r", "now"])
-        return "Restarting the computer."
+        if _run(["shutdown", "-r", "now"]):
+            return "Restarting the computer."
 
-    # ---------------- Logout ----------------
+        return "Unable to restart the computer."
+
+    # -------------------------------------------------
+    # Logout
+    # -------------------------------------------------
 
     if command in (
         "logout",
@@ -37,14 +76,13 @@ def handle(command: str):
         "sign out",
     ):
 
-        subprocess.Popen(
-            [
-                "gnome-session-quit",
-                "--logout",
-                "--no-prompt",
-            ]
-        )
+        if _run([
+            "gnome-session-quit",
+            "--logout",
+            "--no-prompt",
+        ]):
+            return "Logging out."
 
-        return "Logging out."
+        return "Unable to log out."
 
     return None

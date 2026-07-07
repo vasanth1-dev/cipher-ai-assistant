@@ -1,4 +1,7 @@
 import subprocess
+from urllib.parse import quote_plus
+
+from core.logger import logger
 
 from config import (
     GOOGLE_URL,
@@ -7,6 +10,9 @@ from config import (
     GOOGLE_SEARCH,
     YOUTUBE_SEARCH,
 )
+
+
+INTENT = "browser"
 
 
 def open_url(url: str):
@@ -20,10 +26,24 @@ def open_url(url: str):
             start_new_session=True,
         )
 
+        logger.info(f"[BROWSER] {url}")
+
         return True
 
-    except Exception:
+    except Exception as e:
+
+        logger.exception(e)
+
         return False
+
+
+def _search(base_url, query):
+
+    url = base_url.format(
+        quote_plus(query)
+    )
+
+    return open_url(url)
 
 
 def handle(command: str):
@@ -31,62 +51,90 @@ def handle(command: str):
     if not command:
         return None
 
-    command = command.lower().strip()
+    command = " ".join(
+        command.lower().strip().split()
+    )
 
-    # ----------------------------------
+    # -------------------------------------------------
     # Open Websites
-    # ----------------------------------
+    # -------------------------------------------------
 
     websites = {
-        "open google": GOOGLE_URL,
-        "open youtube": YOUTUBE_URL,
-        "open github": GITHUB_URL,
-        "open gmail": "https://mail.google.com",
-        "open chatgpt": "https://chatgpt.com",
-        "open linkedin": "https://linkedin.com",
+
+        "open google": (
+            "Google",
+            GOOGLE_URL,
+        ),
+
+        "open youtube": (
+            "YouTube",
+            YOUTUBE_URL,
+        ),
+
+        "open github": (
+            "GitHub",
+            GITHUB_URL,
+        ),
+
+        "open gmail": (
+            "Gmail",
+            "https://mail.google.com",
+        ),
+
+        "open chatgpt": (
+            "ChatGPT",
+            "https://chatgpt.com",
+        ),
+
+        "open linkedin": (
+            "LinkedIn",
+            "https://linkedin.com",
+        ),
     }
 
     if command in websites:
 
-        if open_url(websites[command]):
-            return f"Opening {command.replace('open ', '').title()}."
+        name, url = websites[command]
 
-        return "Unable to open browser."
+        if open_url(url):
+            return f"Opening {name}."
 
-    # ----------------------------------
+        return "Unable to open the browser."
+
+    # -------------------------------------------------
     # Google Search
-    # ----------------------------------
+    # -------------------------------------------------
 
-    if command.startswith("search google "):
+    prefix = "search google "
 
-        query = command.replace("search google ", "", 1).strip()
+    if command.startswith(prefix):
+
+        query = command[len(prefix):].strip()
 
         if not query:
             return "What should I search on Google?"
 
-        url = GOOGLE_SEARCH.format(query.replace(" ", "+"))
-
-        if open_url(url):
+        if _search(GOOGLE_SEARCH, query):
             return f"Searching Google for {query}."
 
-        return "Unable to open browser."
+        return "Unable to open the browser."
 
-    # ----------------------------------
+    # -------------------------------------------------
     # YouTube Search
-    # ----------------------------------
+    # -------------------------------------------------
 
-    if command.startswith("search youtube "):
+    prefix = "search youtube "
 
-        query = command.replace("search youtube ", "", 1).strip()
+    if command.startswith(prefix):
+
+        query = command[len(prefix):].strip()
 
         if not query:
             return "What should I search on YouTube?"
 
-        url = YOUTUBE_SEARCH.format(query.replace(" ", "+"))
-
-        if open_url(url):
+        if _search(YOUTUBE_SEARCH, query):
             return f"Searching YouTube for {query}."
 
-        return "Unable to open browser."
+        return "Unable to open the browser."
 
     return None

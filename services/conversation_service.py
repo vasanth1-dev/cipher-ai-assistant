@@ -1,44 +1,86 @@
-from collections import deque
+from core.logger import logger
 
 
 class ConversationService:
 
-    def __init__(self, max_history=10):
-        self.messages = deque(maxlen=max_history)
+    def __init__(self):
 
-    def add_user(self, message: str):
+        self.responses = {
+            "hello": "Hello!",
+            "hi": "Hello!",
+            "hey": "Hello!",
+            "good morning": "Good morning!",
+            "good afternoon": "Good afternoon!",
+            "good evening": "Good evening!",
+            "how are you": "I'm doing well. How can I help you?",
+            "who are you": "I am Cipher, your personal AI assistant.",
+            "what is your name": "My name is Cipher.",
+            "thank you": "You're welcome.",
+            "thanks": "You're welcome.",
+            "bye": "Goodbye.",
+            "goodbye": "Goodbye.",
+        }
 
-        if message:
-            self.messages.append(
-                {
-                    "role": "user",
-                    "content": message.strip(),
-                }
+    # ------------------------------------------------ #
+
+    def process(self, command: str):
+
+        if not command:
+            return None
+
+        command = " ".join(
+            command.lower().strip().split()
+        )
+
+        # Exact match
+        if command in self.responses:
+
+            response = self.responses[command]
+
+            logger.info(
+                f"[CONVERSATION] {command} -> {response}"
             )
 
-    def add_assistant(self, message: str):
+            return response
 
-        if message:
-            self.messages.append(
-                {
-                    "role": "assistant",
-                    "content": message.strip(),
-                }
-            )
+        # Partial match
+        for phrase, response in self.responses.items():
 
-    def build_prompt(self, current_prompt: str):
+            if phrase in command:
 
-        prompt = ""
+                logger.info(
+                    f"[CONVERSATION] {phrase} -> {response}"
+                )
 
-        for msg in self.messages:
-            prompt += f"{msg['role']}: {msg['content']}\n"
+                return response
 
-        prompt += f"user: {current_prompt}\nassistant:"
+        return None
 
-        return prompt
+    # ------------------------------------------------ #
 
-    def clear(self):
-        self.messages.clear()
+    def register(self, phrase: str, response: str):
+
+        if not phrase or not response:
+            return
+
+        self.responses[
+            phrase.lower().strip()
+        ] = response
+
+    # ------------------------------------------------ #
+
+    def remove(self, phrase: str):
+
+        phrase = phrase.lower().strip()
+
+        if phrase in self.responses:
+            del self.responses[phrase]
+
+    # ------------------------------------------------ #
+
+    def available(self):
+
+        return sorted(self.responses.keys())
 
 
 conversation_service = ConversationService()

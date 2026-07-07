@@ -1,0 +1,11 @@
+{
+    "assistant_name": "Cipher",
+    "speech_rate": 170,
+    "speech_volume": 1.0,
+    "ollama_model": "phi3:latest",
+    "gemini_enabled": true,
+    "wake_words": [
+        "hey cipher",
+        "cipher"
+    ]
+}

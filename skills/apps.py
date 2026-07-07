@@ -5,13 +5,40 @@ OPEN_WORDS = (
     "open ",
     "launch ",
     "start ",
+    "run ",
 )
 
 CLOSE_WORDS = (
     "close ",
-    "exit ",
     "quit ",
+    "exit ",
+    "stop ",
+    "kill ",
 )
+
+INTENT = "open_app"
+
+
+def _extract_app(command, keywords):
+
+    for keyword in keywords:
+
+        if command.startswith(keyword):
+
+            app = command[len(keyword):].strip()
+
+            if app.startswith("the "):
+                app = app[4:]
+
+            if app.startswith("application "):
+                app = app[12:]
+
+            if app.startswith("app "):
+                app = app[4:]
+
+            return app
+
+    return None
 
 
 def handle(command: str):
@@ -19,38 +46,46 @@ def handle(command: str):
     if not command:
         return None
 
-    command = command.lower().strip()
+    command = " ".join(
+        command.lower().strip().split()
+    )
 
     # ---------------- OPEN ----------------
 
-    for word in OPEN_WORDS:
+    app = _extract_app(
+        command,
+        OPEN_WORDS,
+    )
 
-        if command.startswith(word):
+    if app is not None:
 
-            app = command.replace(word, "", 1).strip()
+        if not app:
+            return "Which application should I open?"
 
-            if not app:
-                return "Which application should I open?"
+        response = app_service.open(app)
 
-            response = app_service.open(app)
+        if response:
+            return response
 
-            if response:
-                return response
+        return f"I couldn't open {app}."
 
     # ---------------- CLOSE ----------------
 
-    for word in CLOSE_WORDS:
+    app = _extract_app(
+        command,
+        CLOSE_WORDS,
+    )
 
-        if command.startswith(word):
+    if app is not None:
 
-            app = command.replace(word, "", 1).strip()
+        if not app:
+            return "Which application should I close?"
 
-            if not app:
-                return "Which application should I close?"
+        response = app_service.close(app)
 
-            response = app_service.close(app)
+        if response:
+            return response
 
-            if response:
-                return response
+        return f"I couldn't close {app}."
 
     return None

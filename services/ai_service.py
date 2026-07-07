@@ -1,51 +1,147 @@
-import socket
+from core.logger import logger
 
 from services.ollama_service import ollama_service
-from services.gemini_service import gemini_service
-from services.conversation_service import conversation_service
-from services.memory_service import memory_service
 
 
 class AIService:
 
-    def internet_available(self):
+    def __init__(self):
 
-        try:
-            socket.create_connection(("8.8.8.8", 53), timeout=2)
-            return True
-        except OSError:
-            return False
+        self.provider = ollama_service
 
-    def ask(self, prompt: str):
+    # --------------------------------------------------
+    # Provider
+    # --------------------------------------------------
+
+    def set_provider(self, provider):
+
+        if provider is None:
+            return
+
+        self.provider = provider
+
+        logger.info(
+            f"[AI] Provider changed to "
+            f"{provider.__class__.__name__}"
+        )
+
+    def get_provider(self):
+
+        return self.provider
+
+    # --------------------------------------------------
+    # Generate
+    # --------------------------------------------------
+
+    def generate(self, prompt):
+
+        prompt = self._normalize(prompt)
 
         if not prompt:
-            return "Please say something."
+            return ""
 
-        # Build conversation context
+        if self.provider is None:
+            return ""
 
-        memory = memory_service.memory_prompt()
-        full_prompt = (
-            memory +
-            "\n" +
-            conversation_service.build_prompt(prompt)
-        )
-        # ---------- Online AI (Gemini) ----------
-        if self.internet_available() and gemini_service.available():
+        if not hasattr(self.provider, "generate"):
+            logger.error(
+                "[AI] Provider does not implement generate()."
+            )
+            return ""
 
-            response = gemini_service.ask(full_prompt)
+        try:
 
-            if response and not response.startswith("Gemini Error"):
-                conversation_service.add_user(prompt)
-                conversation_service.add_assistant(response)
-                return response
+            response = self.provider.generate(prompt)
 
-        # ---------- Offline AI (Ollama) ----------
-        response = ollama_service.ask(full_prompt)
+            if response is None:
+                return ""
 
-        conversation_service.add_user(prompt)
-        conversation_service.add_assistant(response)
+            return str(response).strip()
 
-        return response
+        except Exception as e:
+
+            logger.exception(e)
+
+            return (
+                "Sorry, I couldn't generate a response right now."
+            )
+
+    # --------------------------------------------------
+    # Streaming
+    # --------------------------------------------------
+
+    def stream(self, prompt):
+
+        prompt = self._normalize(prompt)
+
+        if not prompt:
+            return
+
+        if self.provider is None:
+            return
+
+        if not hasattr(self.provider, "stream"):
+
+            logger.error(
+                "[AI] Provider does not implement stream()."
+            )
+
+            response = self.generate(prompt)
+
+            if response:
+                yield response
+
+            return
+
+        try:
+
+            logger.info(
+                "[AI] Streaming response started."
+            )
+
+            for chunk in self.provider.stream(prompt):
+
+                if chunk is None:
+                    continue
+
+                chunk = str(chunk).strip()
+
+                if not chunk:
+                    continue
+
+                yield chunk
+
+            logger.info(
+                "[AI] Streaming response completed."
+            )
+
+        except Exception as e:
+
+            logger.exception(e)
+
+            yield (
+                "Sorry, I couldn't generate a response right now."
+            )
+
+    # --------------------------------------------------
+    # Status
+    # --------------------------------------------------
+
+    def is_available(self):
+
+        return self.provider is not None
+
+    # --------------------------------------------------
+    # Helpers
+    # --------------------------------------------------
+
+    @staticmethod
+    def _normalize(prompt):
+
+        if prompt is None:
+            return ""
+
+        return str(prompt).strip()
 
 
 ai_service = AIService()

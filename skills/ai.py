@@ -28,11 +28,9 @@ def handle(command: str):
 
     command = command.strip()
 
-    # Local commands are handled by other skills.
     for item in LOCAL_COMMANDS:
-
         if command.startswith(item):
             return None
 
-    # Offline AI (Ollama)
-    return ai_service.ask(command)
+    # AI is handled by assistant streaming
+    return None

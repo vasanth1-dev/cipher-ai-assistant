@@ -1,53 +1,184 @@
+import json
+
 import requests
 
 from config import (
+    MODEL_NAME,
     OLLAMA_URL,
-    OLLAMA_MODEL,
-    AI_PERSONALITY,
 )
+from core.logger import logger
 
 
 class OllamaService:
 
     def __init__(self):
-        self.url = OLLAMA_URL
-        self.model = OLLAMA_MODEL
 
-    def ask(self, prompt: str):
+        self.url = OLLAMA_URL
+        self.model = MODEL_NAME
+        self.timeout = 300
+
+        self.session = requests.Session()
+
+    # --------------------------------------------------
+    # Generate
+    # --------------------------------------------------
+
+    def generate(self, prompt: str):
+
+        prompt = self._normalize(prompt)
 
         if not prompt:
-            return "I didn't hear anything."
+            return ""
 
         try:
 
-            response = requests.post(
+            payload = {
+                "model": self.model,
+                "prompt": prompt,
+                "stream": False,
+            }
+
+            response = self.session.post(
                 self.url,
-                json={
-                    "model": self.model,
-                    "prompt": prompt,
-                    "system": AI_PERSONALITY,
-                    "stream": False,
-                },
-                timeout=120,
+                json=payload,
+                timeout=self.timeout,
             )
 
             response.raise_for_status()
 
             data = response.json()
 
-            return data.get(
-                "response",
-                "Sorry, I couldn't generate a response."
+            return str(
+                data.get("response", "")
             ).strip()
 
-        except requests.exceptions.ConnectionError:
-            return "Ollama is not running."
-
         except requests.exceptions.Timeout:
-            return "Ollama took too long to respond."
+
+            logger.exception("Ollama request timed out.")
+
+            return "The AI model took too long to respond."
 
         except Exception as e:
-            return f"Ollama Error: {e}"
+
+            logger.exception(e)
+
+            return "I'm unable to connect to the AI model."
+
+    # --------------------------------------------------
+    # Stream
+    # --------------------------------------------------
+
+    def stream(self, prompt: str):
+
+        prompt = self._normalize(prompt)
+
+        if not prompt:
+            return
+
+        try:
+
+            payload = {
+                "model": self.model,
+                "prompt": prompt,
+                "stream": True,
+            }
+
+            response = self.session.post(
+                self.url,
+                json=payload,
+                stream=True,
+                timeout=self.timeout,
+            )
+
+            response.raise_for_status()
+
+            for line in response.iter_lines():
+
+                if not line:
+                    continue
+
+                try:
+
+                    data = json.loads(
+                        line.decode("utf-8")
+                    )
+
+                    text = data.get(
+                        "response",
+                        "",
+                    )
+
+                    if text:
+                        yield text
+
+                    if data.get("done"):
+                        break
+
+                except Exception:
+
+                    continue
+
+        except requests.exceptions.Timeout:
+
+            logger.exception(
+                "Ollama stream timed out."
+            )
+
+            yield "The AI model took too long to respond."
+
+        except Exception as e:
+
+            logger.exception(e)
+
+            yield "I'm unable to connect to the AI model."
+
+    # --------------------------------------------------
+    # Status
+    # --------------------------------------------------
+
+    def is_available(self):
+
+        try:
+
+            response = self.session.get(
+                self.url.replace(
+                    "/generate",
+                    "/tags",
+                ),
+                timeout=5,
+            )
+
+            return response.ok
+
+        except Exception:
+
+            return False
+
+    # --------------------------------------------------
+    # Model
+    # --------------------------------------------------
+
+    def set_model(self, model_name: str):
+
+        if model_name:
+
+            self.model = model_name
+
+    def get_model(self):
+
+        return self.model
+
+    # --------------------------------------------------
+    # Helpers
+    # --------------------------------------------------
+
+    @staticmethod
+    def _normalize(prompt):
+
+        if prompt is None:
+            return ""
+
+        return str(prompt).strip()
 
 
 ollama_service = OllamaService()

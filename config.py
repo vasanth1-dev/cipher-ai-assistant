@@ -10,11 +10,14 @@ USER_NAME = "Vasanth"
 # Wake Word
 # ------------------------------------------
 
-WAKE_WORD = [
+WAKE_WORDS = [
     "hey cipher",
     "cipher",
+    "hey cypher",
+    "cypher",
+    "hey safer",
+    "safer",
 ]
-
 # ========================
 WAKEWORD_MODEL = None
 WAKEWORD_THRESOLD = 0.5
@@ -38,7 +41,7 @@ LISTEN_SECONDS = 5
 # ------------------------------------------
 # Speech
 # ------------------------------------------
-
+VOICE = "en-IN-PrabhatNeural"
 SPEECH_RATE = 170
 SPEECH_VOLUME = 1.0
 
@@ -47,7 +50,7 @@ SPEECH_VOLUME = 1.0
 # ------------------------------------------
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-OLLAMA_MODEL = "phi3:latest"
+MODEL_NAME = "phi3:latest"
 
 # ------------------------------------------
 # Browser

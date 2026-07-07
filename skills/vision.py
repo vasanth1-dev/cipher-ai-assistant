@@ -1,6 +1,6 @@
 from services.vision_service import vision_service
 
-
+INTENT = "vision"
 def handle(command: str):
 
     if not command:
