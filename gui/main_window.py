@@ -26,6 +26,7 @@ class MainWindow(QMainWindow):
         self.resize(1280, 760)
 
         icon = Path(__file__).parent / "resources" / "cipher.png"
+
         if icon.exists():
             self.setWindowIcon(QIcon(str(icon)))
 
@@ -57,6 +58,7 @@ class MainWindow(QMainWindow):
     def _build_ui(self):
 
         central = QWidget()
+
         self.setCentralWidget(central)
 
         root = QHBoxLayout(central)
@@ -72,11 +74,14 @@ class MainWindow(QMainWindow):
 
         self.stack = QStackedWidget()
 
-        # Dashboard Page
+        # ---------------- Dashboard ----------------
+
         self.dashboard = DashboardWidget()
 
-        # Chat Page
+        # ---------------- Chat ----------------
+
         chat_page = QWidget()
+
         chat_layout = QVBoxLayout(chat_page)
         chat_layout.setContentsMargins(0, 0, 0, 0)
         chat_layout.setSpacing(15)
@@ -87,8 +92,8 @@ class MainWindow(QMainWindow):
         chat_layout.addWidget(self.chat)
         chat_layout.addWidget(self.input_panel)
 
-        self.stack.addWidget(self.dashboard)   # index 0
-        self.stack.addWidget(chat_page)        # index 1
+        self.stack.addWidget(self.dashboard)
+        self.stack.addWidget(chat_page)
 
         right.addWidget(self.header)
         right.addWidget(self.stack)
@@ -97,6 +102,7 @@ class MainWindow(QMainWindow):
         root.addLayout(right)
 
         self.statusbar = QStatusBar()
+
         self.setStatusBar(self.statusbar)
 
     # --------------------------------------------------
@@ -120,18 +126,24 @@ class MainWindow(QMainWindow):
     def on_page_changed(self, page):
 
         if page == "dashboard":
+
             self.stack.setCurrentIndex(0)
 
         elif page == "chat":
+
             self.stack.setCurrentIndex(1)
 
-        self.set_status(f"Opened: {page.title()}")
+        self.set_status(
+            f"Opened: {page.title()}"
+        )
 
     # --------------------------------------------------
 
     def on_send_clicked(self, text):
 
-        self.add_message("You", text)
+        # ChatManager already adds the user message.
+        # Prevent duplicate "You" bubbles.
+        pass
 
     # --------------------------------------------------
 
@@ -148,13 +160,32 @@ class MainWindow(QMainWindow):
         sender = sender.lower()
 
         if sender == "you":
+
             self.chat.add_user_message(text)
 
         elif sender == "system":
+
             self.chat.add_system_message(text)
 
         else:
+
             self.chat.add_assistant_message(text)
+
+    # --------------------------------------------------
+    # Streaming
+    # --------------------------------------------------
+
+    def start_stream(self):
+
+        self.chat.start_stream()
+
+    def append_stream(self, text):
+
+        self.chat.append_stream(text)
+
+    def finish_stream(self):
+
+        self.chat.finish_stream()
 
     # --------------------------------------------------
 

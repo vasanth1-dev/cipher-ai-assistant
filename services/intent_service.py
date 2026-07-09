@@ -5,6 +5,30 @@ class IntentService:
 
     def __init__(self):
 
+        self.intents = {}
+
+        self.__load_builtin_intents()
+
+            
+        self._sorted = []
+
+        for intent, phrases in self.intents.items():
+
+            for phrase in phrases:
+
+                self._sorted.append(
+                    (
+                        phrase.lower().strip(),
+                        intent,
+                    )
+                )
+
+        self._sorted.sort(
+            key=lambda item: len(item[0]),
+            reverse=True,
+        )
+    def __load_builtin_intents(self):
+
         self.intents = {
 
             "open_app": [
@@ -134,24 +158,8 @@ class IntentService:
                 "disable gemini",
             ],
         }
-
-        self._sorted = []
-
-        for intent, phrases in self.intents.items():
-
-            for phrase in phrases:
-
-                self._sorted.append(
-                    (
-                        phrase.lower().strip(),
-                        intent,
-                    )
-                )
-
-        self._sorted.sort(
-            key=lambda item: len(item[0]),
-            reverse=True,
-        )
+            
+             
 
     # ------------------------------------------------ #
 

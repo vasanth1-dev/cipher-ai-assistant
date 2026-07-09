@@ -10,7 +10,7 @@ def preload():
         requests.post(
             OLLAMA_URL,
             json={
-                "model": OLLAMA_MODEL,
+                "model": MODEL_NAME,
                 "prompt": "hi",
                 "stream": False,
                 "keep_alive": "30m",

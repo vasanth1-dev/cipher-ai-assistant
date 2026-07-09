@@ -62,6 +62,8 @@ class OllamaService:
 
             logger.exception(e)
 
+            print(f"\nOLLAMA ERROR: {type(e).__name__}: {e}\n")
+
             return "I'm unable to connect to the AI model."
 
     # --------------------------------------------------
@@ -129,6 +131,8 @@ class OllamaService:
         except Exception as e:
 
             logger.exception(e)
+
+            print(f"\nOLLAMA STREAM ERROR: {type(e).__name__}: {e}\n")
 
             yield "I'm unable to connect to the AI model."
 

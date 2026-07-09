@@ -1,7 +1,7 @@
 from core.logger import logger
 
 from services.ollama_service import ollama_service
-
+from services.history_service import history_service
 
 class AIService:
 
@@ -36,6 +36,7 @@ class AIService:
     def generate(self, prompt):
 
         prompt = self._normalize(prompt)
+        prompt = self._build_prompt(prompt)
 
         if not prompt:
             return ""
@@ -55,8 +56,19 @@ class AIService:
 
             if response is None:
                 return ""
+            
+            response = str(response).strip()
+        
+            try:
+                history_service.add(
+                    prompt,
+                    response,
+                )
 
-            return str(response).strip()
+            except Exception as e:
+                logger.exception(e)
+
+            return response
 
         except Exception as e:
 
@@ -73,6 +85,7 @@ class AIService:
     def stream(self, prompt):
 
         prompt = self._normalize(prompt)
+        prompt = self._build_prompt(prompt)
 
         if not prompt:
             return
@@ -104,9 +117,12 @@ class AIService:
                 if chunk is None:
                     continue
 
-                chunk = str(chunk).strip()
+                # IMPORTANT:
+                # Don't strip streaming chunks.
+                # Ollama sends leading/trailing spaces in many chunks.
+                chunk = str(chunk)
 
-                if not chunk:
+                if chunk == "":
                     continue
 
                 yield chunk
@@ -130,6 +146,43 @@ class AIService:
     def is_available(self):
 
         return self.provider is not None
+    
+    def _build_prompt(
+        self,
+        prompt,
+    ):
+        """
+        Build the final AI prompt.
+
+        Currently returns the prompt unchanged.
+
+        Later this method will include:
+        - conversation history
+        - memory
+        - system prompt
+        - user profile
+        """
+
+        try:
+            from services.memory_service import memory_service
+
+            memory = memory_service.export()
+
+            if memory:
+
+                return(
+                    "Known information about the user:\n"
+                    f"{memory}\n\n"
+                    f"User: {prompt}\n"
+                    "Cipher"
+                )
+            
+
+        except Exception as e:
+
+            logger.exception(e)
+
+        return prompt
 
     # --------------------------------------------------
     # Helpers

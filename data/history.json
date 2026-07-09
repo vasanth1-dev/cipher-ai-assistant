@@ -28,5 +28,300 @@
         "timestamp": "2026-07-07T20:16:50",
         "command": "open terminal",
         "response": "Opening terminal."
+    },
+    {
+        "timestamp": "2026-07-07T22:28:23",
+        "command": "open firefox.",
+        "response": "I couldn't open firefox.."
+    },
+    {
+        "timestamp": "2026-07-07T22:28:32",
+        "command": "open google",
+        "response": "Opening Google."
+    },
+    {
+        "timestamp": "2026-07-07T22:28:43",
+        "command": "open youtube",
+        "response": "Opening YouTube."
+    },
+    {
+        "timestamp": "2026-07-07T22:29:06",
+        "command": "it's",
+        "response": "I ' m Ph i , an A I developed by Microsoft . How can I assist you today ?"
+    },
+    {
+        "timestamp": "2026-07-07T22:29:17",
+        "command": "whoa",
+        "response": "Who oh oo ! Great to see you here . How can I assist you today ?"
+    },
+    {
+        "timestamp": "2026-07-07T22:29:34",
+        "command": "remember, my name is vasanth.",
+        "response": "Hello Vas anth ! I hope you ' re having a great day . Your input has been noted ; remember your name as Vas anth for any further interactions we may have in the future . If there are specific questions or tasks at hand that relate to this personal detail , feel free to share them and I ' ll assist accordingly ."
+    },
+    {
+        "timestamp": "2026-07-07T23:20:44",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-07T23:21:05",
+        "command": "my name is vasanth",
+        "response": "Hello!It'selartomeetyou,Vasanth.HowcanIhelpyoutoday?Pleasetellmemoreaboutwhatbringsyouhereoranyquestionsthatmightbeonyourmind.Remember,it'sokaynottohavealltheanswersimmediately—I'mheretosupportandguideyouthroughourconversationasbestaspossible!"
+    },
+    {
+        "timestamp": "2026-07-07T23:21:34",
+        "command": "stop",
+        "response": "Itseemslikeyou'rerequestingtohaltorceaseanaction.Withoutcontext,Icannotprovidespecificinformationonwhatexactlyshouldstop.However,ifthisisrelatedtoaconversationorprocessthathasbeengoingonandneedsimmediatecessationforanyreason—suchasaddressingsensitivetopicsinfrontofchildren,haltingphysicalactivityduetodiscomfort,endinganunproductivemeeting,etc.—it'softenbesttocommunicateclearlywithallinvolvedparties.Forexample:\"Ithinkitmightbetimewewrapupourdiscussiononthismatterfornowandrevisitwheneveryonefeelsmoreatease.\""
+    },
+    {
+        "timestamp": "2026-07-07T23:36:28",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-07T23:36:49",
+        "command": "vasanth",
+        "response": "Itappearsthat\"vasanth\"mayrefertoaname,likelyIndian-originated.VasanthisanuncommonnameinEnglishanditmeans'spring'or'blossomingseason'invariousSouthAsianlanguagessuchasTamil(வசந்தன,vasanthan)whichdenotesthemeaningofspringtimeassociatedwithrenewalandblossom.If\"vasanth\"referstoaspecificpersonnamedVasanththatyouareinquiringabout,furtherdetailswouldbeneededforcontext-sensitiveinformationoractionsrelatedtothisindividual."
+    },
+    {
+        "timestamp": "2026-07-07T23:36:57",
+        "command": "stop",
+        "response": "Thecommand\"stop\"suggeststheactionofceasingmovementoractivity.Inabroaderinterpretationwithinphysics,especiallywhendiscussingmechanicsandkineticenergy(KE),onecouldrelatethistohaltinganobjectinmotionfromconvertingitsKEintootherformsofenergyduetoexternalforcesactinguponit."
+    },
+    {
+        "timestamp": "2026-07-08T01:38:38",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-08T01:38:49",
+        "command": "what is your name",
+        "response": "My name is Cipher."
+    },
+    {
+        "timestamp": "2026-07-08T01:39:06",
+        "command": "remember my name is vasanth k",
+        "response": "I'll remember your my name."
+    },
+    {
+        "timestamp": "2026-07-08T01:39:20",
+        "command": "what is  my name",
+        "response": "Your my name is vasanth k."
+    },
+    {
+        "timestamp": "2026-07-08T01:40:49",
+        "command": "explain about python",
+        "response": "Pythonisahigh-level,interpretedprogramminglanguagethatemphasizescodereadabilitythroughitsnotableuseofsignificantwhitespace.CreatedbyGuidovanRossumandfirstreleasedin1991,Pythonhasbecomepopularamongbothbeginnersandexperiencedprogrammersduetoitssimplicity,versatility,andpowerfullibrarieslikeNumPyforscientificcomputingandTensorFloworPyTorchformachinelearningapplications.OneofthemostsignificantfeaturesthatmakePythonago-tolanguageisitsextensivestandardlibrarywhichincludesmodulesandfunctionsforvarioustaskssuchasregularexpressions(re),fileinput/output(Io),networkprogramming,andevendatabaseconnectivitythroughDBMtechnologyorwithsupportfromthird-partylibrarieslikepsycopg2.Pythonsupportsmultipleprogrammingparadigmsincludingobject-oriented,imperativestyleofC++orJavabutalsoproceduralstylesasinlanguagessuchasPerlorshellscriptinglanguageBashwhichmakesitversatileandadaptableforvarioustypesofapplicationsrangingfromwebdevelopmenttoscientificcomputingresearchprojectswherePython’sextensivelibrariescanbeahugeadvantage.Pythonsupportsdynamictyping,garbagecollection,andhasanobject-orientednaturewithclassesthatareusedasdatastructuresalongthewayprovidingmultiplewaystoaccessandmanipulatetheircontentsthroughattributesormethodswhichmakesiteasyforprogrammersofdifferentskilllevelstolearnthislanguagequicklywithoutmuchinitialstruggleinunderstandingcomplexconcepts.Insummary,Pythonisaversatilehighlevelprogramminglanguageknownforitssimplicity,readability,powerfulstandardlibrarywithextensivecommunitysupportthathasmadethisoneofthemostsought-afterlanguagesamongbeginnersandexperiencedprogrammersalikeasitallowsrapiddevelopmenttimewhilemaintainingcleancodewithoutsacrificesinperformance."
+    },
+    {
+        "timestamp": "2026-07-08T01:53:57",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-08T01:54:07",
+        "command": "what is my name",
+        "response": "Your my name is vasanth k."
+    },
+    {
+        "timestamp": "2026-07-08T01:54:21",
+        "command": "remember name is vasanth k",
+        "response": "I'll remember your name."
+    },
+    {
+        "timestamp": "2026-07-08T01:54:33",
+        "command": "what is my name",
+        "response": "Your my name is vasanth k."
+    },
+    {
+        "timestamp": "2026-07-08T01:55:22",
+        "command": "what is python",
+        "response": "Python is a high-level, interpreted programming language first released by Guido van Rossum in 1 end of the 1980s. It has since become known for its clear syntax and readability, which makes it an ideal language for beginners to learn how to code as well as experienced developers who want their programs to be easily understood by others. Python is dynamically typed and supports multiple programming paradigms including procedural, object-oriented, and functional programming. It offers extensive standard library modules that include a vast range of tools which can accomplish nearly any computing task or process without needing external libraries. As an interpreted language with its own interpreter named \"CPython,\" it is widely used in scientific and engineering communities for data analysis but also finds applications across diverse fields such as web development, automation scripting, machine learning, artificial intelligence, and many more areas of software development due to the ease at which Python can be read and written."
+    },
+    {
+        "timestamp": "2026-07-08T01:55:47",
+        "command": "who is google ceo",
+        "response": "The CEO of Google as of my knowledge cutoff in early 2023 was Sundar Pichai. He has been leading the company since April 2de, 2018, when he succeeded Larry Page and Sergey Brin. Prior to becoming CEO, Sundar led the Android division within Alphabet Inc., Google's parent company."
+    },
+    {
+        "timestamp": "2026-07-08T01:56:35",
+        "command": "who is jio owner",
+        "response": "Jio, an Indian telecommunications and digital services provider founded by Mukesh Ambani's Reliance Industries Limited, does not have a singular 'owner.' Instead, it operates as a subsidiary under the umbrella of its parent company. As such, one could argue that for all practical purposes within the corporate structure, Jio is owned entirely by Mukesh Ambani and his Reliance Industries Limited conglomerate."
+    },
+    {
+        "timestamp": "2026-07-08T01:58:28",
+        "command": "which one is famous in madurai",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-08T01:58:57",
+        "command": "which one is famous in madurai",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-08T02:00:15",
+        "command": "about vijay",
+        "response": "Vijay could be a reference to multiple individuals, places or concepts in various cultures. Here are several possibilities:\n\n1. If Vijay is your name and you're seeking information about yourself as an individual, I would need more specific details such as age, occupation, interests etc. However, generally speaking, Vijay can be a common given name of Hindu origin meaning \"victorious\". It could belong to anyone from any walk of life who shares this moniker and wishes to find out about their personal story or achievements associated with that identity.\n\n2. Alternatively, if you are referring to the Tamil actor Vijay Senthil (born 1968), known for his acting in Indian cinema such as \"Kaaviya Thalaivan\" (\"Bandit King\") and he is seeking information about himself or wishes to know more public aspects of celebrities, I would suggest looking into media interviews, biographies detailing their career mileststaticically. As a celebrity actor in the Tamil film industry (Kollywood), there's likely content on entertainment websites like Sify and Rediff which cover his performances and life events more deeply.\n\n3. If you are referring to Vijay, an Indian singer based primarily known for Bollywood music such as \"Chak De\" or 'Tum Hi Ho', information can be found by searching through movie archives where he performed these songs often playing a significant role in the soundtrack's success and popularity with fans.\n\n4. Lastly, if you are referring to Vijay Krishna Varma (1892-1963), an Indian actor who worked mainly during the silent film era like \"Raja Harishchandra\" (\"The King Harishchandra\"), information on him could be found through research into historical cinema archives, old reviews and articles that document his contributions to early Tamil Cinema.\n\nPlease provide more specific details so I can give a detailed profile or update about Vijay you are referring to."
+    },
+    {
+        "timestamp": "2026-07-08T02:01:27",
+        "command": "who is the superstar of tamil actors",
+        "response": "There isn't a universally acknowledged \"superstar\" like there might be in Hollywood, as Bollywood. However, Rajinikanth and Kamal Haasan are often regarded among Tamil cinema's most prominent and beloved figures due to their significant contributions through acting prowess, charisma, and on-screen presence across an extensive range of film roles throughout the decades in both action and drama genres. \n\nRajinikanth has been a leading figure since his debut with \"Chandrasena\" (1976), establishing himself as one of Tamil cinema's most iconic actors, known for playing larger-than-life characters often portrayed in high-octane action films. His dedication to the role and ability to connect with audiences across generations cement his status within this realm.\n\nKamal Haasan is celebrated not only as a versatile actor who can perform complex roles but also for his immense talent, intelligence, wit, distinctive voice (particularly when dubbing films), and profound influence on contemporary Tamil cinema culture at large with movies like \"Nenjil Or Aalmaram\" (1984) that went beyond typical action hero tropes.\n\nBoth actors have garnered immense respect, affection from their audiences, as wells as industry accolades and awards for their contributions to Tamil cinema making them superstars of the genre in India's diverse film landscape."
+    },
+    {
+        "timestamp": "2026-07-08T12:01:33",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-08T12:01:41",
+        "command": "what is my name",
+        "response": "Your my name is vasanth k."
+    },
+    {
+        "timestamp": "2026-07-08T12:02:18",
+        "command": "what is meant by variables",
+        "response": "Variables in programming are named symbols that store values within a program. These names can represent various data types such as integers, strings, booleans, etc., and their primary purpose is to hold information that programs need to work with during execution time. Variables serve multiple functions like storing temporary or permanent data required for calculations, controlling the flow of a program through conditions (if statements), iterating over sets of items using loops, among other uses depending on context and programming language semantics."
+    },
+    {
+        "timestamp": "2026-07-08T12:02:39",
+        "command": "notify",
+        "response": "What should I notify?"
+    },
+    {
+        "timestamp": "2026-07-08T12:03:02",
+        "command": "notify after 5 minutes i need to water",
+        "response": "Notification sent."
+    },
+    {
+        "timestamp": "2026-07-08T12:22:55",
+        "command": "who is prime minister of india",
+        "response": "As of my knowledge cutoff in April 2024, the Prime Minister of India is Narendra Modi. He has been serving as PM since May 26, 2 hallmarking his first term began on May 26, 2014, after winning a significant victory with the Bharatiya Janata Party (BJP). Prior to becoming Prime Minister in this role for three consecutive terms. It's important to note that political situations can change due to elections or other events post my last update; please check the latest resources for current information."
+    },
+    {
+        "timestamp": "2026-07-08T12:24:07",
+        "command": "reminder july 31 release spiderman brand new day movie",
+        "response": "Reminder: Please remember that \"Spider-Man: Far From Home,\" a highly anticipated Spiderman brand new day movie, is set to be released on July 31. Be sure not to miss this exciting event as it marks another significant installment in the beloved superhero series. Make plans accordingly and consider booking tickets for your next entertainment outing!"
+    },
+    {
+        "timestamp": "2026-07-08T12:24:25",
+        "command": "remember  july 31 release spiderman brand new day movie",
+        "response": "Please say it like: remember my bike is Duke 125."
+    },
+    {
+        "timestamp": "2026-07-08T12:24:53",
+        "command": "notify  july 31 release spiderman brand new day movie",
+        "response": "Notification sent."
+    },
+    {
+        "timestamp": "2026-07-08T13:57:43",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-08T13:59:44",
+        "command": "explain for loop in python",
+        "response": "A `for` loop in Python is used to iterate over a sequence, such as lists, strings, tuples or sets. It's also commonly used with the built-in function range(). The general syntax of a `for` loop looks like this:\n\n```python\nfor element in iterable_object:\n    # Code block here executes for each item in the object \n```\nFor example, if you want to print all elements in a list one by one using a `for` loop, it would look something like this:\n\n```python\nmy_list = [1,2,3,4,5]\nfor i in my_list:\n    print(i)  # This code will be executed for each element of the list. Outputs are printed one after another as they appear on console.\n```\nThis would output:  \n\n```python    \n1\n2\n3\n4\n5\n```\nThe `for` loop iterates over all items in my_list and executes its code block (which is just printing the current item) once for each element present inside it, hence giving us an iterator.  It keeps on looping until every single one of them has been processed or explicitly stopped by a break statement, whichever comes first.\n\nThe `range()` function can also be used with loops in Python to execute certain code repeatedly based on the number provided as input parameters:  \n```python    \nfor i in range(5):  # It will iterate from 0 up till but not including the stop value given (in this case, five)   \n    print(i)\n```\nThis would output numbers one by one starting with zero and ending before it reaches the limit of five.  \nAnother common use-case is to utilize `range()` in a loop along with string multiplication or list comprehension: \n```python    \nfor i in range(3):      # Iterates from 0 up till but not including stop value given (in this case, three)   \n    print('*' * i)       # This will output '*', then '**', and finally '***'. Note the multiplication of string.  \n```"
+    },
+    {
+        "timestamp": "2026-07-08T14:58:21",
+        "command": "take photo",
+        "response": "Photo captured successfully. Saved to data/images/capture.jpg"
+    },
+    {
+        "timestamp": "2026-07-08T22:32:40",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-08T22:32:50",
+        "command": "what is my name",
+        "response": "Your my name is vasanth k."
+    },
+    {
+        "timestamp": "2026-07-08T22:34:08",
+        "command": "explain python simple",
+        "response": "Python is a high-level, interpreted programming language known for its simplicity and readability. It was created by Guido van Rossum in the late 1980s with an emphasis on code that' end users can understand easily as well as being compact enough to execute quickly. Python supports multiple programming paradigms including procedural, object-oriented, and functional programming styles making it highly versatile for various applications from web development and data analysis to scientific computing and artificial intelligence projects.\n\nHere are some of the key features that contribute to its simplicity:\n\n1. **Legible Syntax**: Python’s syntax is clean and close to human languages which reduces the cost of writing and maintaining code. It avoids excessive punctuation, making complex expressions more readable by aligning operators at the same indent level as their operands.\n\n2. **Interactive Shell**: The interactive shell (REPL - Read-Eval-Print Loop) allows users to execute Python commands line by line which is very helpful for learning and debugging code quickly without writing a complete script first.\n\n3. **Dynamic Typing**: Variables in Python are not explicitly declared; the type of a variable can change dynamically, meaning you do not need separate sections of code dealing with different data types as needed – just use `int`, `str`, or any other built-in class when declaring your variables.\n\n4. **Easy Error Handling**: Python uses exceptions for error handling which allows programs to be written without the fear that an unexpected condition will cause a crash - it simply jumps out of the current block and attempts execution elsewhere (if possible). \n\n5. **Standard Library & Third-party Packages**: There's an extensive standard library in Python, as well as millions of third-party packages available on repositories like PyPI that provide functionality to perform a wide range of tasks without writing from scratch code. These libraries are often used with simple one or two line commands and can significantly reduce coding time for complex functions.\n\nPython is suitable for beginners due to its simplicity but also powerful enough for professional-level applications, making it popular among developers across the world. Here's a simple Python program as an example:\n\n```python\n# A classic Hello World Example in Python!\nprint(\"Hello, world!\")  # This line prints out \"Hello, world!\" to the terminal or console window.\n```"
+    },
+    {
+        "timestamp": "2026-07-08T22:34:28",
+        "command": "english na enna",
+        "response": "I'm sorry, but \"english na enna\" does not appear to be a coherent phrase or question in English. If you intended to ask about something related to the English language or need assistance with learning it, please provide more details so I can help appropriately. For example:\n\n- How do I improve my spoken English? \n- What is an engaging way to learn English as a second language (ESL)? \n- Can you recommend resources for beginners learning how to speak and understand conversational English?"
+    },
+    {
+        "timestamp": "2026-07-09T17:50:36",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-09T17:50:49",
+        "command": "i am vasanth",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T17:50:56",
+        "command": "why",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T17:51:07",
+        "command": "what is python",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T18:14:46",
+        "command": "hey cipher",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-09T18:14:55",
+        "command": "my name is vasanth",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T19:16:27",
+        "command": "hi",
+        "response": "Hello!"
+    },
+    {
+        "timestamp": "2026-07-09T19:16:32",
+        "command": "i am vasanth",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T19:16:38",
+        "command": "why",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T19:41:43",
+        "command": "i am cycle",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T19:42:06",
+        "command": "opening google",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T19:42:20",
+        "command": "well, i'll find a good one.",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T19:58:02",
+        "command": "what time is it",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T20:01:16",
+        "command": "what time is it",
+        "response": "I'm unable to connect to the AI model."
+    },
+    {
+        "timestamp": "2026-07-09T20:07:05",
+        "command": "what time is it",
+        "response": "I'm unable to connect to the AI model."
     }
 ]

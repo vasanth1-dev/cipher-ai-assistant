@@ -50,7 +50,7 @@ SPEECH_VOLUME = 1.0
 # ------------------------------------------
 
 OLLAMA_URL = "http://localhost:11434/api/generate"
-MODEL_NAME = "phi3:latest"
+MODEL_NAME = "qwen2.5:1.5b"
 
 # ------------------------------------------
 # Browser

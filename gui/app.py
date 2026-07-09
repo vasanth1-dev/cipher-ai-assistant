@@ -5,9 +5,10 @@ from PyQt6.QtWidgets import QApplication
 
 from core.assistant import Cipher
 from gui.chat_widget import ChatManager
-from gui.main_window import MainWindow
 from gui.dashboard_updater import DashboardUpdater
+from gui.main_window import MainWindow
 from gui.tray import CipherTray
+
 
 class CipherApp:
 
@@ -24,7 +25,9 @@ class CipherApp:
         self.dashboard_updater = DashboardUpdater(
             self.window.dashboard
         )
+
         self.chat = ChatManager()
+
         self.assistant = Cipher()
 
         self._connect_backend()
@@ -34,7 +37,6 @@ class CipherApp:
 
     def _connect_backend(self):
 
-        # Assistant -> GUI
         self.assistant.on_message = (
             self.chat.message_received.emit
         )
@@ -43,7 +45,18 @@ class CipherApp:
             self.chat.status
         )
 
-        # ChatManager -> Assistant
+        self.assistant.on_stream_start = (
+            self.chat.start_stream
+        )
+
+        self.assistant.on_stream_update = (
+            self.chat.append_stream
+        )
+
+        self.assistant.on_stream_finish = (
+            self.chat.finish_stream
+        )
+
         self.chat.set_response_callback(
             self.assistant.process
         )
@@ -52,14 +65,31 @@ class CipherApp:
 
     def _connect_gui(self):
 
-        # Input Panel
+        # Input
         self.window.input_panel.sendClicked.connect(
             self.chat.send
         )
 
-        # Messages
+        self.window.input_panel.micClicked.connect(
+            self._start_voice_once
+        )
+
+        # Normal messages
         self.chat.message_received.connect(
             self.window.add_message
+        )
+
+        # Streaming
+        self.chat.stream_started.connect(
+            lambda sender: self.window.chat.start_stream()
+        )
+
+        self.chat.stream_updated.connect(
+            self.window.chat.append_stream
+        )
+
+        self.chat.stream_finished.connect(
+            self.window.chat.finish_stream
         )
 
         # Status
@@ -73,11 +103,6 @@ class CipherApp:
 
         self.chat.thinking_finished.connect(
             self.window.set_online
-        )
-
-        # Microphone button
-        self.window.input_panel.micClicked.connect(
-            self._start_voice_once
         )
 
     # --------------------------------------------------
@@ -103,7 +128,6 @@ class CipherApp:
         self.window.set_online()
 
         self.dashboard_updater.set_ai_online()
-
         self.dashboard_updater.start()
 
         self._start_voice_once()
@@ -111,3 +135,13 @@ class CipherApp:
         sys.exit(
             self.app.exec()
         )
+
+
+def main():
+
+    CipherApp().run()
+
+
+if __name__ == "__main__":
+
+    main()

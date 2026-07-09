@@ -1,0 +1,39 @@
+{
+    "id": "media",
+    "name": "Media",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in media plugin for controlling music and media playback.",
+    "category": "Entertainment",
+    "entry_point": "media_plugin.MediaPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 80,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "audio"
+    ],
+    "keywords": [
+        "media",
+        "music",
+        "audio",
+        "video",
+        "play",
+        "pause",
+        "stop"
+    ],
+    "commands": [
+        "play",
+        "pause",
+        "resume",
+        "stop",
+        "next",
+        "previous",
+        "shuffle",
+        "repeat",
+        "mute music",
+        "unmute music"
+    ],
+    "min_cipher_version": "2.0.0"
+}

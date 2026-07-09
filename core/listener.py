@@ -44,9 +44,9 @@ class Listener:
 
         self.recognizer = sr.Recognizer()
 
-        self.recognizer.energy_threshold = 300
+        self.recognizer.energy_threshold = 200
         self.recognizer.dynamic_energy_threshold = True
-        self.recognizer.pause_threshold = 0.8
+        self.recognizer.pause_threshold = 0.5
 
     # --------------------------------------------------
 
@@ -63,7 +63,7 @@ class Listener:
 
                 self.recognizer.adjust_for_ambient_noise(
                     source,
-                    duration=0.5,
+                    duration=1.0,
                 )
 
                 audio = self.recognizer.listen(
@@ -77,12 +77,12 @@ class Listener:
 
             text = self.recognizer.recognize_google(
                 audio,
-                language="en-IN",
+                language="en-US",
             )
 
             if text:
                 print(f"Recognized (Google): {text}")
-                return text.lower().strip()
+                return text._normalize(text)
 
             return ""
 
@@ -149,7 +149,7 @@ class Listener:
 
                 print(f"Recognized (Whisper): {text}")
 
-                return text.lower()
+                return self._normalize(text)
 
             return ""
 
@@ -166,6 +166,25 @@ class Listener:
 
             if self.on_idle:
                 self.on_idle()
+
+
+    def _normalize(self, text: str) -> str:
+
+        text = text.lower().strip()
+
+        corrections = {
+            "cypher": "cipher",
+            "cycle": "cipher",
+            "sai": "cipher",
+            "safe her": "cipher",
+            "cifer": "cipher",
+            "firefox": "firefox",
+        }
+
+        for wrong, correct in corrections.items():
+            text = text.replace(wrong, correct)
+
+        return text
 
     # --------------------------------------------------
 

@@ -2,10 +2,6 @@ from PyQt6.QtCore import QObject, QThread, pyqtSignal
 
 
 class ChatWorker(QThread):
-    """
-    Runs the assistant in the background so the UI
-    remains responsive.
-    """
 
     finishedProcessing = pyqtSignal()
     error = pyqtSignal(str)
@@ -33,14 +29,21 @@ class ChatWorker(QThread):
 
 class ChatManager(QObject):
 
+    # Normal message
     message_received = pyqtSignal(str, str)
+
+    # Streaming
+    stream_started = pyqtSignal(str)
+    stream_updated = pyqtSignal(str)
+    stream_finished = pyqtSignal()
+
+    # Status
     status_changed = pyqtSignal(str)
 
     thinking_started = pyqtSignal()
     thinking_finished = pyqtSignal()
 
     def __init__(self):
-
         super().__init__()
 
         self._worker = None
@@ -64,7 +67,9 @@ class ChatManager(QObject):
         self.user(text)
 
         if self._callback is None:
-            self.system("Assistant callback is not configured.")
+            self.system(
+                "Assistant callback is not configured."
+            )
             return
 
         self.status("🧠 Thinking...")
@@ -99,6 +104,8 @@ class ChatManager(QObject):
         self.system(f"Error: {text}")
 
     # --------------------------------------------------
+    # Normal Messages
+    # --------------------------------------------------
 
     def user(self, text):
 
@@ -107,8 +114,6 @@ class ChatManager(QObject):
             text,
         )
 
-    # --------------------------------------------------
-
     def cipher(self, text):
 
         self.message_received.emit(
@@ -116,14 +121,29 @@ class ChatManager(QObject):
             text,
         )
 
-    # --------------------------------------------------
-
     def system(self, text):
 
         self.message_received.emit(
             "System",
             text,
         )
+
+    # --------------------------------------------------
+    # Streaming API
+    # --------------------------------------------------
+
+    def start_stream(self):
+
+        self.stream_started.emit("Cipher")
+
+    def append_stream(self, text):
+
+        if text:
+            self.stream_updated.emit(text)
+
+    def finish_stream(self):
+
+        self.stream_finished.emit()
 
     # --------------------------------------------------
 

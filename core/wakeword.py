@@ -13,9 +13,17 @@ class WakeWord:
         corrections = {
             "cypher": "cipher",
             "cifer": "cipher",
+            "cipher": "cipher",
             "sifer": "cipher",
             "safer": "cipher",
             "safe her": "cipher",
+            "sai": "cipher",
+            "sire": "cipher",
+            "cyper": "cipher",
+            "cipher": "cipher",
+            "zipper": "cipher",
+            "super": "cipher",
+            "cycle": "cipher",
         }
 
         for wrong, correct in corrections.items():
@@ -30,7 +38,18 @@ class WakeWord:
 
         text = self.normalize(text)
 
-        return any(text.startswith(word) for word in self.wake_words)
+        for wake_word in self.wake_word:
+
+            if (
+                text == wake_word
+                or text.startswith(wake_word + " ")
+                or wake_word in text
+            ):
+                return True
+            
+        return False
+
+            
 
     def remove(self, text: str):
 

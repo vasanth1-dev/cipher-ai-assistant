@@ -8,8 +8,8 @@ from core.wakeword import wakeword
 from core.logger import logger
 from core.reminder_worker import reminder_worker
 
-from services.history_service import history_service
-from services.ai_service import ai_service
+
+
 
 from config import (
     ASSISTANT_NAME,
@@ -29,9 +29,14 @@ class Cipher:
 
         self.last_activity = time.time()
 
-        #GUI callbacks
+        # GUI callbacks
         self.on_message = None
         self.on_status = None
+
+        # Streaming callbacks
+        self.on_stream_start = None
+        self.on_stream_update = None
+        self.on_stream_finish = None
 
     # -------------------------------------------------- #
     # State
@@ -45,15 +50,19 @@ class Cipher:
         if self.on_status:
             self.on_status("🟢 Active")
 
+        message = (
+            f"Hello {USER_NAME}. "
+            f"I am {ASSISTANT_NAME}. "
+            f"How can I help you?"
+        )
+
         if self.on_message:
             self.on_message(
                 "Cipher",
-                f"Hello {USER_NAME}. I am {ASSISTANT_NAME}. How can I help you?"
+                message,
             )
 
-        speaker.speak(
-            f"Hello {USER_NAME}. I am {ASSISTANT_NAME}. How can I help you?"
-        )
+        speaker.speak(message)
 
     def sleep(self):
 
@@ -65,7 +74,7 @@ class Cipher:
         if self.on_message:
             self.on_message(
                 "Cipher",
-                "Going to sleep."
+                "Going to sleep.",
             )
 
         speaker.speak("Going to sleep.")
@@ -76,9 +85,20 @@ class Cipher:
 
         try:
             reminder_worker.stop()
+
         except Exception as e:
             logger.exception(e)
 
+        try:
+
+            from plugins import plugin_manager
+
+            if plugin_manager.started:
+                plugin_manager.stop()
+
+        except Exception as e:
+
+            logger.exception(e)
     # -------------------------------------------------- #
     # Processing
     # -------------------------------------------------- #
@@ -95,22 +115,23 @@ class Cipher:
 
         if not command:
             return
-        
-
-        if self.on_status:
-            self.on_status("🧠 Thinking...")
 
         self.processing = True
 
         self.last_activity = time.time()
 
-        print(f"\nYou : {command}")
+        if self.on_status:
+            self.on_status("🧠 Thinking...")
 
         logger.info(f"USER : {command}")
 
         try:
 
             response = router.route(command)
+
+            # -----------------------------
+            # Local skill response
+            # -----------------------------
 
             if response is not None:
 
@@ -120,57 +141,26 @@ class Cipher:
                         response,
                     )
 
-                history_service.add(command, response)
+                
 
-                logger.info(f"CIPHER : {response}")
+                logger.info(
+                    f"CIPHER : {response}"
+                )
 
                 speaker.speak(response)
 
                 return
 
-            full_response = ""
-
-            for sentence in ai_service.stream(command):
-
-                if not sentence:
-                    continue
-
-                sentence = sentence.strip()
-
-                if not sentence:
-                    continue
-
-                full_response += sentence + " "
-
-                logger.info(f"CIPHER : {sentence}")
-
-                if self.on_message:
-                    self.on_message(
-                        "Cipher",
-                        sentence,
-                    )
-
-                speaker.speak(sentence)
-
-            full_response = full_response.strip()
-
-            if full_response:
-
-                history_service.add(
-                    command,
-                    full_response,
-                )
+            
 
         except Exception as e:
 
             logger.exception(e)
 
-            print(e)
-
             if self.on_message:
                 self.on_message(
                     "Cipher",
-                    "Sorry. Something went wrong"
+                    "Sorry. Something went wrong."
                 )
 
             speaker.speak(
@@ -192,6 +182,17 @@ class Cipher:
 
         try:
             reminder_worker.start()
+
+        except Exception as e:
+            logger.exception(e)
+
+        try:
+
+            from plugins import plugin_manager
+
+            if not plugin_manager.started:
+                plugin_manager.start()
+
         except Exception as e:
             logger.exception(e)
 
@@ -201,7 +202,7 @@ class Cipher:
         if self.on_message:
             self.on_message(
                 "System",
-                f"{ASSISTANT_NAME} is online"
+                f"{ASSISTANT_NAME} is online",
             )
 
         speaker.speak(
@@ -215,12 +216,12 @@ class Cipher:
                 if self.active:
 
                     if (
-                        time.time() - self.last_activity
+                        time.time()
+                        - self.last_activity
                         > SESSION_TIMEOUT
                     ):
 
                         self.sleep()
-
                         continue
 
                 text = listener.listen()
@@ -230,7 +231,7 @@ class Cipher:
 
                 text = text.lower().strip()
 
-                # ---------------- Wake Mode ---------------- #
+                # Wake Mode
 
                 if not self.active:
 
@@ -238,7 +239,9 @@ class Cipher:
 
                         self.activate()
 
-                        command = wakeword.remove(text)
+                        command = wakeword.remove(
+                            text
+                        )
 
                         if command:
 
@@ -250,17 +253,19 @@ class Cipher:
 
                     continue
 
-                # ---------------- Exit ---------------- #
+                # Exit
 
                 if text in EXIT_COMMANDS:
 
-                    speaker.speak("Goodbye.")
+                    speaker.speak(
+                        "Goodbye."
+                    )
 
                     self.stop()
 
                     break
 
-                # ---------------- Sleep ---------------- #
+                # Sleep
 
                 if text in (
                     "sleep",
@@ -281,7 +286,6 @@ class Cipher:
             except KeyboardInterrupt:
 
                 self.stop()
-
                 break
 
             except Exception as e:

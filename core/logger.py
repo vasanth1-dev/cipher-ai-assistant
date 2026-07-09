@@ -29,14 +29,22 @@ class CipherLogger:
 
         self.logger.addHandler(file_handler)
 
-    def info(self, message):
-        self.logger.info(message)
+    def info(self, message, *args):
+        self.logger.info(message, *args)
 
-    def warning(self, message):
-        self.logger.warning(message)
+    def warning(self, message, *args):
+        self.logger.warning(message, *args)
 
-    def error(self, message):
-        self.logger.error(message)
+    def error(self, message, *args):
+        self.logger.error(message, *args)
 
+    def debug(self, message, *args):
+        self.logger.debug(message, *args)
+
+    def critical(self, message, *args):
+        self.logger.critical(message, *args)
+
+    def exception(self, message, *args):
+        self.logger.exception(message, *args)
 
 logger = CipherLogger()
