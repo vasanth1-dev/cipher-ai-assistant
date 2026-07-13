@@ -1,0 +1,29 @@
+PAGE_DASHBOARD = "dashboard"
+PAGE_CHAT = "chat"
+PAGE_MEMORY = "memory"
+PAGE_FILES = "files"
+PAGE_SYSTEM = "system"
+PAGE_SETTINGS = "settings"
+PAGE_PLUGINS = "plugins"
+PAGE_VOICE = "voice"
+PAGE_EXPORT = "export"
+PAGE_ABOUT = "about"
+PAGE_HOME = "home"
+PAGE_LOADING = "loading"
+PAGE_NOT_FOUND = "404"
+
+ALL_PAGES = (
+    PAGE_LOADING,
+    PAGE_HOME,
+    PAGE_DASHBOARD,
+    PAGE_CHAT,
+    PAGE_MEMORY,
+    PAGE_FILES,
+    PAGE_SYSTEM,
+    PAGE_SETTINGS,
+    PAGE_PLUGINS,
+    PAGE_VOICE,
+    PAGE_EXPORT,
+    PAGE_ABOUT,
+    PAGE_NOT_FOUND,
+)

@@ -3,6 +3,7 @@ import threading
 
 from PyQt6.QtWidgets import QApplication
 
+from core.logger import logger
 from core.assistant import Cipher
 from gui.chat_widget import ChatManager
 from gui.main_window import MainWindow
@@ -13,13 +14,22 @@ class CipherGUI:
 
     def __init__(self):
 
-        self.app = QApplication(sys.argv)
+        self.app = QApplication.instance()
+
+        if self.app is None:
+            self.app = QApplication(sys.argv)
 
         self.window = MainWindow()
         self.chat = ChatManager()
         self.tray = CipherTray(self.window)
 
-        self.assistant = Cipher()
+        try:
+
+            self.assistant = Cipher()
+
+        except Exception as e:
+            logger.exception(e)
+            raise
 
         self._connect_gui()
         self._connect_assistant()
@@ -76,18 +86,31 @@ class CipherGUI:
 
     def _mic_clicked(self):
 
-        self.window.set_status("🎤 Listening...")
+        self.window.set_status("🎤 Voice feature under maintenance")
+        
 
     # --------------------------------------------------
 
     def start_voice(self):
 
-        threading.Thread(
+        self.voice_thread = threading.Thread(
             target=self.assistant.run,
             daemon=True,
-        ).start()
+            name = "CipherVoiceThread",
+        )
+
+        self.voice_thread.start()
 
     # --------------------------------------------------
+    def shutdown(self):
+
+        try:
+
+            self.assistant.stop()
+
+        except Exception as e:
+
+            logger.exception(e)
 
     def run(self):
 
@@ -96,8 +119,23 @@ class CipherGUI:
         self.window.set_online()
 
         self.start_voice()
+        
+        try:
 
-        sys.exit(self.app.exec())
+            sys.exit(
+                self.app.exec()
+                )
+            
+        finally:
+
+            try:
+                self.assistant.stop()
+            except Exception:
+                pass
+
+            self.shutdown()
+
+    
 
 
 def main():

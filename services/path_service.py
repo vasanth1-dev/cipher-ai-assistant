@@ -1,5 +1,7 @@
 from pathlib import Path
 
+from core.logger import logger
+
 
 class PathService:
 
@@ -17,9 +19,47 @@ class PathService:
             "home": self.home,
         }
 
+    # --------------------------------------------------
+    # Get Path
+    # --------------------------------------------------
+
     def get(self, name: str):
 
-        return self.paths.get(name.lower())
+        if not name:
+            return None
+
+        key = str(name).strip().lower()
+
+        path = self.paths.get(key)
+
+        if path is None:
+
+            logger.warning(
+                f"[PATH] Unknown location: {name}"
+            )
+
+            return None
+
+        return path
+
+    # --------------------------------------------------
+    # Utilities
+    # --------------------------------------------------
+
+    def exists(self, name: str):
+
+        path = self.get(name)
+
+        return (
+            path is not None
+            and path.exists()
+        )
+
+    def available(self):
+
+        return sorted(
+            self.paths.keys()
+        )
 
 
 path_service = PathService()

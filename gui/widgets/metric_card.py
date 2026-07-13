@@ -1,21 +1,36 @@
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import (
+    QEasingCurve,
+    QPropertyAnimation,
+)
+from PyQt6.QtGui import QColor
 from PyQt6.QtWidgets import (
     QFrame,
-    QLabel,
+    QGraphicsDropShadowEffect,
     QHBoxLayout,
+    QLabel,
+    QSizePolicy,
     QVBoxLayout,
+)
+
+from gui.theme import (
+    PRIMARY,
+    SUCCESS,
+    TEXT,
+    TEXT_MUTED,
 )
 
 
 class MetricCard(QFrame):
     """
-    Compact dashboard metric card.
+    Professional Metric Card
 
-    Examples:
-        CPU        18%
-        RAM       4.2 GB
-        Disk       62%
-        Network   Online
+    Features
+    --------
+    • Modern compact design
+    • Hover animation
+    • Soft shadow
+    • Accent indicator
+    • Compatible API
     """
 
     def __init__(
@@ -26,58 +41,141 @@ class MetricCard(QFrame):
     ):
         super().__init__()
 
+        self._accent = PRIMARY
+
         self.setObjectName("MetricCard")
 
-        self.setMinimumHeight(95)
+        self.setMinimumHeight(105)
 
-        self.setStyleSheet("""
-        QFrame#MetricCard{
+        self.setSizePolicy(
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Fixed,
+        )
+
+        self.setStyleSheet(f"""
+        QFrame#MetricCard{{
             background:#1F2937;
-            border:1px solid #374151;
-            border-radius:12px;
-        }
+            border:1px solid #334155;
+            border-radius:14px;
+        }}
 
-        QLabel{
+        QLabel{{
             background:transparent;
-            color:white;
-        }
+            color:{TEXT};
+        }}
         """)
 
+        self.shadow = QGraphicsDropShadowEffect(self)
+        self.shadow.setBlurRadius(14)
+        self.shadow.setOffset(0, 3)
+        self.shadow.setColor(QColor(0, 0, 0, 80))
+
+        self.setGraphicsEffect(self.shadow)
+
+        self.animation = QPropertyAnimation(
+            self.shadow,
+            b"blurRadius",
+            self,
+        )
+
+        self.animation.setDuration(150)
+        self.animation.setEasingCurve(
+            QEasingCurve.Type.OutCubic
+        )
+
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(15, 12, 15, 12)
-        layout.setSpacing(15)
+        layout.setContentsMargins(16, 14, 16, 14)
+        layout.setSpacing(14)
+
+        self.accent = QFrame()
+        self.accent.setFixedWidth(5)
+        self.accent.setStyleSheet(f"""
+        background:{self._accent};
+        border-radius:2px;
+        """)
 
         self.icon_label = QLabel(icon)
-        self.icon_label.setAlignment(
-            Qt.AlignmentFlag.AlignCenter
-        )
-        self.icon_label.setFixedWidth(42)
         self.icon_label.setStyleSheet("""
-        font-size:20pt;
+        font-size:22pt;
         """)
 
         right = QVBoxLayout()
-        right.setSpacing(3)
+        right.setSpacing(4)
 
         self.title_label = QLabel(title)
-        self.title_label.setStyleSheet("""
-        color:#9CA3AF;
+        self.title_label.setStyleSheet(f"""
+        color:{TEXT_MUTED};
         font-size:10pt;
+        font-weight:600;
         """)
 
         self.value_label = QLabel(value)
-        self.value_label.setStyleSheet("""
-        color:white;
-        font-size:16pt;
-        font-weight:bold;
+        self.value_label.setStyleSheet(f"""
+        color:{TEXT};
+        font-size:18pt;
+        font-weight:700;
         """)
 
         right.addWidget(self.title_label)
         right.addWidget(self.value_label)
 
+        layout.addWidget(self.accent)
         layout.addWidget(self.icon_label)
         layout.addLayout(right)
+        layout.addStretch()
 
+    # --------------------------------------------------
+
+    def enterEvent(self, event):
+
+        self.animation.stop()
+        self.animation.setStartValue(
+            self.shadow.blurRadius()
+        )
+        self.animation.setEndValue(24)
+        self.animation.start()
+
+        self.setStyleSheet(f"""
+        QFrame#MetricCard{{
+            background:#263244;
+            border:1px solid {PRIMARY};
+            border-radius:14px;
+        }}
+
+        QLabel{{
+            background:transparent;
+            color:{TEXT};
+        }}
+        """)
+
+        super().enterEvent(event)
+
+    def leaveEvent(self, event):
+
+        self.animation.stop()
+        self.animation.setStartValue(
+            self.shadow.blurRadius()
+        )
+        self.animation.setEndValue(14)
+        self.animation.start()
+
+        self.setStyleSheet(f"""
+        QFrame#MetricCard{{
+            background:#1F2937;
+            border:1px solid #334155;
+            border-radius:14px;
+        }}
+
+        QLabel{{
+            background:transparent;
+            color:{TEXT};
+        }}
+        """)
+
+        super().leaveEvent(event)
+
+    # --------------------------------------------------
+    # Compatible API
     # --------------------------------------------------
 
     def set_title(self, text: str):
@@ -90,8 +188,25 @@ class MetricCard(QFrame):
         self.icon_label.setText(str(icon))
 
     def set_value_color(self, color: str):
+
+        self._accent = color
+
+        self.accent.setStyleSheet(f"""
+        background:{color};
+        border-radius:2px;
+        """)
+
         self.value_label.setStyleSheet(f"""
         color:{color};
-        font-size:16pt;
-        font-weight:bold;
+        font-size:18pt;
+        font-weight:700;
         """)
+
+    def set_normal(self):
+        self.set_value_color(SUCCESS)
+
+    def set_warning(self):
+        self.set_value_color("#F59E0B")
+
+    def set_error(self):
+        self.set_value_color("#EF4444")

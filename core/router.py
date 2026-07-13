@@ -109,9 +109,9 @@ class Router:
 
                                 logger.info(
                                     f"[PLUGIN] {plugin.name}"
-                            )
+                                )
 
-                            return result
+                                return result
                         
             except Exception as e:
 

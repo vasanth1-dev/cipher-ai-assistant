@@ -30,12 +30,29 @@ def _run(command):
 
 def handle(command: str):
 
+    from datetime import datetime
+
+    #TIME
+
     if not command:
         return None
-
+    
     command = " ".join(
         command.lower().strip().split()
     )
+
+    if (
+        "what time" in command
+        or command == "time"
+        or "current time" in command
+    ):
+        
+        return (
+            "The Current time is "
+            + datetime.now().strftime("%I:%M %p")
+        )
+
+
 
     # -------------------------------------------------
     # Shutdown
@@ -50,7 +67,7 @@ def handle(command: str):
         # Uncomment when you are ready to enable it.
         # _run(["shutdown", "-h", "now"])
 
-        return "Shutting down the computer."
+        return "Shutdown is currently disabled."
 
     # -------------------------------------------------
     # Restart

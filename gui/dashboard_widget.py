@@ -7,6 +7,10 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
+from gui.theme import (
+    TEXT,
+    TEXT_MUTED,
+)
 
 from gui.widgets.dashboard_card import DashboardCard
 from gui.widgets.metric_card import MetricCard
@@ -31,19 +35,19 @@ class DashboardWidget(QWidget):
         # Header
         # --------------------------------------------------
 
-        title = QLabel("🏠 Dashboard")
-        title.setStyleSheet("""
+        title = QLabel("System Overview")
+        title.setStyleSheet(f"""
         font-size:24px;
         font-weight:bold;
-        color:white;
+        color:{TEXT};
         """)
 
         subtitle = QLabel(
-            "Welcome back, Vasanth"
+            "Ubuntu Desktop AI Assistant"
         )
 
-        subtitle.setStyleSheet("""
-        color:#9CA3AF;
+        subtitle.setStyleSheet(f"""
+        color:{TEXT_MUTED};
         font-size:11pt;
         """)
 
@@ -74,6 +78,18 @@ class DashboardWidget(QWidget):
 
         root.addLayout(metrics)
 
+        line = QLabel()
+
+        line.setFixedHeight(1)
+
+        line.setStyleSheet("""
+        background:#334155;
+        margin-top:6px;
+        margin-bottom:6px;
+        """)
+
+        root.addWidget(line)
+
         # --------------------------------------------------
         # Status
         # --------------------------------------------------
@@ -83,14 +99,14 @@ class DashboardWidget(QWidget):
 
         self.ai_card = DashboardCard(
             "AI Status",
-            "Online",
-            "Ollama Connected",
+            "🟢 Online",
+            "Model Ready",
         )
 
         self.voice_card = DashboardCard(
             "Voice",
-            "Idle",
-            "Waiting...",
+            "🎤 Ready",
+            "Waiting for command...",
         )
 
         status.addWidget(self.ai_card)
@@ -103,20 +119,36 @@ class DashboardWidget(QWidget):
         # --------------------------------------------------
 
         quick = QLabel("Quick Actions")
-        quick.setStyleSheet("""
+        quick.setStyleSheet(f"""
         font-size:16pt;
         font-weight:bold;
-        color:white;
+        color:{TEXT};
         """)
 
         root.addWidget(quick)
 
         actions = QHBoxLayout()
 
-        self.terminal_btn = QPushButton("🖥 Terminal")
-        self.browser_btn = QPushButton("🌍 Browser")
-        self.files_btn = QPushButton("📁 Files")
-        self.settings_btn = QPushButton("⚙ Settings")
+        self.terminal_btn = QPushButton("Terminal")
+        self.browser_btn = QPushButton("Browser")
+        self.files_btn = QPushButton("Files")
+        self.settings_btn = QPushButton("Settings")
+
+        self.terminal_btn.setToolTip(
+            "Open Terminal"
+        )
+
+        self.browser_btn.setToolTip(
+            "Open Browser"
+        )
+
+        self.files_btn.setToolTip(
+            "Open Files"
+        )
+
+        self.settings_btn.setToolTip(
+            "Open Settings"
+        )
 
         buttons = (
             self.terminal_btn,
@@ -128,6 +160,10 @@ class DashboardWidget(QWidget):
         for btn in buttons:
 
             btn.setMinimumHeight(45)
+
+            btn.setCursor(
+                Qt.CursorShape.PointingHandCursor
+            )
 
             btn.setStyleSheet("""
             QPushButton{
@@ -152,6 +188,49 @@ class DashboardWidget(QWidget):
     # --------------------------------------------------
     # Metrics
     # --------------------------------------------------
+        
+    def set_ai_online(self):
+
+        self.ai_card.set_value(
+            "🟢 Online"
+        )
+
+        self.ai_card.set_subtitle(
+            "Model Ready"
+        )
+
+
+    def set_ai_offline(self):
+
+        self.ai_card.set_value(
+            "🔴 Offline"
+        )
+
+        self.ai_card.set_subtitle(
+            "Disconnected"
+        )
+
+
+    def set_voice_ready(self):
+
+        self.voice_card.set_value(
+            "🎤 Ready"
+        )
+
+        self.voice_card.set_subtitle(
+            "Waiting for command"
+        )
+
+
+    def set_voice_listening(self):
+
+        self.voice_card.set_value(
+            "🎧 Listening"
+        )
+
+        self.voice_card.set_subtitle(
+            "Speech detected"
+        )
 
     def set_cpu(self, value):
         self.cpu.set_value(value)
@@ -177,22 +256,68 @@ class DashboardWidget(QWidget):
 
     def set_ai_status(
         self,
-        value,
-        subtitle="",
+        online: bool,
+        model: str = "",
     ):
 
-        self.ai_card.set_value(value)
+        if online:
 
-        if subtitle:
-            self.ai_card.set_subtitle(subtitle)
+            self.ai_card.set_value("🟢 Online")
+
+            if model:
+                self.ai_card.set_subtitle(model)
+            else:
+                self.ai_card.set_subtitle("Model Ready")
+
+        else:
+
+            self.ai_card.set_value("🔴 Offline")
+            self.ai_card.set_subtitle("Disconnected")
 
     def set_voice_status(
         self,
-        value,
+        status,
         subtitle="",
     ):
 
-        self.voice_card.set_value(value)
+        icons = {
+
+            "Ready": "🎤",
+            "Listening": "🎧",
+            "Thinking": "🧠",
+            "Speaking": "🔊",
+
+        }
+
+        icon = icons.get(
+            status,
+            "🎤",
+        )
+
+        self.voice_card.set_value(
+            f"{icon} {status}"
+        )
 
         if subtitle:
-            self.voice_card.set_subtitle(subtitle)
+
+            self.voice_card.set_subtitle(
+                subtitle
+            )
+
+    def enable_actions(
+        self,
+        enabled=True,
+    ):
+
+        buttons = (
+
+            self.terminal_btn,
+            self.browser_btn,
+            self.files_btn,
+            self.settings_btn,
+
+        )
+
+        for button in buttons:
+
+            button.setEnabled(enabled)

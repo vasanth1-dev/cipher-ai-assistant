@@ -6,6 +6,7 @@ from config import (
     MODEL_NAME,
     OLLAMA_URL,
 )
+
 from core.logger import logger
 
 
@@ -15,6 +16,7 @@ class OllamaService:
 
         self.url = OLLAMA_URL
         self.model = MODEL_NAME
+
         self.timeout = 300
 
         self.session = requests.Session()
@@ -23,7 +25,11 @@ class OllamaService:
     # Generate
     # --------------------------------------------------
 
-    def generate(self, prompt: str):
+    def generate(
+        self,
+        prompt: str,
+        system: str = "",
+    ):
 
         prompt = self._normalize(prompt)
 
@@ -33,15 +39,33 @@ class OllamaService:
         try:
 
             payload = {
+
                 "model": self.model,
+
+                "system": system,
+
                 "prompt": prompt,
+
                 "stream": False,
+
+                "options": {
+
+                    "temperature": 0.2,
+                    "top_p": 0.9,
+                    "num_predict": 512,
+
+                },
+
             }
 
             response = self.session.post(
+
                 self.url,
+
                 json=payload,
+
                 timeout=self.timeout,
+
             )
 
             response.raise_for_status()
@@ -49,28 +73,43 @@ class OllamaService:
             data = response.json()
 
             return str(
-                data.get("response", "")
+                data.get(
+                    "response",
+                    "",
+                )
             ).strip()
 
         except requests.exceptions.Timeout:
 
-            logger.exception("Ollama request timed out.")
+            logger.exception(
+                "Ollama request timed out."
+            )
 
-            return "The AI model took too long to respond."
+            return (
+                "The AI model took too long to respond."
+            )
 
         except Exception as e:
 
             logger.exception(e)
 
-            print(f"\nOLLAMA ERROR: {type(e).__name__}: {e}\n")
+            print(
+                f"\nOLLAMA STREAM ERROR: {type(e).__name__}: {e}\n"
+            )
 
-            return "I'm unable to connect to the AI model."
+            return (
+                "I'm unable to connect to the AI model."
+            )
 
     # --------------------------------------------------
     # Stream
     # --------------------------------------------------
 
-    def stream(self, prompt: str):
+    def stream(
+        self,
+        prompt: str,
+        system: str = "",
+    ):
 
         prompt = self._normalize(prompt)
 
@@ -80,30 +119,47 @@ class OllamaService:
         try:
 
             payload = {
+
                 "model": self.model,
+
+                "system": system,
+
                 "prompt": prompt,
+
                 "stream": True,
+
+                "options": {
+
+                    "temperature": 0.2,
+                    "top_p": 0.9,
+                    "num_predict": 512,
+
+                },
+
             }
 
             response = self.session.post(
+
                 self.url,
+
                 json=payload,
+
                 stream=True,
+
                 timeout=self.timeout,
+
             )
 
             response.raise_for_status()
 
-            for line in response.iter_lines():
+            for line in response.iter_lines(decode_unicode=True):
 
                 if not line:
                     continue
 
                 try:
 
-                    data = json.loads(
-                        line.decode("utf-8")
-                    )
+                    data = json.loads(line)
 
                     text = data.get(
                         "response",
@@ -126,15 +182,21 @@ class OllamaService:
                 "Ollama stream timed out."
             )
 
-            yield "The AI model took too long to respond."
+            yield (
+                "The AI model took too long to respond."
+            )
 
         except Exception as e:
 
             logger.exception(e)
 
-            print(f"\nOLLAMA STREAM ERROR: {type(e).__name__}: {e}\n")
+            print(
+                f"\nOLLAMA STREAM ERROR: {type(e).__name__}: {e}\n"
+            )
 
-            yield "I'm unable to connect to the AI model."
+            yield (
+                "I'm unable to connect to the AI model."
+            )
 
     # --------------------------------------------------
     # Status
@@ -145,14 +207,18 @@ class OllamaService:
         try:
 
             response = self.session.get(
+
                 self.url.replace(
                     "/generate",
                     "/tags",
                 ),
+
                 timeout=5,
+
             )
 
-            return response.ok
+            response.raise_for_status()
+            return True
 
         except Exception:
 
@@ -162,7 +228,10 @@ class OllamaService:
     # Model
     # --------------------------------------------------
 
-    def set_model(self, model_name: str):
+    def set_model(
+        self,
+        model_name: str,
+    ):
 
         if model_name:
 

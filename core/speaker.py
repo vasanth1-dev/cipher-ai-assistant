@@ -7,6 +7,7 @@ import threading
 
 import edge_tts
 
+from core.logger import logger
 from config import VOICE
 
 try:
@@ -42,6 +43,7 @@ class Speaker:
         )
 
         self.thread.start()
+        self.player = None
 
     # --------------------------------------------------
 
@@ -61,7 +63,25 @@ class Speaker:
 
     def stop(self):
 
+        self.stop_speaking()
+
         self.running = False
+
+        self.clear_queue()
+
+        if self.player:
+
+            try:
+
+                self.player.terminate()
+
+                self.player.wait(timeout=1)
+
+            except Exception:
+
+                pass
+
+            self.player = None
         self.queue.put(None)
 
     # --------------------------------------------------
@@ -74,12 +94,34 @@ class Speaker:
             except queue.Empty:
                 break
 
+
+    def stop_speaking(self):
+        """
+        Stop the current speech without shutting down
+        the speaker thread.
+        """
+
+        self.clear_queue()
+
+        if self.player:
+
+            try:
+                self.player.terminate()
+                self.player.wait(timeout=1)
+
+            except Exception:
+                pass
+
+            self.player = None
     # --------------------------------------------------
 
     @property
     def is_speaking(self):
 
-        return not self.queue.empty()
+        return (
+            self.player is not None
+            or not self.queue.empty()
+        )
 
     # --------------------------------------------------
 
@@ -105,7 +147,7 @@ class Speaker:
 
             except Exception as e:
 
-                print("Speaker Error:", e)
+                logger.exception(e)
 
                 if self.on_error:
                     self.on_error(str(e))
@@ -137,7 +179,7 @@ class Speaker:
 
             await communicate.save(filename)
 
-            subprocess.run(
+            self.player = subprocess.Popen(
                 [
                     "ffplay",
                     "-nodisp",
@@ -148,13 +190,18 @@ class Speaker:
                 ],
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
-                check=False,
             )
 
-        finally:
+            self.player.wait()
+
+            self.player = None
+
 
             if os.path.exists(filename):
                 os.remove(filename)
+
+        except Exception as e:
+            logger.exception(e)
 
 
 speaker = Speaker()

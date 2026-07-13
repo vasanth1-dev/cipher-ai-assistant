@@ -35,7 +35,11 @@ class ReminderWorker:
 
         self.running = False
 
+        if self.thread.is_alive():
+            self.thread.join(timeout=2)
+
         logger.info("Reminder worker stopped.")
+
 
     def _run(self):
 

@@ -1,35 +1,72 @@
 # ==========================
-# CIPHER v2 REQUIREMENTS
+# Cipher v2 Requirements
 # ==========================
 
-# Offline AI
+# --------------------------
+# AI
+# --------------------------
+
 ollama
 
-# Speech To Text
+# --------------------------
+# Speech Recognition
+# --------------------------
+
+SpeechRecognition
 faster-whisper
 ctranslate2
 av
 
+# --------------------------
 # Wake Word
+# --------------------------
+
 openwakeword
 onnxruntime
 
+# --------------------------
 # Audio
+# --------------------------
+
 sounddevice
 soundfile
 numpy
 
+# --------------------------
 # Text To Speech
-pyttsx3
+# --------------------------
 
-# Browser & HTTP
+edge-tts
+
+# --------------------------
+# GUI
+# --------------------------
+
+PyQt6
+
+# --------------------------
+# Vision
+# --------------------------
+
+opencv-python
+Pillow
+
+# --------------------------
+# Automation
+# --------------------------
+
+pywhatkit
+
+# --------------------------
+# Networking
+# --------------------------
+
 requests
 
+# --------------------------
 # Utilities
+# --------------------------
+
 python-dotenv
 psutil
 rich
-
-# Optional Vision (Future)
-opencv-python
-pillow

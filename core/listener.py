@@ -7,6 +7,8 @@ import soundfile as sf
 import speech_recognition as sr
 from faster_whisper import WhisperModel
 
+from core.logger import logger
+
 from config import (
     WHISPER_MODEL,
     DEVICE,
@@ -23,15 +25,7 @@ from config import (
 LISTEN_ENABLED = threading.Event()
 LISTEN_ENABLED.set()
 
-print("Loading Whisper model...")
-
-model = WhisperModel(
-    WHISPER_MODEL,
-    device=DEVICE,
-    compute_type=COMPUTE_TYPE,
-)
-
-print("Whisper model loaded.")
+RECORD_LOCK =threading.Lock()
 
 
 class Listener:
@@ -48,53 +42,28 @@ class Listener:
         self.recognizer.dynamic_energy_threshold = True
         self.recognizer.pause_threshold = 0.5
 
+        self.model = None
+        self.running = True
+
     # --------------------------------------------------
 
-    def google_stt(self):
+    def _load_whisper_model(self):
 
-        try:
+        if self.model is not None:
+            return
 
-            if self.on_listening:
-                self.on_listening()
+        logger.info("Loading Whisper model...")
 
-            with sr.Microphone(sample_rate=16000) as source:
+        self.model = WhisperModel(
+            WHISPER_MODEL,
+            device=DEVICE,
+            compute_type=COMPUTE_TYPE,
+        )
 
-                print("🎤 Listening...")
+        logger.info("Whisper model loaded.")
 
-                self.recognizer.adjust_for_ambient_noise(
-                    source,
-                    duration=1.0,
-                )
-
-                audio = self.recognizer.listen(
-                    source,
-                    timeout=5,
-                    phrase_time_limit=6,
-                )
-
-            if self.on_processing:
-                self.on_processing()
-
-            text = self.recognizer.recognize_google(
-                audio,
-                language="en-US",
-            )
-
-            if text:
-                print(f"Recognized (Google): {text}")
-                return text._normalize(text)
-
-            return ""
-
-        except Exception:
-
-            return ""
-
-        finally:
-
-            if self.on_idle:
-                self.on_idle()
-
+    # --------------------------------------------------
+    # Whisper STT (Primary)
     # --------------------------------------------------
 
     def whisper_stt(self):
@@ -106,14 +75,18 @@ class Listener:
             if self.on_listening:
                 self.on_listening()
 
-            audio = sd.rec(
-                int(LISTEN_SECONDS * SAMPLE_RATE),
-                samplerate=SAMPLE_RATE,
-                channels=CHANNELS,
-                dtype="float32",
-            )
+            logger.info("🎤 Listening...")
 
-            sd.wait()
+            with RECORD_LOCK:
+
+                audio = sd.rec(
+                    int(LISTEN_SECONDS * SAMPLE_RATE),
+                    samplerate=SAMPLE_RATE,
+                    channels=CHANNELS,
+                    dtype="float32",
+                )
+
+                sd.wait()
 
             with tempfile.NamedTemporaryFile(
                 suffix=".wav",
@@ -131,13 +104,16 @@ class Listener:
             if self.on_processing:
                 self.on_processing()
 
-            segments, _ = model.transcribe(
+            self._load_whisper_model()
+
+            segments, _ = self.model.transcribe(
                 filename,
                 language="en",
                 beam_size=5,
                 best_of=5,
                 vad_filter=True,
                 condition_on_previous_text=False,
+                initial_prompt="The wake word is Hey Cipher. "
             )
 
             text = " ".join(
@@ -145,17 +121,21 @@ class Listener:
                 for segment in segments
             ).strip()
 
+            text = self._normalize(text)
+
             if text:
 
-                print(f"Recognized (Whisper): {text}")
+                logger.info(
+                    f"Recognized (Whisper): {text}"
+                )
 
-                return self._normalize(text)
+                return text
 
             return ""
 
         except Exception as e:
 
-            print("Whisper Error:", e)
+            logger.exception(e)
 
             return ""
 
@@ -167,24 +147,79 @@ class Listener:
             if self.on_idle:
                 self.on_idle()
 
+    # --------------------------------------------------
+    # Google STT (Fallback)
+    # --------------------------------------------------
 
-    def _normalize(self, text: str) -> str:
+    def google_stt(self):
+
+
+
+        try:
+
+            with sr.Microphone(
+                sample_rate=SAMPLE_RATE
+            ) as source:
+
+                self.recognizer.adjust_for_ambient_noise(
+                    source,
+                    duration=0.5,
+                )
+
+                audio = self.recognizer.listen(
+                    source,
+                    timeout=5,
+                    phrase_time_limit=6,
+                )
+
+            text = self.recognizer.recognize_google(
+                audio,
+                language="en-US",
+            )
+
+            text = self._normalize(text)
+
+
+            if text:
+
+                logger.info(
+                    f"Recognized (Google): {text}"
+                )
+
+                return text
+
+            return ""
+
+        except Exception:
+
+            return ""
+
+    # --------------------------------------------------
+
+    def _normalize(self, text):
+
+        if not text:
+            return ""
 
         text = text.lower().strip()
 
         corrections = {
+
             "cypher": "cipher",
-            "cycle": "cipher",
-            "sai": "cipher",
-            "safe her": "cipher",
             "cifer": "cipher",
-            "firefox": "firefox",
+            "cycle": "cipher",
+            "sifer": "cipher",
+            "safer": "cipher",
+            "safe her": "cipher",
+            "sai": "cipher",
+            "fire fox": "firefox",
+
         }
 
         for wrong, correct in corrections.items():
             text = text.replace(wrong, correct)
 
-        return text
+        return " ".join(text.split())
 
     # --------------------------------------------------
 
@@ -192,14 +227,24 @@ class Listener:
 
         LISTEN_ENABLED.wait()
 
-        text = self.google_stt()
+        # Whisper First
+
+        text = self.whisper_stt()
 
         if text:
             return text
 
-        print("Google STT failed. Using Whisper...")
+        logger.warning(
+            "Whisper failed. Trying Google STT..."
+        )
 
-        return self.whisper_stt()
+        return self.google_stt()
+    
+    def stop(self):
+
+        self.running = False
+
+        resume_listening()
 
 
 listener = Listener()
@@ -211,3 +256,4 @@ def pause_listening():
 
 def resume_listening():
     LISTEN_ENABLED.set()
+

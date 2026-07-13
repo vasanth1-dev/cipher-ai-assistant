@@ -60,6 +60,17 @@ def handle(command: str):
 
         key = original[len("what is "):].strip()
 
+        key = key.strip()
+
+        if key.lower().startswith("my "):
+            key = key[3:].strip()
+
+        elif key.lower().startswith("the "):
+            key = key[4:].strip()
+
+        elif key.lower().startswith("our "):
+            key = key[4:].strip()
+
         if not key:
             return "What would you like me to recall?"
 
@@ -78,10 +89,21 @@ def handle(command: str):
 
         key = original[len("forget "):].strip()
 
-        if not key:
+        key = key.strip()
+
+        if key.lower().startswith("my "):
+            key = key[3:].strip()
+
+        elif key.lower().startswith("the "):
+            key = key[4:].strip()
+
+        elif key.lower().startswith("our "):
+            key = key[4:].strip()
+
+        elif not key:
             return "What should I forget?"
 
-        if memory_service.forget(key):
+        elif memory_service.forget(key):
             return f"I forgot your {key}."
 
         return f"I don't know your {key}."

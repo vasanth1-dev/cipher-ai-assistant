@@ -1,0 +1,10 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Cipher
+Comment=Offline AI Voice Assistant
+Exec=python3 /opt/cipher/run_gui.py
+Icon=/opt/cipher/gui/resources/cipher.png
+Terminal=false
+Categories=Utility;AI;
+StartupNotify=true

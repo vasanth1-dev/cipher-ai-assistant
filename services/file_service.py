@@ -2,6 +2,7 @@ import os
 import shutil
 import subprocess
 
+from core.logger import logger
 from services.path_service import path_service
 
 
@@ -20,14 +21,19 @@ class FileService:
                 [
                     "xdg-open",
                     str(path),
-                ]
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+                start_new_session=True
             )
 
             return f"Opening {folder}."
 
         except Exception as e:
 
-            return f"Error: {e}"
+            logger.exception(e)
+
+            return "Unable to open the folder."
 
     def create_folder(self, name, location="home"):
 
@@ -46,7 +52,9 @@ class FileService:
 
         except Exception as e:
 
-            return f"Error: {e}"
+            logger.exception(e)
+
+            return "Unable to create folder."
 
     def delete_folder(self, name, location="home"):
 
@@ -68,7 +76,9 @@ class FileService:
 
         except Exception as e:
 
-            return f"Error: {e}"
+            logger.exception(e)
+
+            return "Unable to delete the folder."
 
     def list_folder(self, location="home"):
 
@@ -87,8 +97,9 @@ class FileService:
             return "\n".join(files)
 
         except Exception as e:
+            logger.exception(e)
 
-            return f"Error: {e}"
+            return "Error"
 
 
 file_service = FileService()

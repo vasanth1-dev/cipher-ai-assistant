@@ -1,4 +1,5 @@
 from pathlib import Path
+import subprocess
 
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
@@ -8,6 +9,10 @@ from PyQt6.QtWidgets import (
     QStatusBar,
     QVBoxLayout,
     QWidget,
+)
+from gui.theme import (
+    BACKGROUND,
+    TEXT,
 )
 
 from gui.dashboard_widget import DashboardWidget
@@ -22,8 +27,16 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Cipher AI Assistant")
-        self.resize(1280, 760)
+        self.setWindowTitle("" \
+        "Cipher v2 - Ubuntu AI Assistant"
+        )
+        DEFAULT_WIDTH = 1280
+        DEFAULT_HEIGHT = 760
+
+        self.resize(
+            DEFAULT_WIDTH,
+            DEFAULT_HEIGHT,
+        )
 
         icon = Path(__file__).parent / "resources" / "cipher.png"
 
@@ -41,16 +54,16 @@ class MainWindow(QMainWindow):
 
     def _apply_theme(self):
 
-        self.setStyleSheet("""
-        QMainWindow{
-            background:#111827;
-        }
+        self.setStyleSheet(f"""
+        QMainWindow{{
+            background:{BACKGROUND};
+        }}
 
-        QWidget{
-            color:white;
+        QWidget{{
+            color:{TEXT};
             font-family:Segoe UI;
             font-size:11pt;
-        }
+        }}
         """)
 
     # --------------------------------------------------
@@ -84,19 +97,19 @@ class MainWindow(QMainWindow):
 
         chat_layout = QVBoxLayout(chat_page)
         chat_layout.setContentsMargins(0, 0, 0, 0)
-        chat_layout.setSpacing(15)
+        chat_layout.setSpacing(10)
 
         self.chat = ChatPanel()
         self.input_panel = InputPanel()
 
-        chat_layout.addWidget(self.chat)
-        chat_layout.addWidget(self.input_panel)
+        chat_layout.addWidget(self.chat, 1)
+        chat_layout.addWidget(self.input_panel, 0)
 
         self.stack.addWidget(self.dashboard)
         self.stack.addWidget(chat_page)
 
-        right.addWidget(self.header)
-        right.addWidget(self.stack)
+        right.addWidget(self.header, 0)
+        right.addWidget(self.stack, 1)
 
         root.addWidget(self.sidebar)
         root.addLayout(right)
@@ -120,6 +133,28 @@ class MainWindow(QMainWindow):
         self.input_panel.micClicked.connect(
             self.on_mic_clicked
         )
+
+        self.input_panel.stopClicked.connect(
+            self.on_stop_clicked
+        )
+
+        self.dashboard.terminal_btn.clicked.connect(
+            self.open_terminal
+        )
+
+        self.dashboard.browser_btn.clicked.connect(
+            self.open_browser
+        )
+
+        self.dashboard.files_btn.clicked.connect(
+            self.open_files
+        )
+
+        self.dashboard.settings_btn.clicked.connect(
+            self.open_settings
+        )
+
+        self.stack.setCurrentIndex(0)
 
     # --------------------------------------------------
 
@@ -151,7 +186,28 @@ class MainWindow(QMainWindow):
 
         self.set_status("🎤 Listening...")
 
-        self.header.status.set_listening()
+        self.header.set_listening()
+
+
+    def on_stop_clicked(self):
+
+        from core.listener import pause_listening
+        from core.speaker import speaker
+
+        pause_listening()
+
+        speaker.stop()
+
+        self.set_status(
+            "⏹ Listening paused."
+        )
+
+        self.header.set_ready()
+
+        self.dashboard.set_voice_status(
+            "Paused",
+            "Microphone paused",
+        )
 
     # --------------------------------------------------
 
@@ -203,10 +259,53 @@ class MainWindow(QMainWindow):
 
     def set_online(self):
 
-        self.header.status.set_online()
+        self.header.set_online()
+
+        self.dashboard.set_ai_status(
+            True,
+            "qwen2.5",
+        )
+
+        self.dashboard.set_voice_status(
+            "Ready",
+            "Waiting for command",
+        )
 
     # --------------------------------------------------
 
     def set_offline(self):
 
         self.header.status.set_offline()
+
+        self.dashboard.set_ai_status(
+            False,
+        )
+
+    def closeEvent(self, event):
+
+        from core.speaker import speaker
+
+        speaker.stop()
+
+        event.accept()
+
+
+
+    def open_terminal(self):
+
+        subprocess.Popen(["gnome-terminal"])
+
+
+    def open_browser(self):
+
+        subprocess.Popen(["firefox"])
+
+
+    def open_files(self):
+
+        subprocess.Popen(["nautilus"])
+
+
+    def open_settings(self):
+
+        subprocess.Popen(["gnome-control-center"])

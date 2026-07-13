@@ -17,16 +17,17 @@ WAKE_WORDS = [
     "cypher",
     "hey safer",
     "safer",
+    "hey stop",
 ]
 # ========================
 WAKEWORD_MODEL = None
-WAKEWORD_THRESOLD = 0.5
+WAKEWORD_THRESHOLD = 0.5
 
 # ------------------------------------------
 # Whisper
 # ------------------------------------------
 
-WHISPER_MODEL = "small.en"
+WHISPER_MODEL = "medium.en"
 DEVICE = "cpu"
 COMPUTE_TYPE = "int8"
 
@@ -34,8 +35,8 @@ COMPUTE_TYPE = "int8"
 # Audio
 # ------------------------------------------
 
-SAMPLE_RATE = 44100
-CHANNELS = 2
+SAMPLE_RATE = 16000
+CHANNELS = 1
 LISTEN_SECONDS = 5
 
 # ------------------------------------------
@@ -84,6 +85,9 @@ APPLICATIONS = {
 # ------------------------------------------
 
 SESSION_TIMEOUT = 300
+REQUEST_TIMEOUT =300
+MIC_TIMEOUT = 5
+PHRASE_TIMEOUT = 6
 
 # ------------------------------------------
 # Logging

@@ -76,6 +76,11 @@ class IntentService:
                 "cpu",
                 "ram",
                 "disk",
+                "time",
+                "what time",
+                "current time",
+                "date",
+                "today",
             ],
 
             "vision": [

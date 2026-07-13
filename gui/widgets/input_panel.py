@@ -5,6 +5,15 @@ from PyQt6.QtWidgets import (
     QLineEdit,
     QPushButton,
 )
+from gui.theme import(
+    BACKGROUND,
+    SURFACE,
+    BORDER,
+    PRIMARY,
+    PRIMARY_HOVER,
+    PRIMARY_PRESSED,
+    TEXT,
+)
 
 
 class InputPanel(QFrame):
@@ -22,47 +31,48 @@ class InputPanel(QFrame):
 
     sendClicked = pyqtSignal(str)
     micClicked = pyqtSignal()
+    stopClicked = pyqtSignal()
 
     def __init__(self):
         super().__init__()
 
         self.setObjectName("InputPanel")
 
-        self.setStyleSheet("""
-        QFrame#InputPanel{
-            background:#1F2937;
+        self.setStyleSheet(f"""
+        QFrame#InputPanel{{
+            background:{SURFACE};
             border-radius:14px;
-        }
+        }}
 
-        QLineEdit{
-            background:#111827;
-            color:white;
-            border:1px solid #374151;
+        QLineEdit{{
+            background:{BACKGROUND};
+            color:{TEXT};
+            border:1px solid {BORDER};
             border-radius:10px;
             padding:12px;
             font-size:11pt;
-        }
+        }}
 
-        QLineEdit:focus{
-            border:2px solid #2563EB;
-        }
+        QLineEdit:focus{{
+            border:2px solid {PRIMARY};
+        }}
 
-        QPushButton{
-            background:#2563EB;
+        QPushButton{{
+            background:{PRIMARY};
             color:white;
             border:none;
             border-radius:10px;
             padding:10px 18px;
             font-weight:bold;
-        }
+        }}
 
-        QPushButton:hover{
-            background:#3B82F6;
-        }
+        QPushButton:hover{{
+            background:{PRIMARY_HOVER};
+        }}
 
-        QPushButton:pressed{
-            background:#1D4ED8;
-        }
+        QPushButton:pressed{{
+            background:{PRIMARY_PRESSED};
+        }}
         """)
 
         layout = QHBoxLayout(self)
@@ -73,19 +83,37 @@ class InputPanel(QFrame):
         self.input.setPlaceholderText("Ask Cipher anything...")
         self.input.returnPressed.connect(self._send)
 
-        self.mic_button = QPushButton("🎤")
+        self.mic_button = QPushButton("🎙")
         self.mic_button.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.mic_button.setFixedSize(52, 46)
+        self.mic_button.setFixedSize(52, 48)
         self.mic_button.clicked.connect(self.micClicked.emit)
 
-        self.send_button = QPushButton("Send")
+        self.send_button = QPushButton("➤ Send")
         self.send_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.send_button.setFixedWidth(100)
         self.send_button.clicked.connect(self._send)
 
+        self.stop_button = QPushButton("⏹ Stop")
+
+        self.stop_button.setCursor(
+            Qt.CursorShape.PointingHandCursor
+        )
+
+        self.stop_button.setFixedSize(52, 48)
+
+        self.stop_button.clicked.connect(
+            self.stopClicked.emit
+        )
+
         layout.addWidget(self.input)
         layout.addWidget(self.mic_button)
+        layout.addWidget(self.stop_button)
         layout.addWidget(self.send_button)
+
+        self.input.setClearButtonEnabled(True)
+        self.input.setMinimumHeight(48)
+        self.send_button.setMinimumHeight(48)
+        self.mic_button.setMinimumHeight(48)
 
     def _send(self):
         text = self.input.text().strip()
@@ -95,6 +123,7 @@ class InputPanel(QFrame):
 
         self.sendClicked.emit(text)
         self.input.clear()
+        self.input.setFocus()
 
     def text(self) -> str:
         return self.input.text()

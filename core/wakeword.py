@@ -8,12 +8,14 @@ class WakeWord:
 
     def normalize(self, text: str):
 
+        if not text:
+            return 
+
         text = text.lower().strip()
 
         corrections = {
             "cypher": "cipher",
             "cifer": "cipher",
-            "cipher": "cipher",
             "sifer": "cipher",
             "safer": "cipher",
             "safe her": "cipher",
@@ -38,7 +40,7 @@ class WakeWord:
 
         text = self.normalize(text)
 
-        for wake_word in self.wake_word:
+        for wake_word in self.wake_words:
 
             if (
                 text == wake_word

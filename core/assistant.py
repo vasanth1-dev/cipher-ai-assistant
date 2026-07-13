@@ -26,6 +26,7 @@ class Cipher:
         self.active = False
         self.running = True
         self.processing = False
+        self.processing_lock = threading.Lock()
 
         self.last_activity = time.time()
 
@@ -56,12 +57,6 @@ class Cipher:
             f"How can I help you?"
         )
 
-        if self.on_message:
-            self.on_message(
-                "Cipher",
-                message,
-            )
-
         speaker.speak(message)
 
     def sleep(self):
@@ -85,6 +80,7 @@ class Cipher:
 
         try:
             reminder_worker.stop()
+            speaker.stop()
 
         except Exception as e:
             logger.exception(e)
@@ -99,14 +95,20 @@ class Cipher:
         except Exception as e:
 
             logger.exception(e)
+
+        try:
+
+            listener.stop()
+
+        except Exception:
+            pass
     # -------------------------------------------------- #
     # Processing
     # -------------------------------------------------- #
 
     def process(self, command):
 
-        if self.processing:
-            return
+        
 
         if not command:
             return
@@ -115,8 +117,13 @@ class Cipher:
 
         if not command:
             return
+        
+        with self.processing_lock:
 
-        self.processing = True
+            if self.processing:
+                return
+
+            self.processing = True
 
         self.last_activity = time.time()
 
@@ -129,17 +136,21 @@ class Cipher:
 
             response = router.route(command)
 
+            print("ROUTER RESPONSE =>", repr(response))
+
             # -----------------------------
             # Local skill response
             # -----------------------------
 
-            if response is not None:
+            if response:
 
                 if self.on_message:
                     self.on_message(
                         "Cipher",
                         response,
                     )
+
+                    print("GUI SEND =>", repr(response))
 
                 
 
@@ -168,8 +179,59 @@ class Cipher:
             )
 
         finally:
+            
+            with self.processing_lock:
+                self.processing = False
 
-            self.processing = False
+            if self.on_status:
+                self.on_status("🟢 Ready")
+    
+        # -------------------------------------------------- #
+    # Single Listen (GUI ST Button)
+    # -------------------------------------------------- #
+
+    def listen_once(self):
+
+        if self.processing:
+            return
+
+        if self.on_status:
+            self.on_status("🎤 Listening...")
+
+        try:
+
+            text = listener.listen()
+
+            print("RAW STT =>", repr(text))
+
+            if not text:
+
+                if self.on_status:
+                    self.on_status("🟢 Ready")
+
+                return
+
+            text = text.strip()
+
+            if self.on_message:
+                self.on_message(
+                    USER_NAME,
+                    text,
+                )
+
+            self.process(text)
+
+        except Exception as e:
+
+            logger.exception(e)
+
+            if self.on_message:
+                self.on_message(
+                    "System",
+                    f"Speech Error: {e}",
+                )
+
+        finally:
 
             if self.on_status:
                 self.on_status("🟢 Ready")
@@ -179,6 +241,7 @@ class Cipher:
     # -------------------------------------------------- #
 
     def run(self):
+
 
         try:
             reminder_worker.start()
@@ -224,6 +287,11 @@ class Cipher:
                         self.sleep()
                         continue
 
+                if self.processing:
+                    time.sleep(0.1)
+                    continue
+
+
                 text = listener.listen()
 
                 if not text:
@@ -237,18 +305,20 @@ class Cipher:
 
                     if wakeword.detect(text):
 
-                        self.activate()
-
                         command = wakeword.remove(
                             text
                         )
+
+                        if not self.active:
+                            self.activate()
 
                         if command:
 
                             threading.Thread(
                                 target=self.process,
-                                args=(command,),
+                                args=(text,),
                                 daemon=True,
+                                name="CipherCommand"
                             ).start()
 
                     continue

@@ -1,20 +1,27 @@
 from core.logger import logger
+from config import USER_NAME, ASSISTANT_NAME
 
 
 class ConversationService:
 
     def __init__(self):
 
+        self.last_topic = None
+
         self.responses = {
-            "hello": "Hello!",
-            "hi": "Hello!",
-            "hey": "Hello!",
+            "hello": f"Hello {USER_NAME}! How can I help you today?",
+            "hi": f"Hello {USER_NAME}! How can I help you today?",
+            "hey": f"Hello {USER_NAME}! How can I help you today?",
             "good morning": "Good morning!",
             "good afternoon": "Good afternoon!",
             "good evening": "Good evening!",
             "how are you": "I'm doing well. How can I help you?",
-            "who are you": "I am Cipher, your personal AI assistant.",
-            "what is your name": "My name is Cipher.",
+            "who are you": (
+                f"I am {ASSISTANT_NAME}, your personal Ubuntu AI assistant."
+            ),
+            "what is your name": (
+                f"My name is {ASSISTANT_NAME}."
+            ),
             "thank you": "You're welcome.",
             "thanks": "You're welcome.",
             "bye": "Goodbye.",
@@ -81,6 +88,22 @@ class ConversationService:
     def available(self):
 
         return sorted(self.responses.keys())
+    
+    def set_topic(
+            self,
+            topic: str,
+    ):
+        
+        if topic:
+            self.last_topic = topic.strip()
+
+    def get_topic(self):
+
+        return self.last_topic
+    
+    def clear_topic(self):
+
+        self.last_topic = None
 
 
 conversation_service = ConversationService()
