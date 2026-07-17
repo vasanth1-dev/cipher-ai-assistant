@@ -1,5 +1,7 @@
 from PyQt6.QtCore import QObject, QThread, pyqtSignal
-
+from core.conversation.conversation_service import (
+    conversation_service,
+)
 
 class ChatWorker(QThread):
 
@@ -39,6 +41,8 @@ class ChatManager(QObject):
 
     # Status
     status_changed = pyqtSignal(str)
+
+    conversation_title_changed = pyqtSignal(str, str)
 
     thinking_started = pyqtSignal()
     thinking_finished = pyqtSignal()
@@ -109,12 +113,34 @@ class ChatManager(QObject):
 
     def user(self, text):
 
+        conversation = conversation_service.get_current()
+
+        old_title = conversation.title if conversation else None
+
+        conversation_service.add_user_message(text)
+
+        conversation = conversation_service.get_current()
+
+        if (
+            conversation is not None
+            and conversation.title != old_title
+        ):
+
+            self.conversation_title_changed.emit(
+                conversation.id,
+                conversation.title,
+            )
+
         self.message_received.emit(
             "You",
             text,
         )
-
+        
     def cipher(self, text):
+
+        conversation_service.add_assistant_message(
+            text
+        )
 
         self.message_received.emit(
             "Cipher",
@@ -122,6 +148,10 @@ class ChatManager(QObject):
         )
 
     def system(self, text):
+
+        conversation_service.add_system_message(
+            text
+        )
 
         self.message_received.emit(
             "System",

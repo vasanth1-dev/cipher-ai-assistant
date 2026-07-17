@@ -10,6 +10,11 @@ from PyQt6.QtWidgets import (
 from gui.theme import (
     TEXT,
     TEXT_MUTED,
+    CARD_PADDING,
+    SPACING,
+    BUTTON_HEIGHT,
+    TITLE_SIZE,
+    HEADER_SIZE,
 )
 
 from gui.widgets.dashboard_card import DashboardCard
@@ -29,7 +34,9 @@ class DashboardWidget(QWidget):
 
         root = QVBoxLayout(self)
         root.setContentsMargins(0, 0, 0, 0)
-        root.setSpacing(18)
+        root.setSpacing(
+            CARD_PADDING
+        )
 
         # --------------------------------------------------
         # Header
@@ -37,7 +44,7 @@ class DashboardWidget(QWidget):
 
         title = QLabel("System Overview")
         title.setStyleSheet(f"""
-        font-size:24px;
+        font-size:{TITLE_SIZE + 2}px;
         font-weight:bold;
         color:{TEXT};
         """)
@@ -59,7 +66,9 @@ class DashboardWidget(QWidget):
         # --------------------------------------------------
 
         metrics = QGridLayout()
-        metrics.setSpacing(12)
+        metrics.setSpacing(
+            SPACING
+        )
 
         self.cpu = MetricCard("CPU", "--", "🖥")
         self.ram = MetricCard("RAM", "--", "🧠")
@@ -95,7 +104,9 @@ class DashboardWidget(QWidget):
         # --------------------------------------------------
 
         status = QHBoxLayout()
-        status.setSpacing(12)
+        status.setSpacing(
+            SPACING
+        )
 
         self.ai_card = DashboardCard(
             "AI Status",
@@ -120,7 +131,7 @@ class DashboardWidget(QWidget):
 
         quick = QLabel("Quick Actions")
         quick.setStyleSheet(f"""
-        font-size:16pt;
+        font-size:{HEADER_SIZE}pt;
         font-weight:bold;
         color:{TEXT};
         """)
@@ -159,7 +170,9 @@ class DashboardWidget(QWidget):
 
         for btn in buttons:
 
-            btn.setMinimumHeight(45)
+            btn.setMinimumHeight(
+                BUTTON_HEIGHT
+            )
 
             btn.setCursor(
                 Qt.CursorShape.PointingHandCursor

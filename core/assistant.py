@@ -144,15 +144,21 @@ class Cipher:
 
             if response:
 
+    # Save assistant reply
+                try:
+                    from core.conversation.conversation_service import conversation_service
+
+                    conversation_service.add_assistant_message(response)
+
+                except Exception as e:
+                    logger.exception(e)
+
+                # Update GUI
                 if self.on_message:
                     self.on_message(
                         "Cipher",
                         response,
                     )
-
-                    print("GUI SEND =>", repr(response))
-
-                
 
                 logger.info(
                     f"CIPHER : {response}"

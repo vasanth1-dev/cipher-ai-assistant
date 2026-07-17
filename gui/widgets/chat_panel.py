@@ -4,26 +4,29 @@ from PyQt6.QtWidgets import (
     QVBoxLayout,
     QWidget,
 )
-
+from PyQt6.QtCore import pyqtSignal
 from gui.widgets.chat_container import ChatContainer
-
+from gui.widgets.welcome_widget import WelcomeWidget
+from gui.theme import(
+    SPACING_SMALL,
+)
 
 class ChatPanel(QWidget):
-    """
-    Cipher Professional Chat Panel
-
-    Responsibilities
-    ----------------
-    • Conversation Management
-    • Streaming
-    • Typing Indicator
-    • Auto Scroll
-    """
+    
+    promptSelected = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
 
+        self.welcome = WelcomeWidget()
+
+        self.welcome.promptSelected.connect(
+            self.promptSelected.emit
+        )
+
         self.container = ChatContainer()
+
+        self.container.hide()
 
         self._streaming = False
         self._auto_scroll = True
@@ -45,11 +48,18 @@ class ChatPanel(QWidget):
             0,
         )
 
-        layout.setSpacing(8)
+        layout.setSpacing(
+            SPACING_SMALL
+        )
 
         self.setSizePolicy(
             QSizePolicy.Policy.Expanding,
             QSizePolicy.Policy.Expanding,
+        )
+
+        layout.addWidget(
+            self.welcome,
+            1,
         )
 
         layout.addWidget(
@@ -60,11 +70,19 @@ class ChatPanel(QWidget):
     # --------------------------------------------------
     # Messages
     # --------------------------------------------------
+    def _show_chat(self):
+
+        if self.welcome.isVisible():
+            self.welcome.hide()
+            self.container.show()
+
 
     def add_user_message(
         self,
         text: str,
     ):
+        
+        self._show_chat()
 
         self.container.add_message(
             "You",
@@ -77,6 +95,8 @@ class ChatPanel(QWidget):
         self,
         text: str,
     ):
+        
+        self._show_chat()
 
         self.container.add_message(
             "Cipher",
@@ -89,6 +109,8 @@ class ChatPanel(QWidget):
         self,
         text: str,
     ):
+        
+        self._show_chat()
 
         self.container.add_message(
             "System",
@@ -162,6 +184,42 @@ class ChatPanel(QWidget):
         self.hide_typing()
 
         self.container.clear_messages()
+
+        self.container.hide()
+
+        self.welcome.show()
+
+
+    # --------------------------------------------------
+    # Load Conversation
+    # --------------------------------------------------
+
+    def load_conversation(self, conversation):
+
+        self.clear_chat()
+
+        if not conversation.messages:
+            return
+
+        self._show_chat()
+
+        for message in conversation.messages:
+
+            sender = message.get("sender", "")
+
+            text = message.get("text", "")
+
+            if sender == "You":
+
+                self.add_user_message(text)
+
+            elif sender == "Cipher":
+
+                self.add_assistant_message(text)
+
+            else:
+
+                self.add_system_message(text)
 
     # --------------------------------------------------
     # Scroll

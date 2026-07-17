@@ -13,6 +13,12 @@ from gui.theme import (
     WARNING,
     TEXT,
     TEXT_MUTED,
+    TITLE_SIZE,
+    SMALL_SIZE,
+    CARD_PADDING,
+    SPACING,
+    SPACING_LARGE,
+    BUTTON_HEIGHT,
 )
 
 
@@ -152,27 +158,28 @@ class Header(QFrame):
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(
-            20,
-            14,
-            20,
-            14,
+            CARD_PADDING,
+            SPACING,
+            CARD_PADDING,
+            SPACING,
         )
-        layout.setSpacing(15)
+        layout.setSpacing(SPACING_LARGE)
 
         left = QVBoxLayout()
 
         self.title = QLabel(
             "🤖 Cipher"
         )
-        self.title.setStyleSheet("""
-        font-size:22px;
+        self.title.setStyleSheet(f"""
+        font-size:{TITLE_SIZE}px;
         font-weight:bold;
+        color:{TEXT};
         """)
 
         self.subtitle = QLabel(" Ubuntu Desktop AI Assistant")
         self.subtitle.setStyleSheet(f"""
         color:{TEXT_MUTED};
-        font-size:10pt;
+        font-size:{SMALL_SIZE}pt;
         """)
 
         left.addWidget(self.title)
@@ -197,13 +204,15 @@ class Header(QFrame):
 
             label.setStyleSheet(f"""
             color:{TEXT_MUTED};
-            font-size:10pt;
+            font-size:{SMALL_SIZE}pt;
             """)
 
             info.addWidget(label)
 
         layout.addLayout(info)
-        layout.addSpacing(15)
+        layout.addSpacing(
+            SPACING_LARGE
+        )
 
         self.status = StatusBadge()
 
@@ -212,8 +221,8 @@ class Header(QFrame):
             "Settings"
         )
         self.settings_button.setFixedSize(
-            42,
-            42,
+            BUTTON_HEIGHT,
+            BUTTON_HEIGHT,
         )
 
         layout.addWidget(self.status)

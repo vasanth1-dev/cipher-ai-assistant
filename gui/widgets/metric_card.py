@@ -17,6 +17,11 @@ from gui.theme import (
     SUCCESS,
     TEXT,
     TEXT_MUTED,
+    CARD_PADDING,
+    RADIUS_LARGE,
+    SMALL_SIZE,
+    HEADER_SIZE,
+    SPACING,
 )
 
 
@@ -84,8 +89,15 @@ class MetricCard(QFrame):
         )
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(16, 14, 16, 14)
-        layout.setSpacing(14)
+        layout.setContentsMargins(
+            CARD_PADDING,
+            CARD_PADDING,
+            CARD_PADDING,
+            CARD_PADDING,
+        )
+        layout.setSpacing(
+            SPACING
+        )
 
         self.accent = QFrame()
         self.accent.setFixedWidth(5)
@@ -95,8 +107,8 @@ class MetricCard(QFrame):
         """)
 
         self.icon_label = QLabel(icon)
-        self.icon_label.setStyleSheet("""
-        font-size:22pt;
+        self.icon_label.setStyleSheet(f"""
+        font-size:{HEADER_SIZE}pt;
         """)
 
         right = QVBoxLayout()
@@ -105,7 +117,7 @@ class MetricCard(QFrame):
         self.title_label = QLabel(title)
         self.title_label.setStyleSheet(f"""
         color:{TEXT_MUTED};
-        font-size:10pt;
+        font-size:{SMALL_SIZE}pt;
         font-weight:600;
         """)
 
@@ -139,7 +151,7 @@ class MetricCard(QFrame):
         QFrame#MetricCard{{
             background:#263244;
             border:1px solid {PRIMARY};
-            border-radius:14px;
+            border-radius:{RADIUS_LARGE}px;
         }}
 
         QLabel{{

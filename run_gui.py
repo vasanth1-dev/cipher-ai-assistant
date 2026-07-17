@@ -71,7 +71,7 @@ class CipherGUI:
         )
 
         self.assistant.on_message = (
-            self.chat.message_received.emit
+            self.chat.cipher
         )
 
     # --------------------------------------------------

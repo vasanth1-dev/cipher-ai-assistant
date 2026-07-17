@@ -6,12 +6,22 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
 )
+from gui.widgets.conversation_list import(
+    ConversationList,
+)
 from gui.theme import (
     SURFACE,
     PRIMARY,
     PRIMARY_HOVER,
     TEXT,
     TEXT_MUTED,
+    SMALL_SIZE,
+    CARD_PADDING,
+    SIDEBAR_WIDTH,
+    SPACING_SMALL,
+    SPACING_LARGE,
+    TITLE_SIZE,
+
 )
 
 
@@ -58,7 +68,9 @@ class Sidebar(QFrame):
         super().__init__()
 
         self.setObjectName("Sidebar")
-        self.setFixedWidth(230)
+        self.setFixedWidth(
+            SIDEBAR_WIDTH
+        )
 
         self.setStyleSheet(f"""
         QFrame#Sidebar{{
@@ -72,22 +84,31 @@ class Sidebar(QFrame):
         """)
 
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(18, 18, 18, 18)
-        layout.setSpacing(8)
+        layout.setContentsMargins(
+            CARD_PADDING,
+            CARD_PADDING,
+            CARD_PADDING,
+            CARD_PADDING,
+        )
+        layout.setSpacing(
+            SPACING_SMALL
+        )
 
         logo = QLabel(
     "🤖 Cipher\nUbuntu AI Assistant"
         )
         logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         logo.setStyleSheet(f"""
-        font-size:22px;
+        font-size:{TITLE_SIZE}px;
         font-weight:bold;
         padding:12px;
         color:{TEXT}
         """)
 
         layout.addWidget(logo)
-        layout.addSpacing(15)
+        layout.addSpacing(
+            SPACING_LARGE
+        )
 
         self.buttons = {}
 
@@ -110,6 +131,30 @@ class Sidebar(QFrame):
             layout.addWidget(btn)
             self.buttons[key] = btn
 
+      
+
+
+        separator = QFrame()
+
+        separator.setFrameShape(
+            QFrame.Shape.HLine
+        )
+
+        separator.setStyleSheet(f"""
+        background:{PRIMARY};
+        max-height:1px;
+        border:none;
+        """)
+
+        layout.addWidget(separator)
+
+        self.conversation_list = ConversationList()
+
+        layout.addWidget(
+            self.conversation_list,
+            1,
+        )
+
         layout.addStretch()
 
         # ---------------------------------------
@@ -124,7 +169,7 @@ class Sidebar(QFrame):
 
         status_title.setStyleSheet(f"""
         color:{TEXT_MUTED};
-        font-size:10pt;
+        font-size:{SMALL_SIZE}pt;
         """)
 
         self.status_value = QLabel("🟢 Online")
@@ -192,7 +237,7 @@ class Sidebar(QFrame):
         version.setStyleSheet(f"""
         color:{TEXT_MUTED};
         padding:10px;
-        font-size:10pt
+        font-size:{SMALL_SIZE}pt
         """)
 
         layout.addWidget(version)

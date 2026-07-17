@@ -9,10 +9,16 @@ from PyQt6.QtWidgets import (
     QStatusBar,
     QVBoxLayout,
     QWidget,
+    QInputDialog,
+    QMessageBox,
 )
 from gui.theme import (
     BACKGROUND,
     TEXT,
+    PRIMARY,
+    PRIMARY_HOVER,
+    BORDER,
+    SURFACE,
 )
 
 from gui.dashboard_widget import DashboardWidget
@@ -20,12 +26,16 @@ from gui.widgets.chat_panel import ChatPanel
 from gui.widgets.header import Header
 from gui.widgets.input_panel import InputPanel
 from gui.widgets.sidebar import Sidebar
+from core.conversation.conversation_service import (
+    conversation_service,
+)
 
 
 class MainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
+
 
         self.setWindowTitle("" \
         "Cipher v2 - Ubuntu AI Assistant"
@@ -80,6 +90,10 @@ class MainWindow(QMainWindow):
 
         self.sidebar = Sidebar()
 
+        self.sidebar.conversation_list.load(
+            conversation_service.get_all()
+        )
+
         right = QVBoxLayout()
         right.setSpacing(15)
 
@@ -126,6 +140,10 @@ class MainWindow(QMainWindow):
             self.on_page_changed
         )
 
+        self.sidebar.conversation_list.newChatClicked.connect(
+            self.create_new_chat
+        )
+
         self.input_panel.sendClicked.connect(
             self.on_send_clicked
         )
@@ -154,9 +172,34 @@ class MainWindow(QMainWindow):
             self.open_settings
         )
 
+        self.chat.promptSelected.connect(
+            self.on_prompt_selected
+        )
+
+        self.sidebar.conversation_list.conversationSelected.connect(
+            self.load_conversation
+        )
+
+        self.sidebar.conversation_list.renameRequested.connect(
+            self.rename_conversation
+        )
+
+        self.sidebar.conversation_list.deleteRequested.connect(
+            self.delete_conversation
+        )
+
+        self.sidebar.conversation_list.pinRequested.connect (
+            self.pin_conversation
+        )
+
         self.stack.setCurrentIndex(0)
 
     # --------------------------------------------------
+    def on_prompt_selected(self, prompt):
+
+        self.input_panel.input.setText(prompt)
+
+        self.input_panel.focus_input()
 
     def on_page_changed(self, page):
 
@@ -227,6 +270,232 @@ class MainWindow(QMainWindow):
 
             self.chat.add_assistant_message(text)
 
+    def load_conversation(self, conversation_id):
+
+        conversations = conversation_service.get_all()
+
+        conversation = next(
+            (
+                c
+                for c in conversations
+                if c.id == conversation_id
+            ),
+            None,
+        )
+
+        if conversation is None:
+            return
+
+        conversation_service.set_current(
+            conversation_id
+        )
+
+        self.chat.load_conversation(
+            conversation
+        )
+
+        self.set_status(
+            f"Loaded: {conversation.title}"
+        )
+
+    def rename_conversation(self, conversation_id):
+
+        conversation = next(
+            (
+                c
+                for c in conversation_service.get_all()
+                if c.id == conversation_id
+            ),
+            None,
+        )
+
+        if conversation is None:
+            return
+
+        dialog = QInputDialog(self)
+
+        dialog.setWindowTitle("Rename Conversation")
+        dialog.setLabelText("New title:")
+        dialog.setTextValue(conversation.title)
+
+        dialog.setStyleSheet(f"""
+        QInputDialog {{
+            background: {BACKGROUND};
+        }}
+
+        QLabel {{
+            color: {TEXT};
+        }}
+
+        QLineEdit {{
+            background: {SURFACE};
+            color: {TEXT};
+            border: 1px solid {BORDER};
+            border-radius: 6px;
+            padding: 6px;
+        }}
+
+        QPushButton {{
+            background: {PRIMARY};
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+        }}
+
+        QPushButton:hover {{
+            background: {PRIMARY_HOVER};
+        }}
+        """)
+
+        ok = dialog.exec()
+
+        title = dialog.textValue()
+
+        if not ok:
+            return
+
+        title = title.strip()
+
+        if not title:
+            return
+
+        conversation_service.rename(
+            conversation_id,
+            title,
+        )
+
+        self.sidebar.conversation_list.update_title(
+            conversation_id,
+            title,
+        )
+
+        self.set_status(
+            f"Renamed to '{title}'"
+        )
+
+    def delete_conversation(self, conversation_id):
+
+        conversation = next(
+            (
+                c
+                for c in conversation_service.get_all()
+                if c.id == conversation_id
+            ),
+            None,
+        )
+
+        if conversation is None:
+            return
+
+        msg = QMessageBox(self)
+
+        msg.setWindowTitle("Delete Conversation")
+        msg.setText(f"Delete '{conversation.title}'?")
+
+        msg.setStandardButtons(
+            QMessageBox.StandardButton.Yes |
+            QMessageBox.StandardButton.No
+        )
+
+        msg.setStyleSheet(f"""
+        QMessageBox {{
+            background-color: {BACKGROUND}
+        }}
+
+        QLabel {{
+            color: {TEXT};
+            font-size: 11pt;
+        }}
+
+        QPushButton {{
+            background-color: {PRIMARY};
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 6px 16px;
+            min-width: 80px;
+        }}
+
+        QPushButton {{
+            background-color: {PRIMARY_HOVER};
+        }}
+
+        QPushButton:pressed {{
+            background-color: {PRIMARY_HOVER}
+        }}
+        """)
+
+        reply = msg.exec()
+
+        if reply != QMessageBox.StandardButton.Yes:
+            return
+
+        conversation_service.delete(
+            conversation_id
+        )
+
+        self.sidebar.conversation_list.remove_conversation(
+            conversation_id
+        )
+
+        if conversation_service.get_current() is None:
+
+            self.chat.clear_chat()
+
+        self.set_status(
+            "Conversation deleted."
+        )
+
+    def pin_conversation(self, conversation_id):
+
+        conversation = next(
+            (
+                c
+                for c in conversation_service.get_all()
+                if c.id == conversation_id
+            ),
+            None,
+        )
+
+        if conversation is None:
+            return
+
+        if conversation.pinned:
+
+            conversation_service.unpin(
+                conversation_id
+            )
+
+            self.set_status(
+                "Conversation unpinned."
+            )
+
+        else:
+
+            conversation_service.pin(
+                conversation_id
+            )
+
+            self.set_status(
+                "Conversation pinned."
+            )
+
+        self.sidebar.conversation_list.load(
+            conversation_service.get_all()
+        )
+
+    def refresh_current_conversation_title(self):
+
+        conversation = conversation_service.get_current()
+
+        if conversation is None:
+            return
+
+        self.sidebar.conversation_list.update_title(
+            conversation.id,
+            conversation.title,
+        )
+
     # --------------------------------------------------
     # Streaming
     # --------------------------------------------------
@@ -256,7 +525,20 @@ class MainWindow(QMainWindow):
         self.statusbar.showMessage(text)
 
     # --------------------------------------------------
+    def create_new_chat(self):
 
+        conversation = conversation_service.new_chat()
+
+        self.sidebar.conversation_list.add_conversation(
+            conversation.id,
+            conversation.title,
+        )
+
+        self.chat.clear_chat()
+
+        self.set_status("New conversation created.")
+
+        
     def set_online(self):
 
         self.header.set_online()

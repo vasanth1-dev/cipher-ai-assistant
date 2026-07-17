@@ -13,6 +13,10 @@ from gui.theme import(
     PRIMARY_HOVER,
     PRIMARY_PRESSED,
     TEXT,
+    SPACING,
+    CARD_PADDING,
+    BUTTON_HEIGHT,
+    INPUT_HEIGHT,
 )
 
 
@@ -49,7 +53,7 @@ class InputPanel(QFrame):
             color:{TEXT};
             border:1px solid {BORDER};
             border-radius:10px;
-            padding:12px;
+            padding:{SPACING}px;
             font-size:11pt;
         }}
 
@@ -62,7 +66,7 @@ class InputPanel(QFrame):
             color:white;
             border:none;
             border-radius:10px;
-            padding:10px 18px;
+            padding:{SPACING}px {CARD_PADDING}px;
             font-weight:bold;
         }}
 
@@ -76,8 +80,15 @@ class InputPanel(QFrame):
         """)
 
         layout = QHBoxLayout(self)
-        layout.setContentsMargins(14, 14, 14, 14)
-        layout.setSpacing(10)
+        layout.setContentsMargins(
+            SPACING,
+            SPACING,
+            SPACING,
+            SPACING,
+        )
+        layout.setSpacing(
+            SPACING
+        )
 
         self.input = QLineEdit()
         self.input.setPlaceholderText("Ask Cipher anything...")
@@ -111,9 +122,15 @@ class InputPanel(QFrame):
         layout.addWidget(self.send_button)
 
         self.input.setClearButtonEnabled(True)
-        self.input.setMinimumHeight(48)
-        self.send_button.setMinimumHeight(48)
-        self.mic_button.setMinimumHeight(48)
+        self.input.setMinimumHeight(
+            INPUT_HEIGHT
+        )
+        self.send_button.setMinimumHeight(
+            BUTTON_HEIGHT
+        )
+        self.mic_button.setMinimumHeight(
+            BUTTON_HEIGHT
+        )
 
     def _send(self):
         text = self.input.text().strip()

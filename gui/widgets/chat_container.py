@@ -9,6 +9,11 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from gui.theme import(
+    SPACING,
+    SPACING_SMALL,
+    CARD_PADDING,
+)
 from gui.widgets.message_bubble import MessageBubble
 
 
@@ -55,13 +60,15 @@ class ChatContainer(QScrollArea):
         )
 
         self.layout.setContentsMargins(
-            12,
-            12,
-            12,
+            SPACING,
+            SPACING,
+            SPACING,
             90,
         )
 
-        self.layout.setSpacing(18)
+        self.layout.setSpacing(
+            CARD_PADDING
+        )
 
         self.layout.setAlignment(
             Qt.AlignmentFlag.AlignTop
@@ -130,12 +137,12 @@ class ChatContainer(QScrollArea):
             "Cipher is thinking..."
         )
 
-        self._typing_label.setStyleSheet("""
-        QLabel{
+        self._typing_label.setStyleSheet(f"""
+        QLabel{{
             color:#9CA3AF;
             font-size:10pt;
-            padding:8px 12px;
-        }
+            padding:{SPACING_SMALL}px {SPACING}px;
+        }}
         """)
 
         self.layout.insertWidget(

@@ -23,6 +23,12 @@ from gui.theme import (
     SYSTEM_BUBBLE,
     TEXT,
     USER_BUBBLE,
+    CARD_PADDING,
+    SPACING,
+    SPACING_SMALL,
+    RADIUS_LARGE,
+    TEXT_SIZE,
+    SMALL_SIZE
 )
 
 
@@ -70,13 +76,13 @@ class MessageBubble(QFrame):
         self.setStyleSheet(f"""
         QFrame#MessageBubble{{
             background:{background};
-            border-radius:14px;
+            border-radius:{RADIUS_LARGE}px;
         }}
 
         QLabel{{
             color:{TEXT};
             background:transparent;
-            font-size:11pt;
+            font-size:{TEXT_SIZE}pt;
         }}
 
         QPushButton{{
@@ -84,7 +90,7 @@ class MessageBubble(QFrame):
             color:white;
             border:none;
             border-radius:8px;
-            padding:5px 12px;
+            padding:{SPACING_SMALL}px {SPACING}px;
         }}
 
         QPushButton:hover{{
@@ -94,12 +100,14 @@ class MessageBubble(QFrame):
 
         root = QVBoxLayout(self)
         root.setContentsMargins(
-            18,
-            14,
-            18,
-            14,
+            CARD_PADDING,
+            SPACING,
+            CARD_PADDING,
+            SPACING,
         )
-        root.setSpacing(10)
+        root.setSpacing(
+            SPACING
+        )
 
         # ---------------- Header ----------------
 
@@ -109,9 +117,9 @@ class MessageBubble(QFrame):
             self.sender
         )
 
-        self.sender_label.setStyleSheet("""
+        self.sender_label.setStyleSheet(f"""
         font-weight:bold;
-        font-size:11pt;
+        font-size:{TEXT_SIZE}pt;
         """)
 
         header.addWidget(
@@ -122,9 +130,9 @@ class MessageBubble(QFrame):
             self.timestamp.strftime("%H:%M")
         )
 
-        self.time_label.setStyleSheet("""
+        self.time_label.setStyleSheet(f"""
         color:#9CA3AF;
-        font-size:9pt;
+        font-size:{SMALL_SIZE}pt;
         """)
 
         header.addWidget(

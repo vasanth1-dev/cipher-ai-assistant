@@ -57,3 +57,61 @@ SMALL_SIZE = 10
 # --------------------------------------------------
 
 ANIMATION_DURATION = 180
+
+
+# --------------------------------------------------
+# Layout
+# --------------------------------------------------
+
+WINDOW_WIDTH = 1280
+WINDOW_HEIGHT = 760
+
+HEADER_HEIGHT = 80
+
+SIDEBAR_WIDTH = 230
+CHAT_SIDEBAR_WIDTH = 260
+
+CONTENT_MARGIN = 15
+
+
+# --------------------------------------------------
+# Spacing
+# --------------------------------------------------
+
+SPACING_XS = 4
+SPACING_SMALL = 8
+SPACING = 12
+SPACING_LARGE = 16
+SPACING_XL = 24
+SPACING_XXL = 32
+
+
+# --------------------------------------------------
+# Widget Sizes
+# --------------------------------------------------
+
+BUTTON_HEIGHT = 48
+INPUT_HEIGHT = 48
+
+ICON_SMALL = 16
+ICON_MEDIUM = 20
+ICON_LARGE = 24
+
+STATUS_BADGE_HEIGHT = 32
+
+
+# --------------------------------------------------
+# Cards
+# --------------------------------------------------
+
+CARD_RADIUS = 16
+CARD_PADDING = 18
+
+
+# --------------------------------------------------
+# Animation
+# --------------------------------------------------
+
+FAST_ANIMATION = 120
+NORMAL_ANIMATION = 180
+SLOW_ANIMATION = 300

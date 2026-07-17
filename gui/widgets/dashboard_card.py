@@ -17,6 +17,11 @@ from gui.theme import (
     SUCCESS,
     TEXT,
     TEXT_MUTED,
+    CARD_PADDING,
+    SPACING,
+    RADIUS_LARGE,
+    HEADER_SIZE,
+    SMALL_SIZE,
 )
 
 
@@ -60,7 +65,7 @@ class DashboardCard(QFrame):
         QFrame#DashboardCard{{
             background:#1F2937;
             border:1px solid #334155;
-            border-radius:16px;
+            border-radius:{RADIUS_LARGE}px;
         }}
 
         QLabel{{
@@ -94,18 +99,20 @@ class DashboardCard(QFrame):
         layout = QVBoxLayout(self)
 
         layout.setContentsMargins(
-            18,
-            18,
-            18,
-            18,
+            CARD_PADDING,
+            CARD_PADDING,
+            CARD_PADDING,
+            CARD_PADDING,
         )
 
-        layout.setSpacing(10)
+        layout.setSpacing(
+            SPACING
+        )
 
         self.title_label = QLabel(title)
 
         self.title_label.setStyleSheet(f"""
-        font-size:11pt;
+        font-size:{SMALL_SIZE}pt;
         font-weight:600;
         color:{TEXT_MUTED};
         """)
@@ -122,7 +129,7 @@ class DashboardCard(QFrame):
         self.value_label = QLabel(value)
 
         self.value_label.setStyleSheet(f"""
-        font-size:30pt;
+        font-size:{HEADER_SIZE}pt;
         font-weight:700;
         color:{TEXT};
         """)
@@ -130,7 +137,7 @@ class DashboardCard(QFrame):
         self.subtitle_label = QLabel(subtitle)
 
         self.subtitle_label.setStyleSheet(f"""
-        font-size:10pt;
+        font-size:{SMALL_SIZE}pt;
         color:{TEXT_MUTED};
         """)
 

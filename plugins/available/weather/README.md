@@ -83,4 +83,4 @@ Keeping the plugin thin ensures:
 ## Version
 
 - Plugin Version: **1.0.0**
-- Compatible with: **Cipher v2+**
+- Compatible with: **Cipher v2+**c
