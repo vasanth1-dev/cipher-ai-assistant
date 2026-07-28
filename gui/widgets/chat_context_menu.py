@@ -2,7 +2,10 @@ from __future__ import annotations
 
 from PyQt6.QtCore import QPoint, pyqtSignal
 from PyQt6.QtGui import QAction
-from PyQt6.QtWidgets import QMenu
+from PyQt6.QtWidgets import (
+    QMenu,
+    QWidget,
+)
 
 
 class ChatContextMenu(QMenu):
@@ -21,7 +24,10 @@ class ChatContextMenu(QMenu):
     clearConversationRequested = pyqtSignal()
     exportRequested = pyqtSignal()
 
-    def __init__(self, parent=None):
+    def __init__(
+        self, 
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
 
         self.setObjectName("chatContextMenu")
@@ -58,7 +64,9 @@ class ChatContextMenu(QMenu):
 
     # ---------------------------------------------------------
 
-    def _create_actions(self):
+    def _create_actions(
+        self,
+    ) -> None:
 
         copy_action = QAction("Copy", self)
         regenerate_action = QAction("Regenerate Response", self)
@@ -102,7 +110,10 @@ class ChatContextMenu(QMenu):
 
     # ---------------------------------------------------------
 
-    def show_at(self, global_pos: QPoint):
+    def show_at(
+        self, 
+        global_pos: QPoint,
+    ) -> None:
         """
         Show the menu at the given global position.
         """

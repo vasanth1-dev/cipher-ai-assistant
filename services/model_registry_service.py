@@ -17,7 +17,9 @@ class ModelRegistryService:
     of models known to Cipher.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._installed: set[str] = set()
 

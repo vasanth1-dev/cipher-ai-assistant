@@ -24,7 +24,9 @@ class ApplicationState:
     Thread-safe application state container.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._lock = RLock()
 
         self._state: dict[str, Any] = {

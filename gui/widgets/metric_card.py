@@ -61,7 +61,7 @@ class MetricCard(QFrame):
         QFrame#MetricCard{{
             background:#1F2937;
             border:1px solid #334155;
-            border-radius:14px;
+            border-radius:{RADIUS_LARGE}px;
         }}
 
         QLabel{{
@@ -138,7 +138,10 @@ class MetricCard(QFrame):
 
     # --------------------------------------------------
 
-    def enterEvent(self, event):
+    def enterEvent(
+        self, 
+        event
+    ) -> None:
 
         self.animation.stop()
         self.animation.setStartValue(
@@ -162,7 +165,10 @@ class MetricCard(QFrame):
 
         super().enterEvent(event)
 
-    def leaveEvent(self, event):
+    def leaveEvent(
+        self, 
+        event
+    ) -> None:
 
         self.animation.stop()
         self.animation.setStartValue(
@@ -175,7 +181,7 @@ class MetricCard(QFrame):
         QFrame#MetricCard{{
             background:#1F2937;
             border:1px solid #334155;
-            border-radius:14px;
+            border-radius:{RADIUS_LARGE}px;
         }}
 
         QLabel{{
@@ -190,16 +196,16 @@ class MetricCard(QFrame):
     # Compatible API
     # --------------------------------------------------
 
-    def set_title(self, text: str):
+    def set_title(self, text: str) -> None:
         self.title_label.setText(str(text))
 
-    def set_value(self, text: str):
+    def set_value(self, text: str) -> None:
         self.value_label.setText(str(text))
 
-    def set_icon(self, icon: str):
+    def set_icon(self, icon: str) -> None:
         self.icon_label.setText(str(icon))
 
-    def set_value_color(self, color: str):
+    def set_value_color(self, color: str) -> None:
 
         self._accent = color
 
@@ -214,11 +220,11 @@ class MetricCard(QFrame):
         font-weight:700;
         """)
 
-    def set_normal(self):
+    def set_normal(self) -> None:
         self.set_value_color(SUCCESS)
 
-    def set_warning(self):
+    def set_warning(self) -> None:
         self.set_value_color("#F59E0B")
 
-    def set_error(self):
+    def set_error(self) -> None:
         self.set_value_color("#EF4444")

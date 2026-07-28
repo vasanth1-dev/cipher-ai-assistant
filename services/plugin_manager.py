@@ -41,7 +41,9 @@ class PluginManager:
     Discovers and manages Cipher plugins.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._plugins: dict[str, BasePlugin] = {}
         self._modules: dict[str, ModuleType] = {}
 
@@ -114,6 +116,13 @@ class PluginManager:
                 module_name,
             )
             return None
+        
+        if not plugin.name:
+
+            logger.error(
+                "Plugin has no valid name: %s",
+                module_name,
+            )
 
         if plugin.name in self._plugins:
             logger.warning(
@@ -123,7 +132,15 @@ class PluginManager:
             return self._plugins[plugin.name]
 
         if hasattr(plugin, "initialize"):
-            plugin.initialize()
+            try:
+                plugin.initialize()
+
+            except Exception:
+                logger.exception(
+                    "Plugin initialization failed: %s",
+                    plugin.name,
+                )
+                return None
 
         self._plugins[plugin.name] = plugin
         self._modules[plugin.name] = module
@@ -182,6 +199,10 @@ class PluginManager:
         """
         for plugin in self._plugins.values():
             try:
+
+                if not hasattr(plugin, "can_handle"):
+                    continue
+                
                 if plugin.can_handle(text):
                     return plugin
             except Exception:

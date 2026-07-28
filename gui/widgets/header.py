@@ -1,4 +1,8 @@
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import (
+    Qt,
+    pyqtSignal,
+)
+
 from PyQt6.QtWidgets import (
     QFrame,
     QHBoxLayout,
@@ -10,46 +14,42 @@ from gui.theme import (
     SURFACE,
     PRIMARY,
     SUCCESS,
+    BORDER,
+    get_button_style,
     WARNING,
     TEXT,
     TEXT_MUTED,
-    TITLE_SIZE,
     SMALL_SIZE,
     CARD_PADDING,
     SPACING,
     SPACING_LARGE,
     BUTTON_HEIGHT,
+    STATUS_ONLINE_BG,
+    STATUS_OFFLINE_BG,
+    STATUS_LISTENING_BG,
+    STATUS_THINKING_BG,
+    STATUS_SPEAKING_BG,
+    STATUS_READY_BG,
+    STATUS_SPEAKING_TEXT,
+    STATUS_THINKING_TEXT,
 )
 
 
 class StatusBadge(QLabel):
 
-    def __init__(self):
+
+    def __init__(
+       self,
+    ) -> None:
         super().__init__("● Online")
 
         self.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.setMinimumHeight(32)
 
         self.setStyleSheet(f"""
-        QFrame#Header{{
-            background:{SURFACE};
-            border-radius:16px;
-        }}
 
         QLabel{{
             color:{TEXT};
-        }}
-
-        QPushButton{{
-            background:{PRIMARY};
-            color:white;
-            border:none;
-            border-radius:10px;
-            padding:8px 16px;
-        }}
-
-        QPushButton:hover{{
-            background:#60A5FA;
         }}
         """)
 
@@ -74,7 +74,7 @@ class StatusBadge(QLabel):
         self.setText("● Online")
 
         self._update_style(
-            "#14532D",
+            STATUS_ONLINE_BG,
             SUCCESS,
         )
 
@@ -83,7 +83,7 @@ class StatusBadge(QLabel):
         self.setText("● Offline")
 
         self._update_style(
-            "#451A03",
+            STATUS_OFFLINE_BG,
             WARNING,
         )
 
@@ -92,7 +92,7 @@ class StatusBadge(QLabel):
         self.setText("● Listening")
 
         self._update_style(
-            "#1E3A8A",
+            STATUS_LISTENING_BG,
             PRIMARY,
         )
 
@@ -101,8 +101,8 @@ class StatusBadge(QLabel):
         self.setText("● Thinking")
 
         self._update_style(
-            "#4C1D95",
-            "#C084FC",
+            STATUS_THINKING_BG,
+            STATUS_THINKING_TEXT,
         )
 
 
@@ -111,8 +111,8 @@ class StatusBadge(QLabel):
         self.setText("● Speaking")
 
         self._update_style(
-            "#7C2D12",
-            "#FB923C",
+            STATUS_SPEAKING_BG,
+            STATUS_SPEAKING_TEXT,
         )
 
 
@@ -121,47 +121,52 @@ class StatusBadge(QLabel):
         self.setText("● Ready")
 
         self._update_style(
-            "#14532D",
+            STATUS_READY_BG,
             SUCCESS,
         )
 
 
 class Header(QFrame):
 
-    def __init__(self):
+    settingsClicked = pyqtSignal()
+
+    def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
         self.setObjectName("Header")
 
-        self.setStyleSheet("""
-        QFrame#Header{
-            background:#1F2937;
-            border-radius:14px;
-        }
+        self.setStyleSheet(f"""
+        QFrame#Header{{
+            background:{SURFACE};
+            border:1px solid {BORDER};
+            border-radius:16px;
+        }}
 
-        QLabel{
+        QLabel{{
             color:white;
-        }
+        }}
 
-        QPushButton{
+        QPushButton{{
             background:#374151;
             color:white;
             border:none;
             border-radius:10px;
             padding:8px 16px;
-        }
+        }}
 
-        QPushButton:hover{
+        QPushButton:hover{{
             background:#4B5563;
-        }
+        }}
         """)
 
         layout = QHBoxLayout(self)
         layout.setContentsMargins(
             CARD_PADDING,
-            SPACING,
             CARD_PADDING,
-            SPACING,
+            CARD_PADDING,
+            CARD_PADDING,
         )
         layout.setSpacing(SPACING_LARGE)
 
@@ -171,15 +176,16 @@ class Header(QFrame):
             "🤖 Cipher"
         )
         self.title.setStyleSheet(f"""
-        font-size:{TITLE_SIZE}px;
-        font-weight:bold;
+        font-size:20px;
+        font-weight:700;
+        letter-spacing:0.5px;
         color:{TEXT};
         """)
 
-        self.subtitle = QLabel(" Ubuntu Desktop AI Assistant")
+        self.subtitle = QLabel("Ubuntu Desktop AI Assistant")
         self.subtitle.setStyleSheet(f"""
         color:{TEXT_MUTED};
-        font-size:{SMALL_SIZE}pt;
+        font-size:10pt;
         """)
 
         left.addWidget(self.title)
@@ -190,11 +196,11 @@ class Header(QFrame):
 
         info = QVBoxLayout()
 
-        info.setSpacing(4)
+        info.setSpacing(SPACING // 2)
 
-        self.model = QLabel("🤖 qwen2.5")
-        self.voice = QLabel("🎤 Ready")
-        self.memory = QLabel("🧠 Active")
+        self.model = QLabel("🤖 Model : qwen2.5")
+        self.voice = QLabel("🎤 Voice : Ready")
+        self.memory = QLabel("🧠 Memory : Active")
 
         for label in (
             self.model,
@@ -216,78 +222,100 @@ class Header(QFrame):
 
         self.status = StatusBadge()
 
-        self.settings_button = QPushButton("⚙")
+        self.settings_button = QPushButton("⚙️")
         self.settings_button.setToolTip(
             "Settings"
         )
+        self.settings_button.setCursor(
+            Qt.CursorShape.PointingHandCursor
+        )
+
+        self.settings_button.setStyleSheet(get_button_style())
+
         self.settings_button.setFixedSize(
             BUTTON_HEIGHT,
-            BUTTON_HEIGHT,
+            BUTTON_HEIGHT
+        )
+
+        self.settings_button.clicked.connect(
+            self.settingsClicked.emit
         )
 
         layout.addWidget(self.status)
-        layout.addSpacing(10)
+        layout.addSpacing(SPACING)
         layout.addWidget(self.settings_button)
 
-    def set_model(self, name):
+        self.status.set_ready()
+
+    def set_model(self, name: str):
 
         self.model.setText(
-            f"🤖 {name}"
+            f"🤖 Model : {name}"
         )
 
 
-    def set_voice_status(self, status):
+    def set_voice_status(
+        self, 
+        status: str,
+    ):
 
         self.voice.setText(
-            f"🎤 {status}"
+            f"🎤 Voice : {status}"
         )
 
 
-    def set_memory_status(self, status):
+    def set_memory_status(
+        self,
+        status: str
+    ):
 
         self.memory.setText(
-            f"🧠 {status}"
+            f"🧠 Memory : {status}"
+        )
+
+    def _set_status(
+        self,
+        badge_method,
+        voice_status,
+    ):
+
+        badge_method()
+
+        self.set_voice_status(
+            voice_status
         )
 
     def set_online(self):
 
-        self.status.set_online()
-
-        self.set_voice_status(
-            "Ready"
+        self._set_status(
+            self.status.set_online,
+            "Ready",
         )
-
 
     def set_listening(self):
 
-        self.status.set_listening()
-
-        self.set_voice_status(
-            "Listening"
+        self._set_status(
+            self.status.set_listening,
+            "Listening",
         )
-
 
     def set_thinking(self):
 
-        self.status.set_thinking()
-
-        self.set_voice_status(
-            "Thinking"
+        self._set_status(
+            self.status.set_thinking,
+            "Thinking",
         )
-
 
     def set_speaking(self):
 
-        self.status.set_speaking()
-
-        self.set_voice_status(
-            "Speaking"
+        self._set_status(
+            self.status.set_speaking,
+            "Speaking",
         )
 
     def set_ready(self):
 
-        self.status.set_ready()
-
-        self.set_voice_status(
-            "Ready"
+        self._set_status(
+            self.status.set_ready,
+            "Ready",
         )

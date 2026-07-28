@@ -6,6 +6,7 @@ from PyQt6.QtWidgets import (
     QFrame,
     QLabel,
     QVBoxLayout,
+    QWidget,
 )
 
 
@@ -15,7 +16,10 @@ class ChatEmptyState(QFrame):
     Hidden automatically once the first chat message appears.
     """
 
-    def __init__(self, parent=None):
+    def __init__(
+        self, 
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
 
         self.setObjectName("chatEmptyState")
@@ -125,8 +129,12 @@ class ChatEmptyState(QFrame):
 
     # --------------------------------------------------
 
-    def show_state(self):
+    def show_state(
+        self,
+    ) -> None:
         self.show()
 
-    def hide_state(self):
+    def hide_state(
+        self,
+    ) -> None:
         self.hide()

@@ -37,7 +37,9 @@ class ChatNotificationService:
     center without changing the public API.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._notifications: list[ChatNotification] = []
 

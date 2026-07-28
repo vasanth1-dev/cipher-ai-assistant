@@ -9,12 +9,12 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
-from gui.theme import(
+from gui.theme import (
     SPACING,
     SPACING_SMALL,
     CARD_PADDING,
 )
-from gui.widgets.message_bubble import MessageBubble
+from gui.widgets.chat.message_bubble import MessageBubble
 
 
 class ChatContainer(QScrollArea):
@@ -29,8 +29,20 @@ class ChatContainer(QScrollArea):
     • Auto scroll
     """
 
-    def __init__(self):
-        super().__init__()
+    def __init__(
+       self,
+       parent: QWidget | None = None,
+    ) -> None:
+        
+        super().__init__(parent)
+
+        self._scroll_timer = QTimer(self)
+
+        self._scroll_timer.setSingleShot(True)
+
+        self._scroll_timer.timeout.connect(
+            self._perform_scroll
+        )
 
         self._last_bubble = None
         self._typing_label = None
@@ -41,7 +53,9 @@ class ChatContainer(QScrollArea):
     # UI
     # --------------------------------------------------
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         self.setWidgetResizable(True)
 
@@ -88,7 +102,10 @@ class ChatContainer(QScrollArea):
         self,
         sender: str,
         message: str,
-    ):
+    ) -> MessageBubble:
+        
+        sender = str(sender).strip()
+        message = str(message)
 
         self.hide_typing_indicator()
 
@@ -104,8 +121,6 @@ class ChatContainer(QScrollArea):
 
         self._last_bubble = bubble
 
-        self.scroll_to_bottom()
-
         return bubble
 
     # --------------------------------------------------
@@ -113,7 +128,12 @@ class ChatContainer(QScrollArea):
     def append_to_last_message(
         self,
         text: str,
-    ):
+    ) -> None:
+        
+        text = str(text)
+
+        if not text:
+            return
 
         if self._last_bubble is None:
             return
@@ -122,13 +142,13 @@ class ChatContainer(QScrollArea):
             text,
         )
 
-        self.scroll_to_bottom()
-
     # --------------------------------------------------
     # Typing Indicator
     # --------------------------------------------------
 
-    def show_typing_indicator(self):
+    def show_typing_indicator(
+        self,
+    ) -> None:
 
         if self._typing_label is not None:
             return
@@ -154,7 +174,9 @@ class ChatContainer(QScrollArea):
 
     # --------------------------------------------------
 
-    def hide_typing_indicator(self):
+    def hide_typing_indicator(
+        self,
+    ) -> None:
 
         if self._typing_label is None:
             return
@@ -171,11 +193,13 @@ class ChatContainer(QScrollArea):
     # Clear
     # --------------------------------------------------
 
-    def clear_messages(self):
+    def clear_messages(
+        self,
+    ) -> None:
 
         self.hide_typing_indicator()
 
-        while self.layout.count() > 1:
+        while self.layout.count():
 
             item = self.layout.takeAt(0)
 
@@ -184,23 +208,26 @@ class ChatContainer(QScrollArea):
             if widget is not None:
                 widget.deleteLater()
 
+        self.layout.addStretch()
+
         self._last_bubble = None
 
     # --------------------------------------------------
     # Scroll
     # --------------------------------------------------
 
-    def scroll_to_bottom(self):
+    def scroll_to_bottom(
+        self,
+    ) -> None:
 
-        QTimer.singleShot(
+        self._scroll_timer.start(0)
 
-            0,
+    def _perform_scroll(
+        self,
+    ) -> None:
 
-            lambda:
-            self.verticalScrollBar().setValue(
+        bar = self.verticalScrollBar()
 
-                self.verticalScrollBar().maximum()
-
-            ),
-
+        bar.setValue(
+            bar.maximum()
         )

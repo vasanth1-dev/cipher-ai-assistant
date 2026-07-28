@@ -29,7 +29,9 @@ class ChatTaskQueue:
     tasks from this queue in future milestones.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._queue: deque[ChatTask] = deque()
 

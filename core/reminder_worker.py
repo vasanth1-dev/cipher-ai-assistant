@@ -9,12 +9,16 @@ from services.reminder_service import reminder_service
 
 class ReminderWorker:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.running = False
         self.thread = None
 
-    def start(self):
+    def start(
+        self,
+    ) ->None:
 
         if self.running:
             return
@@ -31,17 +35,23 @@ class ReminderWorker:
 
         logger.info("Reminder worker started.")
 
-    def stop(self):
+    def stop(
+        self,
+    ) -> None:
 
         self.running = False
 
-        if self.thread.is_alive():
+        if self.thread and self.thread.is_alive():
             self.thread.join(timeout=2)
+
+        self.thread = None
 
         logger.info("Reminder worker stopped.")
 
 
-    def _run(self):
+    def _run(
+        self,
+    ) -> None:
 
         while self.running:
 
@@ -55,12 +65,16 @@ class ReminderWorker:
 
                     try:
                         speaker.speak(f"Reminder. {reminder}")
-                    except Exception as e:
-                        logger.exception(e)
+                    except Exception:
+                        logger.exception(
+                            "Failed to announce reminder."
+                        )
 
-            except Exception as e:
+            except Exception:
 
-                logger.exception(e)
+                logger.exception(
+                    "Reminder worker loop failed."
+                )
 
             time.sleep(5)
 

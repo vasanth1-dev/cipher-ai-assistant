@@ -6,7 +6,9 @@ from core.logger import logger
 
 class MemoryService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.file = Path("data/memory.json")
 
@@ -17,6 +19,8 @@ class MemoryService:
 
         if not self.file.exists():
             self._save({})
+
+        self._memory = self._load()
 
     # ------------------------------------------------ #
     # Internal
@@ -39,7 +43,9 @@ class MemoryService:
 
         except Exception as e:
 
-            logger.exception(e)
+            logger.exception(
+                f"[MEMORY] Failed to load memory: {e}"
+            )
 
         return {}
 
@@ -63,7 +69,30 @@ class MemoryService:
 
         except Exception as e:
 
-            logger.exception(e)
+            logger.exception(
+                f"[MEMORY] Failed to save memory: {e}"
+            )
+
+    def _commit(
+        self,
+    ) -> None:
+        """
+        Save the in-memory cache to disk.
+        """
+
+        self._save(
+            self._memory
+        )
+
+    def _normalize_key(
+        self,
+        key: str,
+    ) -> str:
+        """
+        Normalize memory keys.
+        """
+
+        return str(key).strip().lower()
 
     # ------------------------------------------------ #
     # Public API
@@ -74,13 +103,18 @@ class MemoryService:
         if not key or value is None:
             return False
 
-        data = self._load()
+        data = self._memory
 
-        key = key.strip().lower()
+        key = self._normalize_key(
+            key,
+        )
 
-        data[key] = str(value).strip()
+        if not key:
+            return False
 
-        self._save(data)
+        data[key] = value
+
+        self._commit()
 
         logger.info(f"[MEMORY] Saved: {key}")
 
@@ -91,11 +125,13 @@ class MemoryService:
         if not key:
             return None
 
-        data = self._load()
+        data = self._memory
 
-        return data.get(
-            key.strip().lower()
+        key = self._normalize_key(
+            key,
         )
+
+        return data.get(key)
 
     def update(self, key, value):
 
@@ -106,16 +142,18 @@ class MemoryService:
         if not key:
             return False
 
-        data = self._load()
+        data = self._memory
 
-        key = key.strip().lower()
+        key = self._normalize_key(
+            key,
+        )
 
         if key not in data:
             return False
 
         del data[key]
 
-        self._save(data)
+        self._commit()
 
         logger.info(f"[MEMORY] Removed: {key}")
 
@@ -126,23 +164,27 @@ class MemoryService:
         if not key:
             return False
 
-        return (
-            key.strip().lower()
-            in self._load()
+        key = self._normalize_key(
+            key,
         )
+
+        return key in self._memory
 
     def search(self, keyword):
 
         if not keyword:
             return {}
 
-        keyword = keyword.lower()
+        keyword = self._normalize_key(keyword)
+
+        if not keyword:
+            return {}
 
         return {
 
             k: v
 
-            for k, v in self._load().items()
+            for k, v in self._memory.items()
 
             if keyword in k.lower()
             or keyword in str(v).lower()
@@ -151,23 +193,27 @@ class MemoryService:
 
     def all(self):
 
-        return self._load()
+        return dict(self._memory)
 
     def keys(self):
 
         return sorted(
-            self._load().keys()
+            self._memory.keys()
         )
 
     def clear(self):
 
-        self._save({})
+        self._memory.clear()
+
+        self._commit()
 
         logger.info("[MEMORY] Cleared.")
 
     def count(self):
 
-        return len(self._load())
+        return len(
+            self._memory
+        )
 
     # ------------------------------------------------ #
     # AI Context
@@ -175,7 +221,7 @@ class MemoryService:
 
     def memory_prompt(self):
 
-        data = self._load()
+        data = self._memory
 
         if not data:
             return ""

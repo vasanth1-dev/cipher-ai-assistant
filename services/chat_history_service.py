@@ -12,7 +12,9 @@ class ChatHistoryService:
     This service is independent from the GUI.
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
         self.history_dir = Path("data/chat_history")
         self.history_dir.mkdir(parents=True, exist_ok=True)
 

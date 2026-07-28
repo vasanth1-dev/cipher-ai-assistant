@@ -30,7 +30,9 @@ class ChatPromptLibraryService:
         ],
     }
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/chat_prompt_library.json")
         self._file.parent.mkdir(

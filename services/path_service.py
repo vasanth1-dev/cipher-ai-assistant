@@ -5,7 +5,9 @@ from core.logger import logger
 
 class PathService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.home = Path.home()
 

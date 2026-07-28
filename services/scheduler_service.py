@@ -8,7 +8,9 @@ from core.speaker import speaker
 
 class SchedulerService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self.running = False
 
     def loop(self):
@@ -37,15 +39,21 @@ class SchedulerService:
 
         self.running = True
 
-        thread = threading.Thread(
+        self.thread = threading.Thread(
             target=self.loop,
             daemon=True,
+            name="SchedulerService"
         )
 
-        thread.start()
+        self.thread.start()
 
     def stop(self):
         self.running = False
+
+        if self.thread and self.thread.is_alive():
+            self.thread.join(timeout=2)
+            
+        self.thread = None
 
 
 scheduler_service = SchedulerService()

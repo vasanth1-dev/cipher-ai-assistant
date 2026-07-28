@@ -13,7 +13,9 @@ class ChatBackupService:
     require any integration with existing files.
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self.data_dir = Path("data")
         self.backup_dir = Path("backups")

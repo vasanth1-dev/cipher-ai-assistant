@@ -44,6 +44,8 @@ def handle(command: str):
         "show contacts",
         "list contacts",
         "contacts",
+        "show my contacts",
+        "my contacts",
     ):
 
         return contact_service.list()

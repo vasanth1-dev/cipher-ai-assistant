@@ -1,0 +1,33 @@
+{
+    "id": "notification",
+    "name": "Notification",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in notification plugin for displaying and managing desktop notifications.",
+    "category": "System",
+    "entry_point": "notification_plugin.NotificationPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 80,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "notifications"
+    ],
+    "keywords": [
+        "notification",
+        "notify",
+        "alert",
+        "toast",
+        "desktop notification"
+    ],
+    "commands": [
+        "notify",
+        "show notification",
+        "notification",
+        "clear notifications",
+        "dismiss notifications",
+        "notification history"
+    ],
+    "min_cipher_version": "2.0.0"
+}

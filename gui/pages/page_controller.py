@@ -1,5 +1,8 @@
 from PyQt6.QtCore import QObject
-from PyQt6.QtWidgets import QStackedWidget
+from PyQt6.QtWidgets import (
+    QStackedWidget,
+    QWidget,
+)
 
 
 class PageController(QObject):
@@ -7,7 +10,10 @@ class PageController(QObject):
     Controls page navigation for the stacked widget.
     """
 
-    def __init__(self, stack: QStackedWidget):
+    def __init__(
+        self, 
+        stack: QStackedWidget,
+    ) -> None:
         super().__init__()
 
         self._stack = stack
@@ -15,7 +21,11 @@ class PageController(QObject):
 
     # --------------------------------------------------
 
-    def add_page(self, name: str, widget):
+    def add_page(
+        self, 
+        name: str, 
+        widget: QWidget,
+    ) -> None:
 
         if name in self._pages:
             return
@@ -25,7 +35,10 @@ class PageController(QObject):
 
     # --------------------------------------------------
 
-    def show_page(self, name: str):
+    def show_page(
+        self, 
+        name: str,
+    ) -> bool:
 
         widget = self._pages.get(name)
 
@@ -37,7 +50,9 @@ class PageController(QObject):
 
     # --------------------------------------------------
 
-    def current_page(self):
+    def current_page(
+        self,
+    ) -> str | None:
 
         widget = self._stack.currentWidget()
 
@@ -49,12 +64,17 @@ class PageController(QObject):
 
     # --------------------------------------------------
 
-    def page(self, name: str):
+    def page(
+        self, 
+        name: str,
+    ) -> QWidget | None:
 
         return self._pages.get(name)
 
     # --------------------------------------------------
 
-    def pages(self):
+    def pages(
+        self,
+    ) -> dict[str, QWidget]:
 
         return self._pages.copy()

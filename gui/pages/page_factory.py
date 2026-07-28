@@ -1,4 +1,6 @@
-from gui.dashboard_widget import DashboardWidget
+from PyQt6.QtWidgets import QWidget
+
+from gui.widgets.dashboard_widget import DashboardWidget
 from gui.widgets.chat_panel import ChatPanel
 
 from gui.pages.about_page import AboutPage
@@ -14,23 +16,39 @@ from gui.pages.system_page import SystemPage
 from gui.pages.voice_page import VoicePage
 
 
-def create_pages():
+def create_pages() -> dict[str, QWidget]:
     """
     Create and return all application pages.
     """
 
+    from gui.pages.page_constants import (
+        PAGE_LOADING,
+        PAGE_HOME,
+        PAGE_DASHBOARD,
+        PAGE_CHAT,
+        PAGE_MEMORY,
+        PAGE_FILES,
+        PAGE_SYSTEM,
+        PAGE_SETTINGS,
+        PAGE_PLUGINS,
+        PAGE_VOICE,
+        PAGE_EXPORT,
+        PAGE_ABOUT,
+        PAGE_NOT_FOUND,
+    )
+
     return {
-        "loading": LoadingPage(),
-        "home": HomePage(),
-        "dashboard": DashboardWidget(),
-        "chat": ChatPanel(),
-        "memory": MemoryPage(),
-        "files": FilesPage(),
-        "system": SystemPage(),
-        "settings": SettingsPage(),
-        "plugins": PluginManagerPage(),
-        "voice": VoicePage(),
-        "export": ExportChatPage(),
-        "about": AboutPage(),
-        "404": PageNotFound(),
+        PAGE_LOADING: LoadingPage(),
+        PAGE_HOME: HomePage(),
+        PAGE_DASHBOARD: DashboardWidget(),
+        PAGE_CHAT: ChatPanel(),
+        PAGE_MEMORY: MemoryPage(),
+        PAGE_FILES: FilesPage(),
+        PAGE_SYSTEM: SystemPage(),
+        PAGE_SETTINGS: SettingsPage(),
+        PAGE_PLUGINS: PluginManagerPage(),
+        PAGE_VOICE: VoicePage(),
+        PAGE_EXPORT: ExportChatPage(),
+        PAGE_ABOUT: AboutPage(),
+        PAGE_NOT_FOUND: PageNotFound(),
     }

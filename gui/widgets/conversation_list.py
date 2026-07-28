@@ -2,20 +2,22 @@ from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtGui import QAction
 from PyQt6.QtWidgets import (
     QFrame,
-    QLineEdit,
     QListWidget,
     QListWidgetItem,
-    QPushButton,
     QVBoxLayout,
     QMenu,
 )
 
+from gui.widgets.ui.icon_button import IconButton
+from gui.widgets.ui.search_box import SearchBox
+from gui.widgets.ui.empty_state import EmptyState
+from core.logger import logger
 from gui.theme import (
     PRIMARY,
-    PRIMARY_HOVER,
     SURFACE,
     TEXT,
     BORDER,
+    LIST_WIDGET_STYLE,
 )
 
 
@@ -45,7 +47,9 @@ class ConversationList(QFrame):
 
    
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
         self._build_ui()
@@ -58,57 +62,22 @@ class ConversationList(QFrame):
         QFrame{{
             background:transparent;
         }}
-
-        QLineEdit{{
-            background:{SURFACE};
-            color:{TEXT};
-            border:1px solid {BORDER};
-            border-radius:8px;
-            padding:8px;
-        }}
-
-        QListWidget{{
-            background:transparent;
-            border:none;
-            color:{TEXT};
-        }}
-
-        QListWidget::item{{
-            padding:10px;
-            border-radius:8px;
-        }}
-
-        QListWidget::item:selected{{
-            background:{PRIMARY};
-            color:white;
-        }}
-
-        QListWidget::item:hover{{
-            background:{PRIMARY_HOVER};
-        }}
-
-        QPushButton{{
-            background:{PRIMARY};
-            color:white;
-            border:none;
-            border-radius:8px;
-            padding:10px;
-            font-weight:bold;
-        }}
-
-        QPushButton:hover{{
-            background:{PRIMARY_HOVER};
-        }}
         """)
 
         layout = QVBoxLayout(self)
 
-        layout.setSpacing(10)
+        layout.setSpacing(12)
+        layout.setContentsMargins(0, 0, 0, 0)
 
         # --------------------------
 
-        self.new_chat = QPushButton(
-            "➕ New Chat"
+        self.new_chat = IconButton(
+            "➕",
+            "New Chat",
+        )
+
+        self.new_chat.setToolTip(
+            "Create New Conversation"
         )
 
         self.new_chat.clicked.connect(
@@ -121,11 +90,13 @@ class ConversationList(QFrame):
 
         # --------------------------
 
-        self.search = QLineEdit()
-
-        self.search.setPlaceholderText(
-            "Search conversations..."
+        self.search = SearchBox(
+            "🔍 Search conversations..."
         )
+
+        self.search.setToolTip(
+            "Search Conversations"
+)
 
         self.search.textChanged.connect(
             self.searchChanged.emit
@@ -138,6 +109,21 @@ class ConversationList(QFrame):
         # --------------------------
 
         self.list = QListWidget()
+
+        self.empty_state = EmptyState(
+            icon="💬",
+            title="No Conversations",
+            message="Start a new chat to begin your conversation history.",
+            button_text="New Chat",
+        )
+
+        self.empty_state.button_widget().clicked.connect(
+            self.newChatClicked.emit
+        )
+
+        self.empty_state.hide()
+
+        self.list.setStyleSheet(LIST_WIDGET_STYLE)
 
         self.list.itemClicked.connect(
             self.clicked
@@ -152,9 +138,24 @@ class ConversationList(QFrame):
         )
 
         layout.addWidget(
+            self.empty_state
+        )
+
+        layout.addWidget(
             self.list,
             1,
         )
+
+    def _format_title(
+        self,
+        title: str,
+        pinned: bool,
+    ) -> str:
+
+        if pinned:
+            return f"📌 💬 {title}"
+
+        return f"💬 {title}"
 
     # --------------------------------------------------
 
@@ -162,11 +163,14 @@ class ConversationList(QFrame):
         self,
         conversation_id,
         title,
-        pinned=False
+        is_pinned=False
     ):
+
         
-        if pinned:
-            title = f"📌 {title}"
+        title = self._format_title(
+            title,
+            is_pinned,
+        )
 
         item = QListWidgetItem(title)
 
@@ -182,15 +186,54 @@ class ConversationList(QFrame):
 
     # --------------------------------------------------
 
-    def clear(self):
+    def clear(self) -> None:
 
         self.list.clear()
 
+        self.list.hide()
+
+        self.empty_state.show()
+
+
+    def _find_item(
+        self,
+        conversation_id: str,
+    ):
+
+        for index in range(
+            self.list.count()
+        ):
+
+            item = self.list.item(index)
+
+            if item.data(
+                Qt.ItemDataRole.UserRole
+            ) == conversation_id:
+
+                return item, index
+
+        return None, -1
+
     # --------------------------------------------------
 
-    def load(self, conversations):
+    def load(
+        self, 
+        conversations,
+    ) -> None:
 
         self.clear()
+
+        if not conversations:
+
+            self.list.hide()
+
+            self.empty_state.show()
+
+            return
+        
+        self.empty_state.hide()
+
+        self.list.show()
 
         for conversation in conversations:
 
@@ -212,53 +255,96 @@ class ConversationList(QFrame):
         title,
     ):
 
-        for index in range(self.list.count()):
+        item, _ = self._find_item(
+            conversation_id
+        )
 
-            item = self.list.item(index)
+        if item is None:
+            return    
+        is_pinned = item.text().startswith("📌")
 
-            if item.data(
-                Qt.ItemDataRole.UserRole
-            ) == conversation_id:
+        item.setText(
+            self._format_title(
+                title,
+                is_pinned,
+            )
+        )
 
-                item.setText(title)
-
-                return
-
-
-    # --------------------------------------------------
-
-    def remove_conversation(self, conversation_id):
-
-        for index in range(self.list.count()):
-
-            item = self.list.item(index)
-
-            if item.data(
-                Qt.ItemDataRole.UserRole
-            ) == conversation_id:
-
-                self.list.takeItem(index)
-
-                return
 
     # --------------------------------------------------
 
-    def clicked(self, item):
+    def remove_conversation(
+        self, 
+        conversation_id,
+    ):
+                
+
+        item, index = self._find_item(
+            conversation_id
+        )
+
+        if item is None:
+                return
+
+        
+
+        self.list.takeItem(index)
+
+    # --------------------------------------------------
+
+    def clicked(
+        self, 
+        item: QListWidgetItem,
+    ) -> None:
 
         conversation_id = item.data(
             Qt.ItemDataRole.UserRole
         )
 
+        if conversation_id is None:
+            return
+
         self.conversationSelected.emit(
             conversation_id
         )
 
+    def filter_conversations(self, text: str) -> None:
+        """
+        Filter conversations by title.
+        """
+
+        text = text.casefold().strip()
+
+        visible_count = 0
+
+        for index in range(self.list.count()):
+
+            item = self.list.item(index)
+
+            title = item.text().casefold()
+
+            matched = text in title
+
+            item.setHidden(not matched)
+
+            if matched:
+                visible_count += 1
+
+        has_items = self.list.count() > 0
+        has_results = visible_count > 0
+
+        self.list.setVisible(has_items and has_results)
+        self.empty_state.setVisible(not has_results)
+
 
     # --------------------------------------------------
 
-    def _show_context_menu(self, position):
+    def _show_context_menu(
+        self, 
+        position,
+    ) -> None:
 
-        print("Context menu opened")
+        logger.debug("Context menu opened")
 
         item = self.list.itemAt(position)
 
@@ -279,7 +365,8 @@ class ConversationList(QFrame):
         }}
 
         QMenu::item {{
-            padding: 8px 24px;
+            padding:8px 16px;
+            border-radius:8px;
         }}
         
         QMenu::item:selected {{

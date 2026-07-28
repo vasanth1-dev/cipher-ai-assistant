@@ -1,4 +1,4 @@
-from PyQt6.QtCore import Qt
+
 from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
@@ -18,11 +18,15 @@ from gui.theme import (
 
 class HelpPage(QWidget):
 
-    def __init__(self):
+    def __init__(
+        self,
+    ) -> None:
         super().__init__()
         self._build_ui()
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         self.setStyleSheet(f"""
         QWidget {{

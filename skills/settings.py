@@ -19,6 +19,9 @@ def handle(command: str):
 
         settings = settings_service.load()
 
+        if not settings:
+            return "No settings have been configured yet."
+
         result = []
 
         for key, value in settings.items():
@@ -105,6 +108,18 @@ def handle(command: str):
         return settings_service.set(
             "ollama_model",
             model,
+        )
+    
+    if command.startswith("change theme to"):
+
+        theme = command.replace(
+            "change theme to",
+            "",
+            1,
+        ).strip()
+
+        return (
+            f"Theme '{theme}' is not implemented yet."
         )
 
     # --------------------------

@@ -19,7 +19,7 @@ from skills.settings import handle as settings
 _registered = False
 
 
-def register_actions():
+def register_actions() -> None:
     """
     Register all built-in skill handlers.
 
@@ -29,6 +29,10 @@ def register_actions():
     global _registered
 
     if _registered:
+
+        logger.info(
+            "[REGISTRY] Skills already registered."
+        )
         return
 
     registrations = [
@@ -55,8 +59,10 @@ def register_actions():
             action_engine.register(intents, handler)
             loaded += 1
 
-        except Exception as e:
-            logger.exception(e)
+        except Exception:
+            logger.exception(
+                f"[REGISTRY] Failed to register {handler.__module__}"
+            )
 
     _registered = True
 

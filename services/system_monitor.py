@@ -6,7 +6,9 @@ import psutil
 
 class SystemMonitor:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.boot_time = psutil.boot_time()
 

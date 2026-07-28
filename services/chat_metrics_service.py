@@ -12,7 +12,9 @@ class ChatMetricsService:
     dashboards, and performance monitoring.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.reset()
 

@@ -38,7 +38,9 @@ class ChatJobService:
     It does not execute jobs.
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self._jobs: dict[str, ChatJob] = {}
 

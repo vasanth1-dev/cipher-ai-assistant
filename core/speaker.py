@@ -1,5 +1,4 @@
 import asyncio
-import os
 import queue
 import subprocess
 import tempfile
@@ -7,6 +6,7 @@ import threading
 
 import edge_tts
 
+from pathlib import Path
 from core.logger import logger
 from config import VOICE
 
@@ -26,7 +26,9 @@ except Exception:
 
 class Speaker:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.queue = queue.Queue()
 
@@ -40,16 +42,21 @@ class Speaker:
         self.thread = threading.Thread(
             target=self._worker,
             daemon=True,
+            name="SpeakerThread",
         )
 
         self.thread.start()
         self.player = None
+        self.player_lock = threading.Lock()
 
     # --------------------------------------------------
 
-    def speak(self, text):
-
-        if not text:
+    def speak(
+        self, 
+        text: str,
+    ) -> None:
+        
+        if text is None:
             return
 
         text = str(text).strip()
@@ -59,9 +66,38 @@ class Speaker:
 
         self.queue.put(text)
 
+    def _play_audio(
+        self,
+        filename: str,
+    ) -> None:
+
+        with self.player_lock:
+
+            self.player = subprocess.Popen(
+                [
+                    "ffplay",
+                    "-nodisp",
+                    "-autoexit",
+                    "-loglevel",
+                    "quiet",
+                    filename,
+                ],
+                stdout=subprocess.DEVNULL,
+                stderr=subprocess.DEVNULL,
+            )
+
+            self.player.wait()
+
+            self.player = None
+
     # --------------------------------------------------
 
-    def stop(self):
+    def stop(
+        self,
+    ) -> None:
+
+        if not self.running:
+            return
 
         self.stop_speaking()
 
@@ -79,14 +115,18 @@ class Speaker:
 
             except Exception:
 
-                pass
+                logger.exception(
+                    "[SPEAKER] Failed to stop player."
+                )
 
             self.player = None
         self.queue.put(None)
 
     # --------------------------------------------------
 
-    def clear_queue(self):
+    def clear_queue(
+        self,
+    ) -> None:
 
         while not self.queue.empty():
             try:
@@ -95,7 +135,9 @@ class Speaker:
                 break
 
 
-    def stop_speaking(self):
+    def stop_speaking(
+        self
+    ) -> None:
         """
         Stop the current speech without shutting down
         the speaker thread.
@@ -103,29 +145,61 @@ class Speaker:
 
         self.clear_queue()
 
-        if self.player:
+        with self.player_lock:
 
-            try:
-                self.player.terminate()
-                self.player.wait(timeout=1)
+            if self.player:
 
-            except Exception:
-                pass
+                try:
+                    self.player.terminate()
+                    self.player.wait(timeout=2)
 
-            self.player = None
+                except Exception:
+
+                    logger.exception(
+                        "[SPEAKER] Failed to stop player."
+                    )
+
+                self.player = None
+
+    def _delete_temp_file(
+        self,
+        filename: str,
+    ) -> None:
+
+        path = Path(filename)
+
+        try:
+            if path.exists():
+                path.unlink()
+
+        except Exception:
+
+            logger.warning(
+                "[SPEAKER] Failed to delete temporary audio file."
+            )
     # --------------------------------------------------
+
+
 
     @property
-    def is_speaking(self):
+    def is_speaking(
+        self,
+    ) -> bool:
 
-        return (
-            self.player is not None
-            or not self.queue.empty()
-        )
+        with self.player_lock:
+
+            speaking = (
+                self.player is not None
+                and self.player.poll() is None
+            )
+
+        return speaking or not self.queue.empty()
 
     # --------------------------------------------------
 
-    def _worker(self):
+    def _worker(
+        self,
+    ) -> None:
 
         while self.running:
 
@@ -147,7 +221,9 @@ class Speaker:
 
             except Exception as e:
 
-                logger.exception(e)
+                logger.exception(
+                    "[SPEAKER] Worker failed."
+                )
 
                 if self.on_error:
                     self.on_error(str(e))
@@ -161,7 +237,10 @@ class Speaker:
 
     # --------------------------------------------------
 
-    async def _tts(self, text):
+    async def _tts(
+        self, 
+        text: str,
+    ) -> None:
 
         with tempfile.NamedTemporaryFile(
             suffix=".mp3",
@@ -179,29 +258,25 @@ class Speaker:
 
             await communicate.save(filename)
 
-            self.player = subprocess.Popen(
-                [
-                    "ffplay",
-                    "-nodisp",
-                    "-autoexit",
-                    "-loglevel",
-                    "quiet",
-                    filename,
-                ],
-                stdout=subprocess.DEVNULL,
-                stderr=subprocess.DEVNULL,
+            self._play_audio(
+                filename,
             )
 
-            self.player.wait()
+        except Exception:
+
+            logger.exception(
+                "[SPEAKER] TTS playback failed."
+            )
+
+        finally:
 
             self.player = None
 
+            self._delete_temp_file(
+                filename,
+            )
 
-            if os.path.exists(filename):
-                os.remove(filename)
-
-        except Exception as e:
-            logger.exception(e)
+        
 
 
 speaker = Speaker()

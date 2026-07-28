@@ -1,31 +1,36 @@
 import importlib
-import os
 
+from pathlib import Path
+from core.logger import logger
 from core.action_engine import action_engine
 
 
 class SkillLoader:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
-        self.skills = {}
+        self.skills: dict[str, object] = {}
 
-    def load(self):
+    def load(
+        self,
+    ) -> None:
 
-        folder = "skills"
+        folder = Path("skills")
 
-        if not os.path.exists(folder):
+        if not folder.exists():
             return
 
-        for file in os.listdir(folder):
+        for file in sorted(folder.iterdir()):
 
-            if not file.endswith(".py"):
+            if file.suffix != ".py":
                 continue
 
-            if file.startswith("_"):
-                continue
+            module_name = file.stem
 
-            module_name = file[:-3]
+            if module_name.startswith("_"):
+                continue
 
             try:
 
@@ -42,19 +47,21 @@ class SkillLoader:
 
                     self.skills[module.INTENT] = module
 
-                    print(
+                    logger.info(
                         f"Loaded Skill : {module.INTENT}"
                     )
 
-            except Exception as e:
+            except Exception:
 
-                print(
-                    f"Skill Error ({module_name}) : {e}"
+                logger.exception(
+                    f"Skill Error ({module_name})"
                 )
 
-    def loaded(self):
+    def loaded(
+        self,
+    ) -> tuple[str, ...]:
 
-        return list(self.skills.keys())
+        return tuple(sorted(self.skills))
 
 
 skill_loader = SkillLoader()

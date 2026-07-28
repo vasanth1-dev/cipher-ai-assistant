@@ -38,6 +38,10 @@ def handle(command: str):
     prefixes = (
         "add task",
         "create task",
+        "add todo",
+        "add a todo",
+        "create todo",
+        "create a todo",
     )
 
     for prefix in prefixes:
@@ -61,6 +65,10 @@ def handle(command: str):
         "my tasks",
         "todo",
         "todo list",
+        "show todo",
+        "show todos",
+        "show my todos",
+        "list todos",
     ):
 
         return todo_service.list()

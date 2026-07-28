@@ -12,7 +12,6 @@ from core.reminder_worker import reminder_worker
 
 
 from config import (
-    ASSISTANT_NAME,
     USER_NAME,
     SESSION_TIMEOUT,
     EXIT_COMMANDS,
@@ -21,12 +20,15 @@ from config import (
 
 class Cipher:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.active = False
         self.running = True
         self.processing = False
         self.processing_lock = threading.Lock()
+        self.state_lock = threading.Lock()
 
         self.last_activity = time.time()
 
@@ -38,43 +40,141 @@ class Cipher:
         self.on_stream_start = None
         self.on_stream_update = None
         self.on_stream_finish = None
+        
+
+
+    def _set_status(
+        self, 
+        text: str,
+    ) -> None:
+
+        if self.on_status:
+            self.on_status(text)
+
+    def _show_message(
+        self,
+        sender: str,
+        message: str,
+    ):
+
+        if not message:
+            return
+
+        if self.on_message:
+            self.on_message(
+                sender,
+                message.strip(),
+            )
+
+    def _speak_response(
+        self,
+        text: str,
+    ):
+
+        if not text:
+            return
+
+        speaker.speak(text)
+
+
+    def _handle_local_response(
+        self,
+        response: str,
+    ):
+
+        response = response.strip()
+
+        if not response:
+
+            if self.on_stream_finish:
+                self.on_stream_finish()
+
+            return
+
+        try:
+            from core.conversation.conversation_service import (
+                conversation_service,
+            )
+
+            conversation_service.add_assistant_message(
+                response
+            )
+
+        except Exception:
+            logger.exception("Failed to save assistant message.")
+
+
+        self._show_message(
+            "Cipher",
+            response,
+        )
+
+        logger.info(
+            f"CIPHER : {response}"
+        )
+
+       # self._speak_response(
+        #    response
+       # )
+       
+        if self.on_stream_finish:
+            self.on_stream_finish()
 
     # -------------------------------------------------- #
     # State
     # -------------------------------------------------- #
 
-    def activate(self):
+    def activate(
+        self,
+    ) -> None:
 
-        self.active = True
+        if self.active:
+            return
+
+        with self.state_lock:
+            self.active = True
+
+
         self.last_activity = time.time()
 
-        if self.on_status:
-            self.on_status("🟢 Active")
-
+        self._set_status("🟢 Active")
+            
+        """
         message = (
             f"Hello {USER_NAME}. "
             f"I am {ASSISTANT_NAME}. "
             f"How can I help you?"
         )
+        
 
         speaker.speak(message)
+        """
 
-    def sleep(self):
+    def sleep(
+        self,
+    ) -> None:
 
-        self.active = False
+        with self.state_lock:
+            self.active = False
 
-        if self.on_status:
-            self.on_status("😴 Sleeping")
+        self._set_status(
+            "😴 Sleeping"
+        )
 
-        if self.on_message:
-            self.on_message(
-                "Cipher",
-                "Going to sleep.",
-            )
+    
+        self._show_message(
+            "Cipher",
+            "Going to sleep.",
+        )
 
-        speaker.speak("Going to sleep.")
+        self._speak_response("Going to sleep.")
 
-    def stop(self):
+    def stop(
+        self,
+    ) -> None:
+
+        if not self.running:
+            return
 
         self.running = False
 
@@ -82,8 +182,8 @@ class Cipher:
             reminder_worker.stop()
             speaker.stop()
 
-        except Exception as e:
-            logger.exception(e)
+        except Exception:
+            logger.exception("Reminder worker shutdown failed.")
 
         try:
 
@@ -92,25 +192,25 @@ class Cipher:
             if plugin_manager.started:
                 plugin_manager.stop()
 
-        except Exception as e:
-
-            logger.exception(e)
+        except Exception:
+            logger.exception("Reminder worker shutdown failed.")
 
         try:
 
             listener.stop()
 
         except Exception:
-            pass
+            logger.exception("Listener shutdown failed.")
     # -------------------------------------------------- #
     # Processing
     # -------------------------------------------------- #
 
-    def process(self, command):
+    def process(
+        self, 
+        command: str,
+    ) -> None:
 
-        
-
-        if not command:
+        if not isinstance(command, str):
             return
 
         command = command.strip()
@@ -125,18 +225,23 @@ class Cipher:
 
             self.processing = True
 
-        self.last_activity = time.time()
-
-        if self.on_status:
-            self.on_status("🧠 Thinking...")
-
-        logger.info(f"USER : {command}")
-
         try:
+
+            self.last_activity = time.time()
+
+            if self.on_status:
+                self.on_status("🧠 Thinking...")
+
+            logger.info(f"USER : {command}")
+
+            if self.on_stream_start:
+                self.on_stream_start()
 
             response = router.route(command)
 
-            print("ROUTER RESPONSE =>", repr(response))
+            logger.debug(
+                f"Router Response: {response!r}"
+            )
 
             # -----------------------------
             # Local skill response
@@ -144,29 +249,30 @@ class Cipher:
 
             if response:
 
-    # Save assistant reply
-                try:
-                    from core.conversation.conversation_service import conversation_service
+                response = response.strip()
 
-                    conversation_service.add_assistant_message(response)
+                if self.on_stream_update:
 
-                except Exception as e:
-                    logger.exception(e)
+                    current = ""
 
-                # Update GUI
-                if self.on_message:
-                    self.on_message(
-                        "Cipher",
-                        response,
-                    )
+                    for word in response.split():
 
-                logger.info(
-                    f"CIPHER : {response}"
+                        current += word + " "
+
+                        self.on_stream_update(
+                            current.rstrip()
+                        )
+
+                        time.sleep(0.02)
+
+                self._handle_local_response(
+                    response
                 )
 
-                speaker.speak(response)
-
                 return
+
+    # Save assistant reply
+                
 
             
 
@@ -174,23 +280,26 @@ class Cipher:
 
             logger.exception(e)
 
-            if self.on_message:
-                self.on_message(
-                    "Cipher",
-                    "Sorry. Something went wrong."
-                )
+            error = "Sorry. Something went wrong."
 
-            speaker.speak(
-                "Sorry. Something went wrong."
+            self._show_message(
+                "Cipher",
+                error,
             )
+
+            self._speak_response(
+                error,
+            )
+
+            if self.on_stream_finish:
+                self.on_stream_finish()
 
         finally:
             
             with self.processing_lock:
                 self.processing = False
 
-            if self.on_status:
-                self.on_status("🟢 Ready")
+            self._set_status("🟢 Ready")
     
         # -------------------------------------------------- #
     # Single Listen (GUI ST Button)
@@ -198,31 +307,35 @@ class Cipher:
 
     def listen_once(self):
 
-        if self.processing:
-            return
+        logger.info("[GUI] listen_once() called")
 
-        if self.on_status:
-            self.on_status("🎤 Listening...")
+        logger.info("Before listener.listen()")
+
+        self._set_status("🎤 Listening...")
 
         try:
 
             text = listener.listen()
 
-            print("RAW STT =>", repr(text))
+            logger.info(f"After listener.listen(): {text!r}")
+
+            logger.debug(
+                f"Speech Input: {text!r}"
+            )
 
             if not text:
 
-                if self.on_status:
-                    self.on_status("🟢 Ready")
+                
+                self._set_status("🟢 Ready")
 
                 return
 
             text = text.strip()
 
-            if self.on_message:
-                self.on_message(
+            
+            self._show_message(
                     USER_NAME,
-                    text,
+                    text.strip(),
                 )
 
             self.process(text)
@@ -231,23 +344,23 @@ class Cipher:
 
             logger.exception(e)
 
-            if self.on_message:
-                self.on_message(
-                    "System",
-                    f"Speech Error: {e}",
-                )
+            
+            self._show_message(
+                "System",
+                f"Speech Error: {e}",
+            )
 
         finally:
 
-            if self.on_status:
-                self.on_status("🟢 Ready")
+            self._set_status("🟢 Ready")
 
     # -------------------------------------------------- #
     # Main Loop
     # -------------------------------------------------- #
-
-    def run(self):
-
+    
+    def _startup(
+        self,
+    ) -> None:
 
         try:
             reminder_worker.start()
@@ -265,24 +378,46 @@ class Cipher:
         except Exception as e:
             logger.exception(e)
 
-        if self.on_status:
-            self.on_status("🟢 Online")
+        self._set_status("🟢 Online")
 
-        if self.on_message:
-            self.on_message(
-                "System",
-                f"{ASSISTANT_NAME} is online",
-            )
 
-        speaker.speak(
-            f"{ASSISTANT_NAME} is online."
+    def _start_processing_thread(
+        self,
+        command: str,
+    ) -> None:
+
+        if not self.running:
+            return
+
+        worker = threading.Thread(
+            target=self.process,
+            args=(command,),
+            daemon=True,
+            name="CipherCommand",
         )
+
+        worker.start()
+
+    def run(
+        self,
+    ) -> None:
+
+        self._startup()
+
+        self._listen_loop()
+    
+    def _listen_loop(
+        self,
+    ) -> None:
 
         while self.running:
 
             try:
 
-                if self.active:
+                with self.state_lock:
+                    active = self.active
+
+                if active:
 
                     if (
                         time.time()
@@ -293,8 +428,14 @@ class Cipher:
                         self.sleep()
                         continue
 
-                if self.processing:
+                with self.processing_lock:
+
+                    busy = self.processing
+
+                if busy:
+
                     time.sleep(0.1)
+
                     continue
 
 
@@ -303,11 +444,11 @@ class Cipher:
                 if not text:
                     continue
 
-                text = text.lower().strip()
+                text = " ".join(text.lower().split())
 
                 # Wake Mode
 
-                if not self.active:
+                if not active:
 
                     if wakeword.detect(text):
 
@@ -315,49 +456,36 @@ class Cipher:
                             text
                         )
 
-                        if not self.active:
-                            self.activate()
+                        self.activate()
 
                         if command:
 
-                            threading.Thread(
-                                target=self.process,
-                                args=(text,),
-                                daemon=True,
-                                name="CipherCommand"
-                            ).start()
+                            self._start_processing_thread(
+                                command
+                            )
 
-                    continue
+                        continue
 
+            
                 # Exit
 
                 if text in EXIT_COMMANDS:
 
-                    speaker.speak(
-                        "Goodbye."
-                    )
-
-                    self.stop()
+                    self._handle_exit()
 
                     break
 
                 # Sleep
 
-                if text in (
-                    "sleep",
-                    "go to sleep",
-                    "stop listening",
-                ):
+                if self._is_sleep_command(text):
 
                     self.sleep()
 
                     continue
 
-                threading.Thread(
-                    target=self.process,
-                    args=(text,),
-                    daemon=True,
-                ).start()
+                self._start_processing_thread(
+                    text
+                )
 
             except KeyboardInterrupt:
 
@@ -369,3 +497,25 @@ class Cipher:
                 logger.exception(e)
 
                 time.sleep(1)
+
+
+    def _handle_exit(
+        self,
+    ) -> None:
+
+        self._speak_response(
+            "Goodbye."
+        )
+
+        self.stop()
+
+    def _is_sleep_command(
+        self,
+        text: str,
+    ) -> bool:
+
+        return text in (
+            "sleep",
+            "go to sleep",
+            "stop listening",
+        )

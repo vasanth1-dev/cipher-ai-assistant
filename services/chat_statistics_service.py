@@ -24,7 +24,9 @@ class ChatStatisticsService:
         "last_updated": None,
     }
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/chat_statistics.json")
         self._file.parent.mkdir(

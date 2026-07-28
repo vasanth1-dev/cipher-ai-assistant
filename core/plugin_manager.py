@@ -1,29 +1,34 @@
 import importlib
-import os
 
+from pathlib import Path
+from core.logger import logger
 
 class PluginManager:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.plugins = {}
 
-    def load(self):
+    def load(
+        self,
+    ) -> None:
 
-        folder = "plugins"
+        folder = Path("plugins")
 
-        if not os.path.exists(folder):
+        if not folder.exists():
             return
 
-        for file in os.listdir(folder):
+        for file in sorted(folder.iterdir()):
 
-            if not file.endswith(".py"):
+            if file.suffix != ".py":
                 continue
 
-            if file.startswith("_"):
-                continue
+            module_name = file.stem
 
-            module_name = file[:-3]
+            if module_name.startswith("_"):
+                continue
 
             try:
 
@@ -37,17 +42,21 @@ class PluginManager:
 
                     self.plugins[module_name] = module
 
-                    print(f"Loaded Plugin : {module_name}")
+                    logger.info(
+                        f"Loaded plugin: {module_name}"
+                    )
 
-            except Exception as e:
+            except Exception:
 
-                print(
-                    f"Plugin Error ({module_name}) : {e}"
+                logger.exception(
+                    f"Plugin Error ({module_name})"
                 )
 
-    def loaded(self):
+    def loaded(
+        self,
+    ) -> tuple[str, ...]:
 
-        return list(self.plugins.keys())
+        return tuple(sorted(self.plugins))
 
 
 plugin_manager = PluginManager()

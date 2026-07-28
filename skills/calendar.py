@@ -71,9 +71,12 @@ def handle(command: str):
         title = " ".join(title.split())
 
         if parsed:
-            event_time = parsed.isoformat()
+            event_time = parsed
         else:
             event_time = datetime.now().isoformat()
+
+        if not title:
+            return "Please provide an event title."
 
         return calendar_service.add(
             title,

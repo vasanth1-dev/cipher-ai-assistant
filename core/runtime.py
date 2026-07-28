@@ -22,7 +22,9 @@ class Runtime:
     Holds references to the application's runtime objects.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._objects: dict[str, Any] = {}
 
     # --------------------------------------------------

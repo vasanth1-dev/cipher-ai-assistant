@@ -36,7 +36,9 @@ class ServiceManager:
     Central registry for Cipher background services.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._services: OrderedDict[str, Any] = OrderedDict()
 
     # --------------------------------------------------

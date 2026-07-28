@@ -1,4 +1,4 @@
-import os
+
 import tempfile
 import threading
 
@@ -8,6 +8,7 @@ import speech_recognition as sr
 from faster_whisper import WhisperModel
 
 from core.logger import logger
+from pathlib import Path
 
 from config import (
     WHISPER_MODEL,
@@ -25,12 +26,32 @@ from config import (
 LISTEN_ENABLED = threading.Event()
 LISTEN_ENABLED.set()
 
-RECORD_LOCK =threading.Lock()
+RECORD_LOCK = threading.Lock()
 
 
 class Listener:
 
-    def __init__(self):
+    
+    CORRECTIONS = {
+
+            "cypher": "cipher",
+            "hey cypher": "hey cipher",
+            "hi cypher": "hi cipher",
+            "okay cypher": "okay cipher",
+            "cifer": "cipher",
+            "cycle": "cipher",
+            "sifer": "cipher",
+            "safer": "cipher",
+            "safe her": "cipher",
+            "sai": "cipher",
+            "fire fox": "firefox",
+
+        }
+    
+
+    def __init__(
+       self,
+    ) -> None:
 
         self.on_listening = None
         self.on_processing = None
@@ -38,35 +59,45 @@ class Listener:
 
         self.recognizer = sr.Recognizer()
 
-        self.recognizer.energy_threshold = 200
+        self.recognizer.energy_threshold = 300
         self.recognizer.dynamic_energy_threshold = True
-        self.recognizer.pause_threshold = 0.5
+        self.recognizer.pause_threshold = 0.8
 
-        self.model = None
+        self.model: WhisperModel | None = None
         self.running = True
+        self.model_lock = threading.Lock()
 
     # --------------------------------------------------
 
-    def _load_whisper_model(self):
+    def _load_whisper_model(
+        self,
+    ) -> None:
 
-        if self.model is not None:
-            return
+        with self.model_lock:
 
-        logger.info("Loading Whisper model...")
+            if self.model is not None:
+                return
 
-        self.model = WhisperModel(
-            WHISPER_MODEL,
-            device=DEVICE,
-            compute_type=COMPUTE_TYPE,
-        )
+            logger.info("Loading Whisper model...")
 
-        logger.info("Whisper model loaded.")
+            self.model = WhisperModel(
+                WHISPER_MODEL,
+                device=DEVICE,
+                compute_type=COMPUTE_TYPE,
+            )
+
+            logger.info("Whisper model loaded.")
 
     # --------------------------------------------------
     # Whisper STT (Primary)
     # --------------------------------------------------
 
-    def whisper_stt(self):
+    def whisper_stt(
+        self,
+    ) -> str:
+
+        if not self.running:
+            return ""
 
         filename = None
 
@@ -104,29 +135,16 @@ class Listener:
             if self.on_processing:
                 self.on_processing()
 
-            self._load_whisper_model()
-
-            segments, _ = self.model.transcribe(
+            text = self._transcribe(
                 filename,
-                language="en",
-                beam_size=5,
-                best_of=5,
-                vad_filter=True,
-                condition_on_previous_text=False,
-                initial_prompt="The wake word is Hey Cipher. "
             )
-
-            text = " ".join(
-                segment.text.strip()
-                for segment in segments
-            ).strip()
 
             text = self._normalize(text)
 
             if text:
 
                 logger.info(
-                    f"Recognized (Whisper): {text}"
+                    f"[WHISPER] {text}"
                 )
 
                 return text
@@ -135,14 +153,17 @@ class Listener:
 
         except Exception as e:
 
-            logger.exception(e)
+            logger.exception(
+                f"Whisper STT failed: {e}"
+            )
 
             return ""
 
         finally:
 
-            if filename and os.path.exists(filename):
-                os.remove(filename)
+            self._delete_temp_file(
+                filename
+            )
 
             if self.on_idle:
                 self.on_idle()
@@ -151,9 +172,12 @@ class Listener:
     # Google STT (Fallback)
     # --------------------------------------------------
 
-    def google_stt(self):
+    def google_stt(
+        self,
+    ) -> str:
 
-
+        if not self.running:
+            return ""
 
         try:
 
@@ -168,8 +192,8 @@ class Listener:
 
                 audio = self.recognizer.listen(
                     source,
-                    timeout=5,
-                    phrase_time_limit=6,
+                    timeout=LISTEN_SECONDS,
+                    phrase_time_limit=LISTEN_SECONDS,
                 )
 
             text = self.recognizer.recognize_google(
@@ -183,53 +207,119 @@ class Listener:
             if text:
 
                 logger.info(
-                    f"Recognized (Google): {text}"
+                    f"[GOOGLE] {text}"
                 )
 
                 return text
 
             return ""
 
-        except Exception:
+        except Exception as e:
+
+            logger.warning(
+                f"Google STT failed: {e}"
+            )
 
             return ""
+        
+    def _delete_temp_file(
+        self,
+        filename: str | None,
+    ) -> None:
+
+        if not filename:
+            return
+
+        try:
+            path = Path(filename)
+
+            if path.exists():
+                path.unlink()
+
+
+        except Exception as e:
+            logger.warning(
+                f"Failed to delete temporary audio file: {e}"
+            )
+
+    def _transcribe(
+        self,
+        filename: str,
+    ) -> str:
+
+        self._load_whisper_model()
+
+        segments, _ = self.model.transcribe(
+            filename,
+            language="en",
+            beam_size=5,
+            best_of=5,
+            vad_filter=True,
+            condition_on_previous_text=False,
+            initial_prompt="The wake word is Hey Cipher.",
+        )
+
+        text = " ".join(
+            segment.text.strip()
+            for segment in segments
+        ).strip()
+
+        logger.info(
+            f"[TRANSCRIBE] {text!r}"
+        )
+
+        return text
 
     # --------------------------------------------------
 
-    def _normalize(self, text):
+    def _normalize(
+        self, 
+        text: str,
+    ) -> str:
 
         if not text:
             return ""
 
         text = text.lower().strip()
 
-        corrections = {
+        
 
-            "cypher": "cipher",
-            "cifer": "cipher",
-            "cycle": "cipher",
-            "sifer": "cipher",
-            "safer": "cipher",
-            "safe her": "cipher",
-            "sai": "cipher",
-            "fire fox": "firefox",
-
-        }
-
-        for wrong, correct in corrections.items():
+        for wrong, correct in self.CORRECTIONS.items():
             text = text.replace(wrong, correct)
 
         return " ".join(text.split())
 
     # --------------------------------------------------
 
-    def listen(self):
+    def listen(
+        self,
+    ) -> str:
 
-        LISTEN_ENABLED.wait()
+        if not self.running:
+            return ""
+
+        logger.info("Before LISTEN_ENABLED.wait()")
+
+        LISTEN_ENABLED.wait(timeout=2)
+
+        logger.info("After LISTEN_ENABLED.wait()")
+
+        if not self.running:
+            return ""
+
+        if not LISTEN_ENABLED.is_set():
+            return ""
 
         # Whisper First
 
         text = self.whisper_stt()
+
+        logger.info(
+            f"[LISTEN] Whisper returned: {text!r}"
+        )
+
+        if not self.running:
+            return ""
 
         if text:
             return text
@@ -239,21 +329,28 @@ class Listener:
         )
 
         return self.google_stt()
-    
-    def stop(self):
+                
+
+        
+    def stop(
+        self,
+    ) -> None:
 
         self.running = False
 
-        resume_listening()
+        LISTEN_ENABLED.set()
+
+        with self.model_lock:
+            self.model = None
 
 
 listener = Listener()
 
 
-def pause_listening():
+def pause_listening() -> None:
     LISTEN_ENABLED.clear()
 
 
-def resume_listening():
+def resume_listening() -> None:
     LISTEN_ENABLED.set()
 

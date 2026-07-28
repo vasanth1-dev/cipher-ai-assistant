@@ -127,15 +127,13 @@ class DashboardUpdater(QObject):
     def set_ai_online(self):
 
         self.dashboard.set_ai_status(
-            "Online",
-            "Ollama Connected",
+            "Online"
         )
 
     def set_ai_offline(self):
 
         self.dashboard.set_ai_status(
-            "Offline",
-            "Ollama Disconnected",
+            "Offline"
         )
 
     # --------------------------------------------------

@@ -7,7 +7,9 @@ from core.logger import logger
 
 class VisionService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.output_dir = Path("data/images")
 
@@ -25,7 +27,7 @@ class VisionService:
         filename="capture.jpg",
     ):
 
-        filename = str(filename).strip()
+        filename = Path(str(filename).strip()).name
 
         if not filename:
             filename = "capture.jpg"

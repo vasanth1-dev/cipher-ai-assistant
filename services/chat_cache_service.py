@@ -18,7 +18,9 @@ class ChatCacheService:
 
     CACHE_FILE = Path("data/chat_cache.json")
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self.CACHE_FILE.parent.mkdir(
             parents=True,

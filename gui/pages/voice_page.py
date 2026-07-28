@@ -21,12 +21,16 @@ from gui.theme import (
 
 class VoicePage(QWidget):
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
         self._build_ui()
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         self.setStyleSheet(f"""
         QWidget {{
@@ -107,7 +111,9 @@ class VoicePage(QWidget):
 
     # --------------------------------------------------
 
-    def set_ready(self):
+    def set_ready(
+        self,
+    ) -> None:
 
         self.status.setText("Ready")
         self.status.setStyleSheet(f"""
@@ -119,7 +125,9 @@ class VoicePage(QWidget):
         self.info.setText("Waiting for voice input...")
         self.wave.setValue(0)
 
-    def set_listening(self):
+    def set_listening(
+        self,
+    ) -> None:
 
         self.status.setText("Listening")
         self.status.setStyleSheet(f"""
@@ -131,7 +139,9 @@ class VoicePage(QWidget):
         self.info.setText("Listening...")
         self.wave.setValue(35)
 
-    def set_thinking(self):
+    def set_thinking(
+        self,
+    ) -> None:
 
         self.status.setText("Thinking")
         self.status.setStyleSheet(f"""
@@ -143,7 +153,9 @@ class VoicePage(QWidget):
         self.info.setText("Generating response...")
         self.wave.setValue(70)
 
-    def set_speaking(self):
+    def set_speaking(
+        self,
+    ) -> None:
 
         self.status.setText("Speaking")
         self.status.setStyleSheet(f"""

@@ -16,7 +16,9 @@ class ChatExportManager:
     added later without changing the public API.
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self.export_dir = Path("exports")
 

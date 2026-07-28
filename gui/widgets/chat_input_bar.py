@@ -8,6 +8,7 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QTextEdit,
     QVBoxLayout,
+    QWidget,
 )
 
 
@@ -36,7 +37,10 @@ class ChatInputBar(QFrame):
 
     sendClicked = pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(
+        self, 
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
 
         self.setObjectName("chatInputBar")
@@ -115,22 +119,34 @@ class ChatInputBar(QFrame):
     def text(self) -> str:
         return self.editor.toPlainText()
 
-    def setText(self, text: str):
+    def setText(
+        self, 
+        text: str,
+    ) -> None:
         self.editor.setPlainText(text)
 
-    def clear(self):
+    def clear(
+        self,
+    ) -> None:
         self.editor.clear()
 
-    def focus(self):
+    def focus(
+        self,
+    ) -> None:
         self.editor.setFocus()
 
-    def setSending(self, sending: bool):
+    def setSending(
+        self, 
+        sending: bool,
+    ) -> None:
         self.send_button.setDisabled(sending)
         self.editor.setReadOnly(sending)
 
     # --------------------------------------------------
 
-    def _emit_message(self):
+    def _emit_message(
+        self,
+    ) -> None:
         text = self.text().strip()
 
         if not text:

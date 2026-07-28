@@ -41,7 +41,9 @@ class ModelDownloadService:
     can update this service while downloading.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._downloads: dict[str, ModelDownload] = {}
 

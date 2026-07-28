@@ -3,7 +3,11 @@ from __future__ import annotations
 from pathlib import Path
 
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtWidgets import QFileDialog, QPushButton
+from PyQt6.QtWidgets import (
+    QFileDialog, 
+    QPushButton,
+    QWidget,
+)
 
 
 class ChatAttachmentButton(QPushButton):
@@ -19,7 +23,10 @@ class ChatAttachmentButton(QPushButton):
 
     fileSelected = pyqtSignal(str)
 
-    def __init__(self, parent=None):
+    def __init__(
+        self, 
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__("📎", parent)
 
         self.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -52,7 +59,9 @@ class ChatAttachmentButton(QPushButton):
 
     # ------------------------------------------------------------------
 
-    def _choose_file(self):
+    def _choose_file(
+        self,
+    ) -> None:
         filename, _ = QFileDialog.getOpenFileName(
             self,
             "Select File",
@@ -74,7 +83,9 @@ class ChatAttachmentButton(QPushButton):
 
     # ------------------------------------------------------------------
 
-    def openDialog(self):
+    def open_dialog(
+        self,
+    ) -> None:
         """
         Public helper if another widget wants
         to trigger the file picker.

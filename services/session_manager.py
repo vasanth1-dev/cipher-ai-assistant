@@ -30,7 +30,9 @@ class SessionManager:
     Runtime session manager.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._session_id = str(uuid.uuid4())
         self._startup_time = time.time()
         self._startup_timestamp = datetime.now().isoformat()

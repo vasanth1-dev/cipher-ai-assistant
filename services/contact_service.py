@@ -7,7 +7,9 @@ from core.logger import logger
 
 class ContactService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.file = "data/contacts.json"
         self.lock = Lock()
@@ -105,8 +107,8 @@ class ContactService:
         if key in contacts:
             return f"{name} already exists."
 
-        if phone:
-            phone = str(phone).replace(" ", "").strip()
+        if phone and not phone.replace("+", "").isdigit():
+            return "Invalid phone number."
 
         if email:
             email = str(email).strip().lower()

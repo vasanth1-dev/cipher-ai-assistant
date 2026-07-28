@@ -32,7 +32,9 @@ class ContextManager:
     Persistent user preferences should be managed elsewhere.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._context: dict[str, Any] = {}
         self._lock = RLock()
 

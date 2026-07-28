@@ -14,7 +14,9 @@ class ModelSelectionService:
     It only manages which model Cipher should use.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._current_model = None
 

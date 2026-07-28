@@ -17,7 +17,9 @@ from gui.renderers.code_renderer import (
 
 class RendererManager:
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self.markdown = markdown_renderer
         self.link = link_renderer
@@ -28,7 +30,7 @@ class RendererManager:
     def render(
         self,
         text: str,
-    ):
+    ) -> str:
 
         if not text:
             return ""
@@ -49,7 +51,7 @@ class RendererManager:
         self,
         language: str,
         code: str,
-    ):
+    ) -> str:
 
         return self.code.render(
             language,

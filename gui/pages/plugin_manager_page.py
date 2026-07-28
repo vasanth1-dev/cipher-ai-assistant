@@ -29,11 +29,15 @@ class PluginManagerPage(QWidget):
     reloadClicked = pyqtSignal(str)
     uninstallClicked = pyqtSignal(str)
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
         super().__init__()
         self._build_ui()
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         self.setStyleSheet(f"""
         QWidget{{
@@ -136,7 +140,10 @@ class PluginManagerPage(QWidget):
 
     # --------------------------------------------------
 
-    def set_plugins(self, plugins):
+    def set_plugins(
+        self, 
+        plugins: list[dict | str],
+    ) -> None:
 
         self.plugin_list.clear()
 
@@ -164,7 +171,13 @@ class PluginManagerPage(QWidget):
 
     # --------------------------------------------------
 
-    def _plugin_changed(self, current, previous):
+    from PyQt6.QtWidgets import QListWidgetItem
+
+    def _plugin_changed(
+        self,
+        current: QListWidgetItem | None,
+        _previous: QListWidgetItem | None,
+    ) -> None:
 
         if current is None:
             self.info.clear()
@@ -177,7 +190,9 @@ class PluginManagerPage(QWidget):
             f"Enabled : {plugin.get('enabled', False)}"
         )
 
-    def _selected_name(self):
+    def _selected_name(
+        self,
+    ) -> str | None:
 
         item = self.plugin_list.currentItem()
 
@@ -188,37 +203,48 @@ class PluginManagerPage(QWidget):
             Qt.ItemDataRole.UserRole
         ).get("name")
 
-    def _enable(self):
+    def _enable(
+        self,
+    ) -> None:
 
         name = self._selected_name()
 
         if name:
             self.enableClicked.emit(name)
 
-    def _disable(self):
+    def _disable(
+        self,
+    ) -> None:
 
         name = self._selected_name()
 
         if name:
             self.disableClicked.emit(name)
 
-    def _reload(self):
+    def _reload(
+        self,
+    ) -> None:
 
         name = self._selected_name()
 
         if name:
             self.reloadClicked.emit(name)
 
-    def _uninstall(self):
+    def _uninstall(
+        self,
+    ) -> None:
 
         name = self._selected_name()
 
         if name:
             self.uninstallClicked.emit(name)
 
-    def _filter_plugins(self, text):
+    def _filter_plugins(
+        self, 
+        text: str,
+    ) -> None:
 
-        text = text.lower()
+        text = text.lower().strip()
 
         for row in range(self.plugin_list.count()):
 

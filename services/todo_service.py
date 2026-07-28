@@ -6,7 +6,9 @@ from threading import Lock
 
 class TodoService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.file = "data/todo.json"
         self.lock = Lock()
@@ -35,8 +37,12 @@ class TodoService:
                 if isinstance(data, list):
                     return data
 
-        except (json.JSONDecodeError, FileNotFoundError):
-            pass
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+            from core.logger import logger
+
+            logger.exception(
+                f"[TODO] Failed to load todo list: {e}"
+            )
 
         self._write([])
 
@@ -44,17 +50,27 @@ class TodoService:
 
     def _write(self, tasks):
 
-        with open(
-            self.file,
-            "w",
-            encoding="utf-8",
-        ) as f:
+        try:
 
-            json.dump(
-                tasks,
-                f,
-                indent=4,
-                ensure_ascii=False,
+            with open(
+                self.file,
+                "w",
+                encoding="utf-8",
+            ) as f:
+
+                json.dump(
+                    tasks,
+                    f,
+                    indent=4,
+                    ensure_ascii=False,
+                )
+
+        except Exception as e:
+
+            from core.logger import logger
+
+            logger.exception(
+                f"[TODO] Failed to save todo list: {e}"
             )
 
     # --------------------------------------------------
@@ -73,7 +89,7 @@ class TodoService:
 
     def add(self, task):
 
-        task = task.strip()
+        task = str(task).strip()
 
         if not task:
             return "Task cannot be empty."
@@ -174,6 +190,14 @@ class TodoService:
             self._write(remaining)
 
         return f"Removed {removed} completed task(s)."
+    
+    def count(self):
+
+        return len(self.load())
+    
+    def is_empty(self):
+
+        return len(self.load()) == 0
 
 
 todo_service = TodoService()

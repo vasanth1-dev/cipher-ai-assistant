@@ -6,7 +6,9 @@ from config import AI_PERSONALITY
 
 class GeminiService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.client = None
 

@@ -66,6 +66,8 @@ def handle(command: str):
 
         if response:
             return response
+        
+        app = app.title()
 
         return f"I couldn't open {app}."
 

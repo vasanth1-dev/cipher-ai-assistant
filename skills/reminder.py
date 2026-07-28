@@ -88,7 +88,10 @@ def handle(command: str):
 
         if not reminder_text or not time_text:
             return (
-                "Example: remind me to call mom in 30 minutes."
+                "Examples:\n"
+                "- remind me to call mom at 6 pm\n"
+                "- remind me to drink water in 30 minutes\n"
+                "- remind me to study tomorrow 9 am"
             )
 
         remind_at = time_parser.parse(time_text)

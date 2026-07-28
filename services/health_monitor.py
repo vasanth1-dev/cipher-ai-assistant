@@ -76,16 +76,20 @@ class HealthMonitor:
         }
 
         if psutil is not None:
-            process = psutil.Process()
+            self._process = (
+                psutil.Process()
+                if psutil is not None
+                else None
+            )
 
             info.update(
                 {
-                    "cpu_percent": process.cpu_percent(interval=0.0),
+                    "cpu_percent": self.process.cpu_percent(interval=0.0),
                     "memory_mb": round(
-                        process.memory_info().rss / (1024 * 1024),
+                        self.process.memory_info().rss / (1024 * 1024),
                         2,
                     ),
-                    "threads": process.num_threads(),
+                    "threads": self.process.num_threads(),
                 }
             )
 

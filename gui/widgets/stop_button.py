@@ -6,7 +6,9 @@ class StopButton(QPushButton):
 
     stopRequested = pyqtSignal()
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         super().__init__("■ Stop")
 
         self.setMinimumHeight(34)

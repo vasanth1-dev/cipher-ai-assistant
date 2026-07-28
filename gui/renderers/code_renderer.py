@@ -14,7 +14,7 @@ class CodeRenderer:
         self,
         language: str,
         code: str,
-    ):
+    ) -> str:
 
         if not code:
             return ""

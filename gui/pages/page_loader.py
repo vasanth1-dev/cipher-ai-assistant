@@ -13,7 +13,10 @@ class PageLoader:
     - Looking up pages by name
     """
 
-    def __init__(self, stack: QStackedWidget):
+    def __init__(
+        self, 
+        stack: QStackedWidget,
+    ) -> None:
         self._stack = stack
         self._pages: Dict[str, QWidget] = {}
 
@@ -23,7 +26,7 @@ class PageLoader:
         self,
         name: str,
         page: QWidget,
-    ):
+    ) -> None:
 
         if name in self._pages:
             return
@@ -33,13 +36,19 @@ class PageLoader:
 
     # --------------------------------------------------
 
-    def page(self, name: str):
+    def page(
+        self, 
+        name: str,
+    ) -> QWidget | None:
 
         return self._pages.get(name)
 
     # --------------------------------------------------
 
-    def show(self, name: str):
+    def show(
+        self, 
+        name: str,
+    ) -> bool:
 
         page = self._pages.get(name)
 
@@ -51,12 +60,17 @@ class PageLoader:
 
     # --------------------------------------------------
 
-    def contains(self, name: str):
+    def contains(
+        self, 
+        name: str,
+    ) -> bool:
 
         return name in self._pages
 
     # --------------------------------------------------
 
-    def names(self):
+    def names(
+        self,
+    ) -> list[str]:
 
         return list(self._pages.keys())

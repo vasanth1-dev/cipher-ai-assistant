@@ -6,22 +6,20 @@ from PyQt6.QtWidgets import (
     QPushButton,
     QVBoxLayout,
 )
-from gui.widgets.conversation_list import(
-    ConversationList,
-)
+
+from gui.widgets.conversation_list import ConversationList
+
 from gui.theme import (
     SURFACE,
-    PRIMARY,
-    PRIMARY_HOVER,
     TEXT,
     TEXT_MUTED,
     SMALL_SIZE,
-    CARD_PADDING,
     SIDEBAR_WIDTH,
-    SPACING_SMALL,
     SPACING_LARGE,
-    TITLE_SIZE,
-
+    CARD_PADDING,
+    PRIMARY_OVERLAY,
+    PRIMARY_OVERLAY_HOVER,
+    SPACING_SMALL
 )
 
 
@@ -31,46 +29,47 @@ class NavButton(QPushButton):
         super().__init__(text)
 
         self.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.setMinimumHeight(48)
         self.setCheckable(True)
-        self.setMinimumWidth(180)
+
+        self.setMinimumHeight(44)
+        self.setMinimumWidth(0)
 
         self.setStyleSheet(f"""
-        QPushButton{{
-            background:transparent;
-            color:{TEXT_MUTED};
-            border:none;
-            border-radius:10px;
-            text-align:left;
-            padding:12px 18px;
-            font-size:11pt;
+        QPushButton {{
+            background: transparent;
+            color: {TEXT_MUTED};
+            border: none;
+            border-radius: 12px;
+            text-align: left;
+            padding: 0 16px;
+            font-size: 10.5pt;
+            font-weight: 500;
         }}
 
-        QPushButton:hover{{
-            background:{PRIMARY_HOVER};
-            color:{TEXT};
+        QPushButton:hover {{
+            background:{PRIMARY_OVERLAY};
+            color: {TEXT};
         }}
 
-        QPushButton:checked{{
-            background:{PRIMARY};
-            color:{TEXT};
-            font-weight:bold;
+        QPushButton:checked {{
+            background:{PRIMARY_OVERLAY_HOVER};
+            color: white;
+            font-weight: 600;
         }}
         """)
-        
 
 
 class Sidebar(QFrame):
 
     pageChanged = pyqtSignal(str)
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
         self.setObjectName("Sidebar")
-        self.setFixedWidth(
-            SIDEBAR_WIDTH
-        )
+        self.setFixedWidth(SIDEBAR_WIDTH)
 
         self.setStyleSheet(f"""
         QFrame#Sidebar{{
@@ -84,31 +83,38 @@ class Sidebar(QFrame):
         """)
 
         layout = QVBoxLayout(self)
+
         layout.setContentsMargins(
             CARD_PADDING,
             CARD_PADDING,
             CARD_PADDING,
             CARD_PADDING,
         )
-        layout.setSpacing(
-            SPACING_SMALL
-        )
+
+        layout.setSpacing(SPACING_SMALL)
 
         logo = QLabel(
-    "🤖 Cipher\nUbuntu AI Assistant"
+            "🤖 Cipher\nUbuntu AI Assistant"
         )
-        logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        logo.setAlignment(
+            Qt.AlignmentFlag.AlignCenter
+        )
+
         logo.setStyleSheet(f"""
-        font-size:{TITLE_SIZE}px;
-        font-weight:bold;
-        padding:12px;
-        color:{TEXT}
+        font-size:18px;
+        font-weight:700;
+        padding:8px;
+        color:{TEXT};
         """)
 
         layout.addWidget(logo)
+
         layout.addSpacing(
             SPACING_LARGE
         )
+
+        # Conversation Search
 
         self.buttons = {}
 
@@ -122,33 +128,28 @@ class Sidebar(QFrame):
         ]
 
         for key, text in pages:
-            btn = NavButton(text)
-            btn.setToolTip(text)
-            btn.clicked.connect(
-                lambda checked=False, k=key: self.select(k)
+
+            button = NavButton(text)
+
+            button.setToolTip(text)
+
+            button.clicked.connect(
+                lambda _, page=key: self.select(page)
             )
 
-            layout.addWidget(btn)
-            self.buttons[key] = btn
+            self.buttons[key] = button
 
-      
+            layout.addWidget(button)
 
-
-        separator = QFrame()
-
-        separator.setFrameShape(
-            QFrame.Shape.HLine
+        layout.addWidget(
+            self._create_separator()
         )
 
-        separator.setStyleSheet(f"""
-        background:{PRIMARY};
-        max-height:1px;
-        border:none;
-        """)
-
-        layout.addWidget(separator)
-
         self.conversation_list = ConversationList()
+
+        layout.addSpacing(
+            SPACING_SMALL
+        )
 
         layout.addWidget(
             self.conversation_list,
@@ -157,65 +158,46 @@ class Sidebar(QFrame):
 
         layout.addStretch()
 
-        # ---------------------------------------
-
-        # Status
-
-        # ---------------------------------------
-
-        status_layout = QHBoxLayout()
-
-        status_title = QLabel("Status")
-
-        status_title.setStyleSheet(f"""
-        color:{TEXT_MUTED};
-        font-size:{SMALL_SIZE}pt;
-        """)
-
-        self.status_value = QLabel("🟢 Online")
-
-        self.status_value.setStyleSheet(f"""
-        color:{TEXT};
-        font-weight:bold;
-        font-size:10pt;
-        """)
-
-        status_layout.addWidget(status_title)
-
-        status_layout.addStretch()
-
-        status_layout.addWidget(
-            self.status_value
+        status_layout, self.status_value = self._create_info_row(
+            "Status",
+            "Online",
         )
 
         layout.addLayout(status_layout)
 
-        model_layout = QHBoxLayout()
-
-        model_title = QLabel("Model")
-
-        model_title.setStyleSheet(f"""
-        color:{TEXT_MUTED};
-        font-size:10pt;
-        """)
-
-        self.model_value = QLabel("qwen2.5")
-
-        self.model_value.setStyleSheet(f"""
-        color:{TEXT};
-        font-weight:bold;
-        font-size:10pt;
-        """)
-
-        model_layout.addWidget(model_title)
-
-        model_layout.addStretch()
-
-        model_layout.addWidget(
-            self.model_value
+        model_layout, self.model_value = self._create_info_row(
+            "Model",
+            "qwen2.5",
         )
 
         layout.addLayout(model_layout)
+
+        layout.addWidget(
+            self._create_separator()
+        )
+
+        self.version = QLabel(
+            "Cipher v2.0\nBuild 1"
+        )
+
+        self.version.setAlignment(
+            Qt.AlignmentFlag.AlignCenter
+        )
+
+        self.version.setStyleSheet(f"""
+        color:{TEXT_MUTED};
+        padding:8px;
+        font-size:{SMALL_SIZE}pt;
+        """)
+
+        layout.addWidget(self.version)
+
+        self.select("dashboard")
+
+    def _create_separator(self) -> QFrame:
+        """
+        Creates a horizontal separator line.
+        """
 
         separator = QFrame()
 
@@ -224,39 +206,96 @@ class Sidebar(QFrame):
         )
 
         separator.setStyleSheet(f"""
-        background:{PRIMARY};
+        background:rgba(255,255,255,0.08);
         max-height:1px;
         border:none;
         """)
-                                   
 
-        version = QLabel(
-            "Cipher v2.0-dev\nBuild 001"
-        )
-        version.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        version.setStyleSheet(f"""
+        return separator
+
+
+    def _create_info_row(
+        self,
+        title: str,
+        value: str,
+    ) -> tuple[QHBoxLayout, QLabel]:
+        """
+        Creates an information row used for
+        Status, Model, etc.
+        """
+
+        row = QHBoxLayout()
+
+        title_label = QLabel(title)
+
+        title_label.setStyleSheet(f"""
         color:{TEXT_MUTED};
-        padding:10px;
-        font-size:{SMALL_SIZE}pt
+        font-size:{SMALL_SIZE}pt;
         """)
 
-        layout.addWidget(version)
+        value_label = QLabel(value)
 
-        self.select("dashboard")
+        value_label.setStyleSheet(f"""
+        color:{TEXT};
+        font-weight:bold;
+        font-size:10pt;
+        """)
 
-    def select(self, page):
+        row.addWidget(title_label)
 
-        for btn in self.buttons.values():
-            btn.setChecked(False)
+        row.addStretch()
 
-        if page in self.buttons:
-            self.buttons[page].setChecked(True)
+        row.addWidget(value_label)
 
-        self.pageChanged.emit(page)
+        return row, value_label
+
+    def select(
+        self,
+        page: str,
+        emit_signal: bool = True,
+    ) -> None:
+        """
+        Select the active navigation page.
+
+        Parameters
+        ----------
+        page:
+            Page identifier.
+
+        emit_signal:
+            When False, only the UI is updated without
+            emitting the pageChanged signal.
+        """
+
+        if page not in self.buttons:
+            return
+
+        for button in self.buttons.values():
+            button.setChecked(False)
+
+        self.buttons[page].setChecked(True)
+
+        if emit_signal:
+            self.pageChanged.emit(page)
 
 
-    def set_status(self, text):
+    def set_status(
+        self,
+        text: str,
+    ) -> None:
+        """
+        Update sidebar status text.
+        """
+
         self.status_value.setText(text)
 
-    def set_model(self, text):
+
+    def set_model(
+        self,
+        text: str,
+    ) -> None:
+        """
+        Update model name.
+        """
+
         self.model_value.setText(text)

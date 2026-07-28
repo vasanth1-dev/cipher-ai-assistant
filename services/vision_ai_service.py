@@ -6,7 +6,9 @@ from config import OLLAMA_URL
 
 class VisionAIService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self.url = OLLAMA_URL
         self.model = "qwen2.5vl:3b"
 

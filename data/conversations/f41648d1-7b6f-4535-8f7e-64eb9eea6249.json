@@ -1,0 +1,759 @@
+{
+    "title": "New Chat",
+    "id": "f41648d1-7b6f-4535-8f7e-64eb9eea6249",
+    "created_at": "2026-07-26T09:04:22.049474+00:00",
+    "updated_at": "2026-07-28T17:48:50.955037+00:00",
+    "pinned": false,
+    "messages": [
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-26T09:04:25.669614+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello! How can I assist you today?",
+            "time": "2026-07-26T09:04:52.009381+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "A \"snake\" typically refers to a reptile, often referring to a python or boa constrictor. It can also be used figuratively to describe something that moves slowly and unpredictably like a serpent. In some contexts, it might mean someone who is secretive or sneaky. Without more context, the most common interpretation would be a specific type of reptile.",
+            "time": "2026-07-26T09:05:20.155400+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-26T09:07:03.513831+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello! How can I assist you today?",
+            "time": "2026-07-26T09:07:30.468605+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-26T09:07:46.956838+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-26T09:08:39.742853+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-26T09:12:39.414712+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I couldn't open Colliad..",
+            "time": "2026-07-26T09:12:56.004375+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Welcome! How can I assist you today?",
+            "time": "2026-07-26T09:13:45.133516+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The current time is 02:44 PM",
+            "time": "2026-07-26T09:14:03.039593+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello! Welcome to Firefox. It's your go-to browser for browsing the web, managing your digital life, and more. Here are some key features of Firefox:\n\n1. **Browser**: A fast, secure, and reliable way to browse the internet.\n2. **Privacy & Security**: Protects you from online threats with advanced security features like HTTPS Everywhere and a private browsing mode.\n3. **Customization**: Tailor your browser experience by customizing themes, extensions, and adding-ons.\n4. **Tabs & Bookmarks**: Easily switch between tabs and save your favorite sites for quick access.\n5. **Web Developer Tools**: Helps you debug websites and improve the performance of your web pages.\n\nFirefox is designed to make browsing enjoyable and efficient, whether you're reading news, watching videos, or shopping online. Try it out today!",
+            "time": "2026-07-26T09:14:30.792132+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Yes, I am Cipher.",
+            "time": "2026-07-26T09:15:31.024929+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-26T09:15:46.582865+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello! Welcome to Firefox. This is your browser of choice, designed to make browsing the web easy and enjoyable. Here are some key features:\n\n1. **Navigation**: Quickly access your bookmarks, history, and favorite websites with a simple click or swipe.\n2. **Tabs and Windows**: Open multiple tabs for different pages in one window, or switch between windows for more complex tasks.\n3. **Privacy & Security**: Firefox includes built-in privacy tools like the \"Do Not Track\" feature to protect your online activities from being tracked by advertisers.\n4. **Customization**: Personalize your browsing experience with themes and extensions that enhance your viewing of web pages.\n5. **Speed & Performance**: Stay up-to-date on security updates, which can help keep your system running smoothly.\n\nIf you have any specific questions or need further assistance, feel free to ask!",
+            "time": "2026-07-26T09:16:16.042834+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Yes, I am very safe.",
+            "time": "2026-07-26T09:17:44.618484+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Yes, I am Cipher.",
+            "time": "2026-07-26T09:18:04.740111+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-26T09:18:18.721732+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I couldn't open Browser..",
+            "time": "2026-07-26T09:18:33.588466+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-26T09:20:44.678092+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T05:59:43.425381+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Battery is 64% and currently charging.",
+            "time": "2026-07-28T05:59:56.838412+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "RAM usage is 6.1 GB of 7.5 GB (81%).",
+            "time": "2026-07-28T06:00:04.200012+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Current CPU usage is 4%.",
+            "time": "2026-07-28T06:00:17.282044+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Disk usage is 119.5 GB of 467.3 GB (27%).",
+            "time": "2026-07-28T06:00:28.496336+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Disk usage is 119.5 GB of 467.3 GB (27%).",
+            "time": "2026-07-28T06:00:41.340385+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T06:06:28.667509+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I'm sorry, but I can't assist with that.",
+            "time": "2026-07-28T06:06:52.784053+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume increased.",
+            "time": "2026-07-28T06:07:01.944196+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume decreased.",
+            "time": "2026-07-28T06:07:13.184461+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume increased.",
+            "time": "2026-07-28T06:07:26.949016+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume muted.",
+            "time": "2026-07-28T06:07:43.225637+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T06:31:41.959349+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T06:31:43.803758+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello! How can I assist you today?",
+            "time": "2026-07-28T06:32:43.132951+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The current time is 12:02 PM",
+            "time": "2026-07-28T06:32:55.029122+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The current time is 12:03 PM",
+            "time": "2026-07-28T06:33:11.475979+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The current time is 12:03 PM",
+            "time": "2026-07-28T06:33:18.655032+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I'm not programmed to play games or have any kind of competition with others. My purpose is to assist you with your tasks and provide information on Ubuntu Linux. Is there anything specific I can help you with today?",
+            "time": "2026-07-28T06:33:27.576879+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Today's date is 28 July 2026",
+            "time": "2026-07-28T06:33:44.591283+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Today's date is 28 July 2026",
+            "time": "2026-07-28T06:33:54.923018+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Today's date is 28 July 2026",
+            "time": "2026-07-28T06:34:08.413593+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Battery is 91% and currently charging.",
+            "time": "2026-07-28T06:34:15.457688+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Current CPU usage is 3%.",
+            "time": "2026-07-28T06:34:23.127879+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "RAM usage is 6.1 GB of 7.5 GB (82%).",
+            "time": "2026-07-28T06:34:28.455706+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume increased.",
+            "time": "2026-07-28T06:34:37.254584+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume decreased.",
+            "time": "2026-07-28T06:34:42.833644+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume muted.",
+            "time": "2026-07-28T06:34:46.456330+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume unmuted.",
+            "time": "2026-07-28T06:34:51.916503+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to increase brightness.",
+            "time": "2026-07-28T06:35:03.703478+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to decrease brightness.",
+            "time": "2026-07-28T06:35:28.408661+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Screenshot saved to /home/vasanth/Pictures/Screenshots/Screenshot_20260728_120539.png",
+            "time": "2026-07-28T06:35:39.477308+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Computer locked.",
+            "time": "2026-07-28T06:35:50.242341+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Wi-Fi is currently enabled.",
+            "time": "2026-07-28T06:36:02.505265+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Wi-Fi disabled.",
+            "time": "2026-07-28T06:36:08.094391+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Wi-Fi enabled.",
+            "time": "2026-07-28T06:36:14.006558+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to determine Bluetooth status.",
+            "time": "2026-07-28T06:36:31.011277+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to disable Bluetooth.",
+            "time": "2026-07-28T06:36:41.710801+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Computer is going to sleep.",
+            "time": "2026-07-28T06:36:48.318877+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to hibernate the computer.",
+            "time": "2026-07-28T06:37:02.901792+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Logout initiated. Please wait while your session is being closed down.",
+            "time": "2026-07-28T06:37:12.974223+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to send the notification.",
+            "time": "2026-07-28T06:37:52.631064+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Opening Chrome.",
+            "time": "2026-07-28T06:38:04.605804+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Opening Firefox.",
+            "time": "2026-07-28T06:38:24.283690+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Opening Terminal.",
+            "time": "2026-07-28T06:38:37.693039+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Opening Calculator.",
+            "time": "2026-07-28T06:38:48.428254+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T06:41:25.396651+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The current time is 12:11 PM",
+            "time": "2026-07-28T06:41:59.483697+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Today's date is 28 July 2026",
+            "time": "2026-07-28T06:42:04.796788+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Battery is 95% and currently charging.",
+            "time": "2026-07-28T06:42:09.805888+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Current CPU usage is 3%.",
+            "time": "2026-07-28T06:42:14.370678+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "RAM usage is 5.9 GB of 7.5 GB (79%).",
+            "time": "2026-07-28T06:42:17.237569+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Disk usage is 119.4 GB of 467.3 GB (27%).",
+            "time": "2026-07-28T06:43:00.479027+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume increased.",
+            "time": "2026-07-28T06:43:15.642225+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to increase brightness.",
+            "time": "2026-07-28T06:43:23.638886+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to determine Bluetooth status.",
+            "time": "2026-07-28T06:43:38.609870+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to hibernate the computer.",
+            "time": "2026-07-28T06:43:51.725366+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Notification sent.",
+            "time": "2026-07-28T06:44:01.331517+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T06:56:27.206005+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Battery is 88% and currently discharging.",
+            "time": "2026-07-28T06:56:46.383240+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Disk usage is 119.4 GB of 467.3 GB (27%).",
+            "time": "2026-07-28T06:56:53.681291+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "வாசந்த, அனுபவம்.",
+            "time": "2026-07-28T06:57:23.087961+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "நுண்கள் தமிழ் பேரவையான வடகோல் முற்றுகள் ஆகும். அது சீனாவில் \"நுண்கள்\" என்ற பேரவையான வடகோல் முற்றுகளை உப்புத்தானது. \n\nநுண்கள் சீனாவில் \"நுண்கள்\" என்ற வடகோல் முற்றுகளை உப்புத்தானது. இது சீனாவில் ஒரு நிகழ்வு ஆகும், அது \"நுண்கள்\" என்ற பேரவையான வடகோல் முற்றுகளை உப்புத்தானது. \n\nஇங்கு \"நுண்கள்\" என்ற வடகோல் முற்றுகளின் ஒரு சமவீją அமைப்பு ஆகும். இது \"நுண்கள்\" என்ற வடகோல் முற்றுகளில் ஒரு சொல்லவையாக உப்புத்தானது. \n\nநுண்கள் இங்கிய வடகோல் முற்றுகளின் ஒரு சமவீją அமைப்பு ஆகும், இது \"நுண்கள",
+            "time": "2026-07-28T06:58:09.853622+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Unable to hibernate the computer.",
+            "time": "2026-07-28T06:58:52.658768+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T07:13:17.101250+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The current time is 12:43 PM",
+            "time": "2026-07-28T07:13:19.530958+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Today's date is 28 July 2026",
+            "time": "2026-07-28T07:13:21.255041+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Battery is 70% and currently discharging.",
+            "time": "2026-07-28T07:13:24.296045+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Current CPU usage is 4%.",
+            "time": "2026-07-28T07:13:27.798174+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "RAM usage is 6.3 GB of 7.5 GB (84%).",
+            "time": "2026-07-28T07:13:29.309091+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Disk usage is 119.3 GB of 467.3 GB (27%).",
+            "time": "2026-07-28T07:13:31.491679+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume increased.",
+            "time": "2026-07-28T07:13:35.379778+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Volume decreased.",
+            "time": "2026-07-28T07:13:39.547673+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Screenshot saved to /home/vasanth/Pictures/Screenshots/Screenshot_20260728_124344.png",
+            "time": "2026-07-28T07:13:45.325382+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Bluetooth is currently enabled.",
+            "time": "2026-07-28T07:13:50.388722+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Wi-Fi is currently enabled.",
+            "time": "2026-07-28T07:13:55.075561+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Opening Firefox.",
+            "time": "2026-07-28T07:14:02.580292+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Notification sent.",
+            "time": "2026-07-28T07:14:16.700627+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T07:14:49.493417+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Battery is 68% and currently discharging.",
+            "time": "2026-07-28T07:14:54.583199+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Current CPU usage is 5%.",
+            "time": "2026-07-28T07:15:05.227813+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I couldn't close cipher.",
+            "time": "2026-07-28T07:15:20.649244+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I couldn't open Cipher.",
+            "time": "2026-07-28T07:15:27.682649+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T07:16:11.730320+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The current time is 6:31 AM.",
+            "time": "2026-07-28T07:16:46.352298+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The battery is an electrical device that stores energy in chemical form, typically within a lithium-ion cell or similar technology. It converts this stored chemical energy into usable electrical power when needed through the process of charging and discharging.\n\nWhen you ask about the battery, it's likely referring to the battery-powered device you're using, such as your laptop, smartphone, or tablet. The battery powers these devices by converting chemical energy from a rechargeable lithium-ion cell into electrical energy that can be used for computing tasks.\n\nThe battery is crucial in portable electronic devices because it provides continuous power without needing to be plugged into an outlet. It's designed to last for several hours of use and then needs to be recharged, typically through the charger connected to the device itself or a separate charging station.\n\nIn summary, the battery converts chemical energy stored within its cells into electrical energy that powers your electronic devices.",
+            "time": "2026-07-28T07:17:13.744342+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T07:18:25.368653+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I couldn't open Mars.",
+            "time": "2026-07-28T07:18:29.918967+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello! I'm here to assist you with any questions or tasks you might have. How can I help today?",
+            "time": "2026-07-28T07:18:37.667290+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I'm sorry, but I can't assist with that.",
+            "time": "2026-07-28T07:18:47.309115+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I'm sorry, but I can't assist with that.",
+            "time": "2026-07-28T07:18:52.788139+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I'm sorry, but I didn't understand your question. Could you please rephrase or ask something specific?",
+            "time": "2026-07-28T07:18:58.851389+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I understand you're finished. Is there anything else I can assist you with?",
+            "time": "2026-07-28T07:19:03.231887+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T14:55:13.883972+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T14:58:07.006801+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T15:04:51.829012+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T15:13:33.718213+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T15:19:52.552094+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "HTML stands for HyperText Markup Language. It's a markup language used to structure and present content on the web.",
+            "time": "2026-07-28T15:20:00.660230+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "CSS stands for Cascading Style Sheets. It's a language used to describe the look and formatting of a document written in HTML.",
+            "time": "2026-07-28T15:20:09.281175+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Java is a popular programming language and platform that supports object-oriented programming. It was developed by Sun Microsystems (now Oracle) in the late 1990s as an alternative to C++. Java code runs on any device with a Java Virtual Machine, making it highly portable.",
+            "time": "2026-07-28T15:20:19.626546+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "It is difficult to pinpoint exactly who invented the internet, as it was developed by multiple individuals and organizations over time. The modern internet we know today evolved from earlier networks like ARPANET and NSFNET in the United States during the 1960s and 1970s. Key contributors include Vint Cerf and Bob Kahn for TCP/IP protocols, Tim Berners-Lee for the World Wide Web, and many others who contributed to its development over decades.",
+            "time": "2026-07-28T15:20:40.733175+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Java was invented by James Gosling at Sun Microsystems in 1995.",
+            "time": "2026-07-28T15:21:11.449582+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Notification sent.",
+            "time": "2026-07-28T15:21:20.979889+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I have stored your reminder that you should call your mother at 7:00 AM today. Is there anything else I can assist you with?",
+            "time": "2026-07-28T15:21:53.126781+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T15:23:40.679373+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T15:30:51.994666+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "TEST RESPONSE",
+            "time": "2026-07-28T15:42:09.362514+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "TEST RESPONSE",
+            "time": "2026-07-28T15:42:18.285272+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "TEST RESPONSE",
+            "time": "2026-07-28T15:42:31.519285+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T15:52:52.193254+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "HTML stands for HyperText Markup Language. It's a markup language used to structure and present content on the web.",
+            "time": "2026-07-28T15:53:37.655820+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Java is a popular programming language and platform that allows developers to create applications for various platforms. It's known for its simplicity, reliability, and large community support.",
+            "time": "2026-07-28T15:53:53.345331+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Vasanth is a professional AI desktop assistant. He was created by Vasanth K to assist users with their Ubuntu Linux questions and tasks.",
+            "time": "2026-07-28T15:54:10.487296+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "The current time is 09:25 PM",
+            "time": "2026-07-28T15:55:04.022855+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T15:59:52.890652+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T16:17:44.799686+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "HTML stands for HyperText Markup Language. It's a markup language used to structure and present content on the web.",
+            "time": "2026-07-28T16:18:25.078598+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I apologize if my previous interactions were unclear. I'm here to help with any questions or tasks you might have, whether it's programming, general knowledge, or anything else. If there’s something specific you need assistance with today, please let me know!",
+            "time": "2026-07-28T16:26:08.104388+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Hello Vasanth! How can I help you today?",
+            "time": "2026-07-28T17:44:57.009442+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Java is a programming language and platform developed by Sun Microsystems (now part of Oracle Corporation). It's known for its simplicity, security, and extensive library of APIs.",
+            "time": "2026-07-28T17:45:39.209389+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Python is a high-level, interpreted programming language known for its simplicity and readability. It's widely used in various fields such as web development, automation scripting, data analysis, artificial intelligence, and more. Python supports multiple programming paradigms like procedural, object-oriented, and functional programming.",
+            "time": "2026-07-28T17:45:50.092500+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Sundar Pichai is the CEO of Google, formerly known as Alphabet. He leads the company's global operations and oversees its strategic direction.",
+            "time": "2026-07-28T17:46:03.589741+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Sridhar Vembu is a renowned Indian-American computer scientist, entrepreneur, and software engineer. He has made significant contributions to the field of software engineering and technology management. Sridhar is known for his work in developing methodologies such as Agile Software Development and Lean Software Development, which have influenced numerous organizations worldwide. He is also recognized for his role in founding several successful startups and companies, including Vembi Technologies and TeraByte Technology.",
+            "time": "2026-07-28T17:46:22.116975+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Yes, Sridhar Vembu is indeed the CEO of Zoho Corporation. He serves as the Chief Executive Officer (CEO) leading the company's strategic direction and operations. Sridhar has been instrumental in shaping Zoho into a global leader in cloud-based productivity software.\n\nZoho Corporation was founded by Sridhar Vembu, along with his wife Ravi Shankar, in 2001. The company specializes in providing enterprise-level applications that help businesses manage their work processes more efficiently. Some of the key products and services offered by Zoho include:\n\n- Zoho CRM: A customer relationship management (CRM) solution for small to medium-sized enterprises.\n- Zoho Books: An accounting software designed specifically for freelancers, startups, and small businesses.\n- Zoho Projects: A project management tool that helps teams collaborate effectively on projects.\n\nSridhar Vembu's leadership has been recognized with several industry awards and recognitions. He is also a well-known figure in the Indian IT industry, known for his innovative approach to technology solutions and business strategy.",
+            "time": "2026-07-28T17:47:07.962720+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Your name is vasanth k.",
+            "time": "2026-07-28T17:47:29.704663+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Your favorite color is blue.",
+            "time": "2026-07-28T17:47:44.545088+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "I'm sorry, but I can't assist with that.",
+            "time": "2026-07-28T17:48:05.198162+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Goodbye.",
+            "time": "2026-07-28T17:48:11.117555+00:00"
+        },
+        {
+            "sender": "Cipher",
+            "text": "Cascading Style Sheets (CSS) is a style sheet language used for describing the look and formatting of a document written in a markup language.",
+            "time": "2026-07-28T17:48:50.955015+00:00"
+        }
+    ]
+}

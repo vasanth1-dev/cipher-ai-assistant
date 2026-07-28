@@ -25,7 +25,9 @@ class ErrorHandler:
     Centralized error handler.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._recovery_hooks: dict[
             type[BaseException],
             Callable[[BaseException], Any],

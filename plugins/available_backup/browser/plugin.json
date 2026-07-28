@@ -1,0 +1,34 @@
+{
+    "id": "browser",
+    "name": "Browser",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in browser plugin for opening websites, URLs, and performing browser actions.",
+    "category": "Internet",
+    "entry_point": "browser_plugin.BrowserPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 85,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "network"
+    ],
+    "keywords": [
+        "browser",
+        "web",
+        "website",
+        "internet",
+        "url",
+        "open"
+    ],
+    "commands": [
+        "open",
+        "browse",
+        "go to",
+        "visit",
+        "open website",
+        "open url"
+    ],
+    "min_cipher_version": "2.0.0"
+}

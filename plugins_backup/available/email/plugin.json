@@ -1,0 +1,36 @@
+{
+    "id": "email",
+    "name": "Email",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in email plugin for composing, sending, reading, and managing emails.",
+    "category": "Communication",
+    "entry_point": "email_plugin.EmailPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 85,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "network"
+    ],
+    "keywords": [
+        "email",
+        "mail",
+        "gmail",
+        "inbox",
+        "compose",
+        "send"
+    ],
+    "commands": [
+        "send email",
+        "compose email",
+        "draft email",
+        "read emails",
+        "check email",
+        "check inbox",
+        "show inbox",
+        "email"
+    ],
+    "min_cipher_version": "2.0.0"
+}

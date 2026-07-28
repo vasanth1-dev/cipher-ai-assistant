@@ -18,7 +18,10 @@ class ChatScrollManager(QObject):
 
     BOTTOM_THRESHOLD = 40
 
-    def __init__(self, scroll_area: QScrollArea):
+    def __init__(
+        self, 
+        scroll_area: QScrollArea,
+    ) -> None:
         super().__init__(scroll_area)
 
         self.scroll_area = scroll_area
@@ -36,7 +39,9 @@ class ChatScrollManager(QObject):
 
     # ------------------------------------------------------------------
 
-    def scroll_to_bottom(self):
+    def scroll_to_bottom(
+        self,
+    ) -> None:
         """
         Scroll immediately.
         """
@@ -45,7 +50,10 @@ class ChatScrollManager(QObject):
 
     # ------------------------------------------------------------------
 
-    def scroll_to_bottom_later(self, delay: int = 0):
+    def scroll_to_bottom_later(
+        self, 
+        delay: int = 0,
+    ) -> None:
         """
         Scroll after layouts finish updating.
         """
@@ -62,7 +70,10 @@ class ChatScrollManager(QObject):
 
     # ------------------------------------------------------------------
 
-    def restore_position(self, value: int):
+    def restore_position(
+        self, 
+        value: int,
+    ) -> None:
         self.scrollbar.setValue(value)
 
     # ------------------------------------------------------------------
@@ -76,15 +87,22 @@ class ChatScrollManager(QObject):
 
     # ------------------------------------------------------------------
 
-    def enable_auto_scroll(self):
+    def enable_auto_scroll(
+        self,
+    ) -> None:
         self._auto_scroll = True
 
-    def disable_auto_scroll(self):
+    def disable_auto_scroll(
+        self,
+    ) -> None:
         self._auto_scroll = False
 
     # ------------------------------------------------------------------
 
-    def _on_scroll(self, value: int):
+    def _on_scroll(
+        self, 
+        value: int,
+    ) -> None:
         del value
 
         if self.is_at_bottom():
@@ -94,7 +112,10 @@ class ChatScrollManager(QObject):
 
     # ------------------------------------------------------------------
 
-    def attach(self, area: QAbstractScrollArea):
+    def attach(
+        self, 
+        area: QAbstractScrollArea,
+    ) -> None:
         """
         Optional helper if scroll area changes.
         """

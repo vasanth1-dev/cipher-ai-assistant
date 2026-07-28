@@ -27,7 +27,9 @@ class ConfigValidator:
     Runtime configuration validator.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._errors: list[str] = []
         self._warnings: list[str] = []
 

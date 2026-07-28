@@ -11,7 +11,9 @@ class ChatFavoritesService:
     Favorites are stored independently from chat history.
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self.data_dir = Path("data")
         self.data_dir.mkdir(exist_ok=True)

@@ -13,7 +13,9 @@ class ModelUsageService:
     depending on any AI backend.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/model_usage.json")
         self._file.parent.mkdir(

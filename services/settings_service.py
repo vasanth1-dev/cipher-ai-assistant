@@ -6,16 +6,36 @@ from core.logger import logger
 
 class SettingsService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.file = Path("data/settings.json")
 
         self.defaults = {
             "assistant_name": "Cipher",
+
+            "model": "phi3",
+            "temperature": "0.2",
+
+            "voice": True,
+            "startup": False,
+            "tray": True,
+            "theme": "Dark",
+            "accent": "Blue",
+            "font-size": "14",
+            "ui_scale": "100%",
+            "animation_speed": "Normal",
+            "high_contrast": False,
+            "reduced_motion": False,
+            "large_click_targets": False,
+
             "speech_rate": 170,
             "speech_volume": 1.0,
+
             "ollama_model": "phi3:latest",
             "gemini_enabled": True,
+
             "wake_words": [
                 "hey cipher",
                 "cipher",
@@ -65,7 +85,9 @@ class SettingsService:
 
         except Exception as e:
 
-            logger.exception(e)
+            logger.exception(
+                f"[SETTINGS] Failed to load settings: {e}"
+            )
 
             defaults = self.defaults.copy()
 
@@ -95,7 +117,9 @@ class SettingsService:
 
         except Exception as e:
 
-            logger.exception(e)
+            logger.exception(
+                f"[SETTINGS] Failed to save settings: {e}"
+            )
 
     # ------------------------------------------------ #
     # Public API
@@ -138,6 +162,11 @@ class SettingsService:
 
     def set(self, key, value):
 
+        key = str(key).strip()
+
+        if not key:
+            return "Invalid setting name."
+
         settings = self.load()
 
         settings[key] = value
@@ -158,11 +187,54 @@ class SettingsService:
 
         self.save(settings)
 
+        logger.info(
+            f"[SETTINGS] Updated keys: {', '.join(kwargs.keys())}"
+        )
+
+    def save_profile(self, name: str) -> None:
+        """
+        Save the current settings as a named profile.
+        """
+
+        settings = self.load()
+
+        profiles = settings.get("profiles", {})
+        profiles[name] = settings.copy()
+
+        settings["profiles"] = profiles
+
+        self.update(**settings)
+
+    def load_profile(self, name: str):
+
+        settings = self.load()
+
+        profile = settings.get(
+            "profiles",
+            {}
+        ).get(name)
+
+        if profile:
+
+            self.update(**profile)
+
+            return profile
+
+        return None
+
     def exists(self, key):
+
+        if not key:
+            return False
 
         return key in self.load()
 
     def remove(self, key):
+
+        if not key:
+            return False
+        
+        key = str(key).strip()
 
         settings = self.load()
 
@@ -190,7 +262,7 @@ class SettingsService:
             "[SETTINGS] Reset to defaults."
         )
 
-        return "Settings reset successfully."
+        return self.load()
 
 
 settings_service = SettingsService()

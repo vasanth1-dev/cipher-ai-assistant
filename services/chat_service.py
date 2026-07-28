@@ -7,7 +7,9 @@ from core.logger import logger
 
 class ChatService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.chat_dir = "data/chats"
 

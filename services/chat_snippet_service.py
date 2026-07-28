@@ -13,7 +13,9 @@ class ChatSnippetService:
     code fragments, shell commands, SQL queries, etc.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/chat_snippets.json")
         self._file.parent.mkdir(

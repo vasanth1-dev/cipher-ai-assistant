@@ -17,14 +17,14 @@ class MarkdownRenderer:
     def render(
         self,
         text: str,
-    ):
+    ) -> str:
 
         if not text:
             return ""
 
         text = self._normalize(text)
 
-        text = self._render_code_blocks(text)
+        text, code_block = self._render_code_blocks(text)
 
         text = html.escape(text)
 
@@ -43,14 +43,20 @@ class MarkdownRenderer:
             "<br>",
         )
 
+        for index, block in enumerate(code_block):
+            text = text.replace(
+                f"__CODE_BLOCK_{index}__",
+                block,
+            )
+
         return text
 
     # --------------------------------------------------
 
     def _normalize(
         self,
-        text,
-    ):
+        text: str,
+    ) -> str:
 
         text = text.replace(
             "\r\n",
@@ -70,34 +76,36 @@ class MarkdownRenderer:
     # --------------------------------------------------
 
     def _render_code_blocks(
-        self,
-        text,
-    ):
+        self, 
+        text: str,
+    ) -> tuple[str, list[str]]:
 
         pattern = re.compile(
             r"```(\w+)?\n?(.*?)```",
             re.DOTALL,
         )
 
+        code_blocks = []
+
         def replace(match):
 
-            language = (
-                match.group(1) or ""
-            )
+            language = match.group(1) or ""
+            code = match.group(2) or ""
 
-            code = (
-                match.group(2) or ""
-            )
-
-            return code_renderer.render(
+            rendered = code_renderer.render(
                 language,
                 code,
             )
 
-        return pattern.sub(
-            replace,
-            text,
-        )
+            placeholder = f"__CODE_BLOCK_{len(code_blocks)}__"
+
+            code_blocks.append(rendered)
+
+            return placeholder
+
+        text = pattern.sub(replace, text)
+
+        return text, code_blocks
 
     # --------------------------------------------------
     # Headings
@@ -105,8 +113,8 @@ class MarkdownRenderer:
 
     def _render_headings(
         self,
-        text,
-    ):
+        text: str,
+    ) -> str:
 
         for level in range(6, 0, -1):
 
@@ -129,8 +137,8 @@ class MarkdownRenderer:
 
     def _render_lists(
         self,
-        text,
-    ):
+        text: str,
+    ) -> str:
 
         text = re.sub(
             r"^\-\s+",
@@ -154,8 +162,8 @@ class MarkdownRenderer:
 
     def _render_bold(
         self,
-        text,
-    ):
+        text: str,
+    ) -> str:
 
         return re.sub(
             r"\*\*(.+?)\*\*",
@@ -169,8 +177,8 @@ class MarkdownRenderer:
 
     def _render_italic(
         self,
-        text,
-    ):
+        text: str,
+    ) -> str:
 
         return re.sub(
             r"\*(.+?)\*",
@@ -184,8 +192,8 @@ class MarkdownRenderer:
 
     def _render_inline_code(
         self,
-        text,
-    ):
+        text: str,
+    ) -> str:
 
         return re.sub(
             r"`(.+?)`",

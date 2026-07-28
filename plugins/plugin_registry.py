@@ -25,7 +25,9 @@ class PluginRegistry:
     • Retrieve plugins by name
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._plugin_classes: Dict[str, Type[BasePlugin]] = {}
         self._plugins: Dict[str, BasePlugin] = {}
@@ -117,13 +119,21 @@ class PluginRegistry:
             )
             return
 
-        manifest = plugin.manifest
+        manifest = getattr(plugin, "manifest", None)
 
+        if manifest is None:
+
+            logger.warning(
+                f"{plugin_class.__name__} "
+                "does not provide a manifest."
+            )
+            return
+        
         if not isinstance(manifest, PluginManifest):
 
             logger.warning(
                 f"{plugin_class.__name__} "
-                "does not provide a valid manifest."
+                "provides an invalid manifest."
             )
             return
 

@@ -6,13 +6,19 @@ class PageHistory:
     Maintains page navigation history.
     """
 
-    def __init__(self, max_size: int = 50):
+    def __init__(
+        self, 
+        max_size: int = 50,
+    ) -> None:
 
         self._history = deque(maxlen=max_size)
 
     # --------------------------------------------------
 
-    def push(self, page: str):
+    def push(
+        self, 
+        page: str,
+    ) -> None:
 
         if not page:
             return
@@ -24,7 +30,9 @@ class PageHistory:
 
     # --------------------------------------------------
 
-    def back(self):
+    def back(
+        self,
+    ) -> str | None:
 
         if len(self._history) <= 1:
             return None
@@ -35,7 +43,9 @@ class PageHistory:
 
     # --------------------------------------------------
 
-    def current(self):
+    def current(
+        self,
+    ) -> str | None:
 
         if not self._history:
             return None
@@ -44,12 +54,16 @@ class PageHistory:
 
     # --------------------------------------------------
 
-    def clear(self):
+    def clear(
+        self,
+    ) -> None:
 
         self._history.clear()
 
     # --------------------------------------------------
 
-    def items(self):
+    def items(
+        self,
+    ) -> list[str]:
 
         return list(self._history)

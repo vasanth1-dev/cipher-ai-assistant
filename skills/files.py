@@ -65,15 +65,27 @@ def handle(command: str):
     # Create Folder
     # -------------------------------------------------
 
-    name = _extract_name(
-        command,
+    prefixes = (
         "create folder",
+        "make folder",
+        "new folder",
+        "create directory",
     )
+
+    name = None
+
+    for prefix in prefixes:
+        name = _extract_name(command, prefix)
+        if name is not None:
+            break
 
     if name is not None:
 
         if not name:
             return "Please tell me the folder name."
+        
+        if "/" in name or "\\" in name:
+            return "Please provide only a folder name."
 
         return file_service.create_folder(name)
 

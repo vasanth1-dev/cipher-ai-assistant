@@ -1,0 +1,49 @@
+{
+    "id": "system",
+    "name": "System",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in system control plugin for managing operating system actions.",
+    "category": "System",
+    "entry_point": "system_plugin.SystemPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 95,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "system",
+        "shell",
+        "audio"
+    ],
+    "keywords": [
+        "system",
+        "shutdown",
+        "restart",
+        "reboot",
+        "lock",
+        "logout",
+        "sleep",
+        "hibernate",
+        "volume",
+        "brightness",
+        "screenshot"
+    ],
+    "commands": [
+        "shutdown",
+        "restart",
+        "reboot",
+        "lock screen",
+        "logout",
+        "sign out",
+        "sleep",
+        "hibernate",
+        "mute",
+        "unmute",
+        "volume",
+        "brightness",
+        "take screenshot",
+        "screenshot"
+    ],
+    "min_cipher_version": "2.0.0"
+}

@@ -17,12 +17,16 @@ from gui.theme import (
 
 class PageNotFound(QWidget):
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
         self._build_ui()
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         self.setStyleSheet(f"""
         QWidget {{

@@ -14,7 +14,9 @@ class ChatBookmarkService:
     itself.
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/chat_bookmarks.json")
         self._file.parent.mkdir(

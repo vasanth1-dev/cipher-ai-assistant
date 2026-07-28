@@ -1,7 +1,5 @@
 import re
 
-import pywhatkit
-
 from core.logger import logger
 
 
@@ -36,6 +34,8 @@ class WhatsAppService:
             )
 
         try:
+
+            import pywhatkit
 
             pywhatkit.sendwhatmsg_instantly(
                 phone_no=phone,

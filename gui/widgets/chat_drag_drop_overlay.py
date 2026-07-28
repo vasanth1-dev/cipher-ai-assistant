@@ -2,8 +2,18 @@ from __future__ import annotations
 
 from pathlib import Path
 
+from PyQt6.QtGui import (
+    QColor,
+    QPainter,
+    QPen,
+    QResizeEvent,
+    QPaintEvent,
+    QDragEnterEvent,
+    QDragMoveEvent,
+    QDragLeaveEvent,
+    QDropEvent,
+)
 from PyQt6.QtCore import Qt, pyqtSignal
-from PyQt6.QtGui import QColor, QPainter, QPen
 from PyQt6.QtWidgets import QLabel, QWidget
 
 
@@ -15,7 +25,10 @@ class ChatDragDropOverlay(QWidget):
 
     filesDropped = pyqtSignal(list)
 
-    def __init__(self, parent=None):
+    def __init__(
+        self, 
+        parent: QWidget | None = None,
+    ) -> None:
         super().__init__(parent)
 
         self.setAcceptDrops(True)
@@ -39,13 +52,19 @@ class ChatDragDropOverlay(QWidget):
 
     # ---------------------------------------------------------
 
-    def resizeEvent(self, event):
+    def resizeEvent(
+        self, 
+        event: QResizeEvent,
+    ) -> None:
         super().resizeEvent(event)
         self.label.setGeometry(self.rect())
 
     # ---------------------------------------------------------
 
-    def paintEvent(self, event):
+    def paintEvent(
+        self, 
+        event: QPaintEvent,
+    ) -> None:
         del event
 
         painter = QPainter(self)
@@ -72,7 +91,10 @@ class ChatDragDropOverlay(QWidget):
 
     # ---------------------------------------------------------
 
-    def dragEnterEvent(self, event):
+    def dragEnterEvent(
+        self, 
+        event: QDragEnterEvent,
+    ) -> None:
 
         mime = event.mimeData()
 
@@ -84,18 +106,26 @@ class ChatDragDropOverlay(QWidget):
 
     # ---------------------------------------------------------
 
-    def dragMoveEvent(self, event):
+    def dragMoveEvent(
+        self, 
+        event: QDragMoveEvent,
+    ) -> None:
         event.acceptProposedAction()
 
     # ---------------------------------------------------------
 
-    def dragLeaveEvent(self, event):
+    def dragLeaveEvent(
+        self, 
+        event: QDragLeaveEvent,
+    ) -> None:
         del event
         self.hide()
 
     # ---------------------------------------------------------
 
-    def dropEvent(self, event):
+    def dropEvent(
+        self, 
+        event: QDropEvent):
 
         self.hide()
 

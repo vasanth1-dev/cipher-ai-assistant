@@ -1,0 +1,39 @@
+{
+    "id": "app_launcher",
+    "name": "Application Launcher",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in application launcher plugin for starting, stopping, and managing desktop applications.",
+    "category": "System",
+    "entry_point": "app_launcher_plugin.AppLauncherPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 90,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "system",
+        "process"
+    ],
+    "keywords": [
+        "application",
+        "app",
+        "launch",
+        "start",
+        "run",
+        "close",
+        "quit",
+        "kill"
+    ],
+    "commands": [
+        "open application",
+        "open app",
+        "launch",
+        "start",
+        "run",
+        "close",
+        "quit",
+        "kill"
+    ],
+    "min_cipher_version": "2.0.0"
+}

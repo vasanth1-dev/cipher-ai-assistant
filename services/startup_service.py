@@ -7,7 +7,9 @@ from config import OLLAMA_URL
 
 class StartupService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self.results = []
 
     def check_python(self):
@@ -25,7 +27,7 @@ class StartupService:
 
         try:
             response = requests.get(
-                "http://localhost:11434",
+                OLLAMA_URL.rsplit("/api", 1)[0],
                 timeout=2,
             )
 
@@ -49,7 +51,7 @@ class StartupService:
         self.results.append(
             (
                 "Camera Folder",
-                os.path.exists("data/images"),
+                os.path.isdir("data/images"),
             )
         )
 
@@ -58,7 +60,7 @@ class StartupService:
         self.results.append(
             (
                 "Face Folder",
-                os.path.exists("data/faces"),
+                os.path.isdir("data/faces"),
             )
         )
 
@@ -67,7 +69,7 @@ class StartupService:
         self.results.append(
             (
                 "Screen Folder",
-                os.path.exists("data/screens"),
+                os.path.isdir("data/screens"),
             )
         )
 

@@ -6,7 +6,9 @@ from core.logger import logger
 
 class NotificationService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.command = shutil.which("notify-send")
 
@@ -23,6 +25,10 @@ class NotificationService:
 
         title = str(title).strip()
         message = str(message).strip()
+        icon = str(icon).strip()
+
+        if not icon:
+            icon = "dialog-information"
 
         if not title:
             title = "Cipher"

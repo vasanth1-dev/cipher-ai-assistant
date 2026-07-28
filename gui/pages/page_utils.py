@@ -1,9 +1,12 @@
-from PyQt6.QtWidgets import QStackedWidget
+from PyQt6.QtWidgets import (
+    QStackedWidget,
+    QWidget,
+)
 
 
 def page_index(
     stack: QStackedWidget,
-    widget,
+    widget: QWidget,
 ) -> int:
     """
     Return the index of a page inside a QStackedWidget.
@@ -14,7 +17,7 @@ def page_index(
 
 def has_page(
     stack: QStackedWidget,
-    widget,
+    widget: QWidget,
 ) -> bool:
     """
     Check whether a page exists in the stacked widget.
@@ -25,7 +28,7 @@ def has_page(
 
 def show_page(
     stack: QStackedWidget,
-    widget,
+    widget: QWidget,
 ) -> bool:
     """
     Display a page if it exists.

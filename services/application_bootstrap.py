@@ -102,9 +102,15 @@ class ApplicationBootstrap:
     # --------------------------------------------------
 
     def initialize(self) -> bool:
-        """
-        Initialize the Cipher runtime.
-        """
+
+        if self.application_state.initialized:
+
+            logger.info(
+                "Cipher runtime already initialized."
+            )
+
+            return True
+
         logger.info("Initializing Cipher runtime...")
 
         self.register_default_services()

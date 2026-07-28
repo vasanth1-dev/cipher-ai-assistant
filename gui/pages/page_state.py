@@ -1,3 +1,6 @@
+from gui.pages.page_constants import PAGE_DASHBOARD
+
+
 from dataclasses import dataclass
 
 
@@ -7,12 +10,15 @@ class PageState:
     Stores the current page state.
     """
 
-    current: str = "dashboard"
+    current: str = PAGE_DASHBOARD
     previous: str | None = None
 
     # --------------------------------------------------
 
-    def change(self, page: str):
+    def change(
+        self, 
+        page: str,
+    ) -> None:
 
         if page == self.current:
             return
@@ -22,7 +28,9 @@ class PageState:
 
     # --------------------------------------------------
 
-    def reset(self):
+    def reset(
+        self,
+    ) -> None:
 
-        self.current = "dashboard"
+        self.current = PAGE_DASHBOARD
         self.previous = None

@@ -3,12 +3,85 @@ from core.logger import logger
 from prompts.prompt_loader import prompt_loader
 
 from services.history_service import history_service
+from services.question_classifier import question_classifier
+from services.memory_service import memory_service
 from services.ollama_service import ollama_service
 
 
 class AIService:
 
-    def __init__(self):
+        # --------------------------------------------------
+    # Prompt Keywords
+    # --------------------------------------------------
+
+    CODING_WORDS = (
+        "python",
+        "java",
+        "c++",
+        "c#",
+        "javascript",
+        "html",
+        "css",
+        "sql",
+        "code",
+        "program",
+        "debug",
+    )
+
+    LINUX_WORDS = (
+        "ubuntu",
+        "linux",
+        "terminal",
+        "bash",
+        "apt",
+        "systemctl",
+        "snap",
+    )
+
+    INTERVIEW_WORDS = (
+        "interview",
+        "mcq",
+        "aptitude",
+        "hr",
+    )
+
+    CONCISE_WORDS = (
+        "full form",
+        "meaning",
+        "definition",
+    )
+
+    EXPLANATION_WORDS = (
+        "explain",
+        "detail",
+        "how",
+        "why",
+        "compare",
+    )
+
+    CHAT_WORDS = (
+        "hi",
+        "hello",
+        "hey",
+        "good morning",
+        "good afternoon",
+        "good evening",
+        "how are you",
+        "who are you",
+    )
+
+    MEMORY_WORDS = (
+        "remember",
+        "forget",
+        "my",
+        "name",
+        "favourite",
+        "favorite",
+    )
+
+    def __init__(
+       self,
+    ) -> None:
 
         self.provider = ollama_service
 
@@ -28,14 +101,6 @@ class AIService:
             f"{provider.__class__.__name__}"
         )
 
-    def get_provider(self):
-
-        return self.provider
-
-    # --------------------------------------------------
-    # Generate
-    # --------------------------------------------------
-
     def generate(self, prompt):
 
         prompt = self._normalize(prompt)
@@ -43,26 +108,78 @@ class AIService:
         if not prompt:
             return ""
 
-        system_prompt, user_prompt = self._build_prompt(
-            prompt
-        )
+        if question_classifier.is_simple(prompt):
+
+            system_instruction = """
+    You are Cipher.
+
+    The user asked a simple factual question.
+
+    Answer in ONLY 2 to 4 sentences.
+
+    Do not use headings.
+
+    Do not use bullet points.
+
+    Do not give unnecessary details.
+
+    Keep the answer under 80 words.
+    """
+
+        else:
+
+            system_instruction = """
+    You are Cipher.
+
+    Match the response length to the user's request.
+
+    If the user asks for details,
+    provide a complete and well-structured explanation.
+
+    Use headings and bullet points whenever helpful.
+    """
 
         try:
+
+            logger.debug("STEP 1: Before _build_prompt")
+
+            system_prompt, user_prompt = self._build_prompt(prompt)
+
+            logger.debug(
+                f"STEP 2: Prompt built (system={len(system_prompt)}, user={len(user_prompt)})"
+            )
+
+            # Merge classifier instruction
+            system_prompt = f"""
+    {system_prompt}
+
+    {system_instruction}
+    """
+
+            logger.debug("STEP 3: Before provider.generate()")
 
             response = self.provider.generate(
                 user_prompt,
                 system=system_prompt,
             )
 
+            logger.debug("STEP 4: After provider.generate()")
+
             if response is None:
                 return ""
 
             response = str(response).strip()
 
+            logger.debug(
+                f"STEP 5: Response received ({len(response)} characters)"
+            )
+
             history_service.add(
                 prompt,
                 response,
             )
+
+            logger.debug("STEP 6: History saved")
 
             return response
 
@@ -128,258 +245,199 @@ class AIService:
                 "Sorry, I couldn't generate a response."
             )
 
+
+    def _add_prompt(
+        self,
+        system_parts: list[str],
+        prompt_name: str,
+    ) -> None:
+        """
+        Load a system prompt and add it if available.
+        """
+
+        prompt = prompt_loader.load(prompt_name)
+
+        if prompt:
+            system_parts.append(prompt)
+
     # --------------------------------------------------
     # Prompt Builder
     # --------------------------------------------------
-
-    def _build_prompt(
+    
+    def _load_memory(
         self,
-        prompt,
-    ):
+        system_parts: list[str],
+    ) -> None:
+        """
+        Load memory prompt into the system prompt list.
+        """
 
-        prompt_lower = prompt.lower()
+        try:
 
-        system_parts = []
+            memory = memory_service.memory_prompt()
 
-        # Always load
+            if memory:
+                system_parts.append(memory)
 
-        for name in (
+        except Exception as e:
 
+            logger.exception(e)
+
+    def _contains_any(
+        self,
+        text: str,
+        keywords: tuple[str, ...],
+    ) -> bool:
+        """
+        Return True if any keyword exists in the text.
+        """
+
+        return any(
+            keyword in text
+            for keyword in keywords
+        )
+    
+    def _load_base_prompts(
+        self,
+        system_parts: list[str],
+    ) -> None:
+        """
+        Load the default system prompts.
+        """
+
+        self._add_prompt(
+            system_parts,
             "system_prompt",
+        )
+
+        self._add_prompt(
+            system_parts,
             "router_prompt",
+        )
 
-        ):
+    def _load_category_prompts(
+        self,
+        prompt_lower: str,
+        system_parts: list[str],
+    ) -> None:
+        """
+        Load additional prompts based on the user's request.
+        """
 
-            text = prompt_loader.load(name)
-
-            if text:
-                system_parts.append(text)
-
-        # Memory
-
-        try:
-
-            from services.memory_service import (
-                memory_service,
-            )
-
-            memory = (
-                memory_service.memory_prompt()
-            )
-
-            if memory:
-
-                system_parts.append(memory)
-
-        except Exception as e:
-
-            logger.exception(e)
-
+        # --------------------------------------------------
         # Coding
+        # --------------------------------------------------
 
-        coding_words = (
-
-            "python",
-            "java",
-            "c++",
-            "c#",
-            "javascript",
-            "html",
-            "css",
-            "sql",
-            "code",
-            "program",
-            "debug",
-
-        )
-
-        if any(
-            word in prompt_lower
-            for word in coding_words
+        if self._contains_any(
+            prompt_lower,
+            self.CODING_WORDS,
         ):
 
-            system_parts.append(
-                prompt_loader.load(
-                    "coding_prompt"
-                )
+            self._add_prompt(
+                system_parts,
+                "coding_prompt",
             )
 
-            system_parts.append(
-                prompt_loader.load(
-                    "developer_prompt"
-                )
+            self._add_prompt(
+                system_parts,
+                "developer_prompt",
             )
 
+        # --------------------------------------------------
         # Linux
+        # --------------------------------------------------
 
-        linux_words = (
-
-            "ubuntu",
-            "linux",
-            "terminal",
-            "bash",
-            "apt",
-            "systemctl",
-            "snap",
-
-        )
-
-        if any(
-            word in prompt_lower
-            for word in linux_words
+        if self._contains_any(
+            prompt_lower,
+            self.LINUX_WORDS,
         ):
 
-            system_parts.append(
-                prompt_loader.load(
-                    "linux_prompt"
-                )
+            self._add_prompt(
+                system_parts,
+                "linux_prompt",
             )
 
+        # --------------------------------------------------
         # Interview
+        # --------------------------------------------------
 
-        if any(
-            word in prompt_lower
-            for word in (
-                "interview",
-                "mcq",
-                "aptitude",
-                "hr",
-            )
+        if self._contains_any(
+            prompt_lower,
+            self.INTERVIEW_WORDS,
         ):
 
-            system_parts.append(
-                prompt_loader.load(
-                    "interview_prompt"
-                )
+            self._add_prompt(
+                system_parts,
+                "interview_prompt",
             )
 
+        # --------------------------------------------------
         # Concise
+        # --------------------------------------------------
 
-        if any(
-            phrase in prompt_lower
-            for phrase in (
-
-                "full form",
-                "meaning",
-                "definition",
-
-            )
+        if self._contains_any(
+            prompt_lower,
+            self.CONCISE_WORDS,
         ):
 
-            system_parts.append(
-                prompt_loader.load(
-                    "concise_prompt"
-                )
+            self._add_prompt(
+                system_parts,
+                "concise_prompt",
             )
 
-        # Detailed
+        # --------------------------------------------------
+        # Detailed Explanation
+        # --------------------------------------------------
 
-        if any(
-            word in prompt_lower
-            for word in (
-
-                "explain",
-                "detail",
-                "how",
-                "why",
-                "compare",
-
-            )
+        if self._contains_any(
+            prompt_lower,
+            self.EXPLANATION_WORDS,
         ):
 
-            system_parts.append(
-                prompt_loader.load(
-                    "explanation_prompt"
-                )
+            self._add_prompt(
+                system_parts,
+                "explanation_prompt",
             )
 
-        # Chat
-
-        # Chat
-
-            # --------------------------------------------------
+        # --------------------------------------------------
         # Chat
         # --------------------------------------------------
 
-        chat_words = (
-
-            "hi",
-            "hello",
-            "hey",
-            "good morning",
-            "good afternoon",
-            "good evening",
-            "how are you",
-            "who are you",
-
-        )
-
-        if any(
-            word in prompt_lower
-            for word in chat_words
+        if self._contains_any(
+            prompt_lower,
+            self.CHAT_WORDS,
         ):
 
-            system_parts.append(
-                prompt_loader.load(
-                    "chat_prompt"
-                )
+            self._add_prompt(
+                system_parts,
+                "chat_prompt",
             )
 
         # --------------------------------------------------
-        # Memory Prompt (Only when needed)
+        # Memory Prompt
         # --------------------------------------------------
 
-        memory_words = (
-
-            "remember",
-            "forget",
-            "my",
-            "name",
-            "favourite",
-            "favorite",
-
-        )
-
-        if any(
-            word in prompt_lower
-            for word in memory_words
+        if self._contains_any(
+            prompt_lower,
+            self.MEMORY_WORDS,
         ):
 
-            system_parts.append(
-                prompt_loader.load(
-                    "memory_prompt"
-                )
+            self._add_prompt(
+                system_parts,
+                "memory_prompt",
             )
 
-        # --------------------------------------------------
-        # User Memory
-        # --------------------------------------------------
+    def _build_system_prompt(
+        self,
+        system_parts: list[str],
+    ) -> str:
+        """
+        Combine all prompt parts into a single system prompt.
+        """
 
-        try:
+        return "\n\n".join(
 
-            from services.memory_service import (
-                memory_service,
-            )
-
-            memory = (
-                memory_service.memory_prompt()
-            )
-
-            if memory:
-
-                system_parts.append(memory)
-
-        except Exception as e:
-
-            logger.exception(e)
-
-        # --------------------------------------------------
-        # Build System Prompt
-        # --------------------------------------------------
-
-        system_prompt = "\n\n".join(
-
-            part
+            part.strip()
 
             for part in system_parts
 
@@ -387,11 +445,59 @@ class AIService:
 
         )
 
+    def _build_prompt(
+        self,
+        prompt: str,
+    ) -> tuple[str, str]:
+        """
+        Build the complete system prompt for the AI model.
+        """
+
+        prompt_lower = prompt.lower()
+
+        system_parts: list[str] = []
+
+        # --------------------------------------------------
+        # Base Prompts
+        # --------------------------------------------------
+
+        self._add_prompt(
+            system_parts,
+            "system_prompt",
+        )
+
+        self._add_prompt(
+            system_parts,
+            "router_prompt",
+        )
+
+        # --------------------------------------------------
+        # User Memory
+        # --------------------------------------------------
+
+        self._load_memory(system_parts)
+
+        # --------------------------------------------------
+        # Category Prompts
+        # --------------------------------------------------
+
+        self._load_category_prompts(
+            prompt_lower,
+            system_parts,
+        )
+
+        # --------------------------------------------------
+        # Build Final System Prompt
+        # --------------------------------------------------
+
+        system_prompt = self._build_system_prompt(
+            system_parts,
+        )
+
         return (
             system_prompt,
             prompt,
         )
-
     # --------------------------------------------------
     # Status
     # --------------------------------------------------

@@ -1,0 +1,36 @@
+{
+    "id": "calendar",
+    "name": "Calendar",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in calendar plugin for managing events, meetings, and schedules.",
+    "category": "Productivity",
+    "entry_point": "calendar_plugin.CalendarPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 85,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "network"
+    ],
+    "keywords": [
+        "calendar",
+        "event",
+        "meeting",
+        "schedule",
+        "appointment"
+    ],
+    "commands": [
+        "calendar",
+        "show calendar",
+        "show events",
+        "list events",
+        "today events",
+        "create event",
+        "add event",
+        "schedule meeting",
+        "delete event"
+    ],
+    "min_cipher_version": "2.0.0"
+}

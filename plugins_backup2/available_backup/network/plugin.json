@@ -1,0 +1,39 @@
+{
+    "id": "network",
+    "name": "Network",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in network plugin for managing Wi-Fi connections and network information.",
+    "category": "System",
+    "entry_point": "network_plugin.NetworkPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 90,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "network",
+        "system"
+    ],
+    "keywords": [
+        "network",
+        "wifi",
+        "wi-fi",
+        "internet",
+        "ip",
+        "connection"
+    ],
+    "commands": [
+        "network",
+        "network status",
+        "wifi",
+        "wi-fi",
+        "scan wifi",
+        "enable wifi",
+        "disable wifi",
+        "connect wifi",
+        "disconnect wifi",
+        "ip address"
+    ],
+    "min_cipher_version": "2.0.0"
+}

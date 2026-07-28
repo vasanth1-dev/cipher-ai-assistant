@@ -149,7 +149,10 @@ class DashboardCard(QFrame):
 
     # --------------------------------------------------
 
-    def enterEvent(self, event):
+    def enterEvent(
+        self, 
+        event: QEvent,
+    ) -> None:
 
         self.animation.stop()
 
@@ -165,7 +168,7 @@ class DashboardCard(QFrame):
         QFrame#DashboardCard{{
             background:#263244;
             border:1px solid {PRIMARY};
-            border-radius:16px;
+            border-radius:{RADIUS_LARGE}px;
         }}
 
         QLabel{{
@@ -176,7 +179,10 @@ class DashboardCard(QFrame):
 
         super().enterEvent(event)
 
-    def leaveEvent(self, event):
+    def leaveEvent(
+        self, 
+        event: QEvent,
+    ) -> None:
 
         self.animation.stop()
 
@@ -192,7 +198,7 @@ class DashboardCard(QFrame):
         QFrame#DashboardCard{{
             background:#1F2937;
             border:1px solid #334155;
-            border-radius:16px;
+            border-radius:{RADIUS_LARGE}px;
         }}
 
         QLabel{{
@@ -207,19 +213,31 @@ class DashboardCard(QFrame):
     # Compatible API
     # --------------------------------------------------
 
-    def set_title(self, text: str):
+    def set_title(
+        self, 
+        text: str
+    ) -> None:
 
         self.title_label.setText(str(text))
 
-    def set_value(self, text: str):
+    def set_value(
+        self, 
+        text: str
+    ) -> None:
 
         self.value_label.setText(str(text))
 
-    def set_subtitle(self, text: str):
+    def set_subtitle(
+        self, 
+        text: str
+    ) -> None:
 
         self.subtitle_label.setText(str(text))
 
-    def set_status_color(self, color: str):
+    def set_status_color(
+        self, 
+        color: str
+    ) -> None:
 
         self._accent = color
 
@@ -234,14 +252,20 @@ class DashboardCard(QFrame):
         color:{color};
         """)
 
-    def set_normal(self):
+    def set_normal(
+        self
+    ) -> None:
 
         self.set_status_color(SUCCESS)
 
-    def set_warning(self):
+    def set_warning(
+        self
+    ) -> None:
 
         self.set_status_color("#F59E0B")
 
-    def set_error(self):
+    def set_error(
+        self
+    ) -> None:
 
         self.set_status_color("#EF4444")

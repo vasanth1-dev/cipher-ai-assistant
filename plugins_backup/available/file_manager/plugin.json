@@ -1,0 +1,47 @@
+{
+    "id": "file_manager",
+    "name": "File Manager",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in file manager plugin for creating, deleting, moving, copying, renaming, listing, and opening files and folders.",
+    "category": "System",
+    "entry_point": "file_manager_plugin.FileManagerPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 85,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "filesystem"
+    ],
+    "keywords": [
+        "file",
+        "folder",
+        "directory",
+        "filesystem",
+        "mkdir",
+        "copy",
+        "move",
+        "rename",
+        "delete",
+        "open"
+    ],
+    "commands": [
+        "create folder",
+        "create directory",
+        "make folder",
+        "mkdir",
+        "create file",
+        "delete file",
+        "delete folder",
+        "rename file",
+        "rename folder",
+        "move file",
+        "copy file",
+        "list files",
+        "list folders",
+        "open file",
+        "open folder"
+    ],
+    "min_cipher_version": "2.0.0"
+}

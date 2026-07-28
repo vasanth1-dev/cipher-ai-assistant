@@ -15,7 +15,9 @@ class ChatRecentService:
 
     MAX_RECENT = 20
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/chat_recent.json")
         self._file.parent.mkdir(

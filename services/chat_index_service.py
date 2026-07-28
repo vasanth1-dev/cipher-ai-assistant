@@ -15,7 +15,9 @@ class ChatIndexService:
 
     INDEX_FILE = Path("data/chat_index.json")
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self.INDEX_FILE.parent.mkdir(
             parents=True,

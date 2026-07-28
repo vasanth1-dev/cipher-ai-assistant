@@ -1,3 +1,5 @@
+ from gui.pages.page_constants import PAGE_DASHBOARD
+
 from PyQt6.QtCore import QObject, pyqtSignal
 
 
@@ -8,10 +10,12 @@ class PageRouter(QObject):
 
     pageChanged = pyqtSignal(str)
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
-        self._current_page = "dashboard"
+        self._current_page = PAGE_DASHBOARD
 
     # --------------------------------------------------
 
@@ -21,7 +25,10 @@ class PageRouter(QObject):
 
     # --------------------------------------------------
 
-    def navigate(self, page: str):
+    def navigate(
+        self, 
+        page: str,
+    ) -> None:
 
         if not page:
             return
@@ -35,6 +42,8 @@ class PageRouter(QObject):
 
     # --------------------------------------------------
 
-    def reset(self):
+    def reset(
+        self,
+    ) -> None:
 
-        self.navigate("dashboard")
+        self.navigate(PAGE_DASHBOARD)

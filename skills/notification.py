@@ -1,7 +1,12 @@
 from services.notification_service import notification_service
 
+INTENT = "notification"
+
 
 def handle(command: str):
+
+    if not command:
+        return None
 
     command = command.lower().strip()
 
@@ -12,11 +17,14 @@ def handle(command: str):
         if not message:
             return "What should I notify?"
 
-        notification_service.notify(
+        success = notification_service.notify(
             "Cipher",
             message,
         )
 
-        return "Notification sent."
+        if success:
+            return "Notification sent."
+
+        return "Unable to send the notification."
 
     return None

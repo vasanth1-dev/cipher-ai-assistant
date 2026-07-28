@@ -1,0 +1,39 @@
+{
+    "id": "bluetooth",
+    "name": "Bluetooth",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in Bluetooth plugin for managing Bluetooth adapters and devices.",
+    "category": "System",
+    "entry_point": "bluetooth_plugin.BluetoothPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 90,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "system"
+    ],
+    "keywords": [
+        "bluetooth",
+        "bt",
+        "wireless",
+        "pair",
+        "connect",
+        "device"
+    ],
+    "commands": [
+        "bluetooth",
+        "bluetooth status",
+        "turn on bluetooth",
+        "turn off bluetooth",
+        "enable bluetooth",
+        "disable bluetooth",
+        "scan bluetooth",
+        "pair bluetooth",
+        "connect bluetooth",
+        "disconnect bluetooth",
+        "bluetooth devices"
+    ],
+    "min_cipher_version": "2.0.0"
+}

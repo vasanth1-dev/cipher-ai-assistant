@@ -35,6 +35,7 @@ class StartupManager:
         ai_service=None,
         gui=None,
     ):
+        self.started = False
         self.service_manager = service_manager
         self.plugin_manager = plugin_manager
         self.ai_service = ai_service
@@ -66,9 +67,15 @@ class StartupManager:
 
             self._start_gui()
 
-            logger.info("Cipher startup completed.")
+            if self.started:
 
-            return True
+                logger.info(
+                    " startup already completed."
+                )
+
+                return True
+            
+            self.started = True
 
         except Exception:
             logger.exception(

@@ -35,7 +35,9 @@ class RuntimeRegistry:
     Thread-safe runtime object registry.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._lock = RLock()
         self._objects: dict[str, Any] = {}
 

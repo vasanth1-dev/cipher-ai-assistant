@@ -16,8 +16,11 @@ from gui.theme import (
 
 
 class AboutPage(QWidget):
+    """About page for the Cipher application."""
 
-    def __init__(self):
+    def __init__(
+        self,
+    ) -> None:
         super().__init__()
 
         self.setStyleSheet(f"""

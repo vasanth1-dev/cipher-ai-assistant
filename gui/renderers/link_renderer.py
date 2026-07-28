@@ -17,7 +17,7 @@ class LinkRenderer:
     def render(
         self,
         text: str,
-    ):
+    ) -> str:
 
         if not text:
             return ""

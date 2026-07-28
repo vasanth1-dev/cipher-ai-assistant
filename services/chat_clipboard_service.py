@@ -14,7 +14,9 @@ class ChatClipboardService:
 
     MAX_HISTORY = 100
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self._history: list[str] = []
 

@@ -27,7 +27,9 @@ class ModelProfileService:
     hardcoding them throughout the application.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._profiles: dict[str, ModelProfile] = {}
 

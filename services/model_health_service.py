@@ -27,7 +27,9 @@ class ModelHealthService:
     another component can update.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._health: dict[str, ModelHealth] = {}
 

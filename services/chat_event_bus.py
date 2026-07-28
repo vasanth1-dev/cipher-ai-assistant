@@ -16,7 +16,9 @@ class ChatEventBus:
         event_bus.publish("message.sent", text="Hello")
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self._subscribers: dict[
             str,

@@ -7,7 +7,9 @@ class ConversationManager:
     Manages all conversations.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.storage = ConversationStorage()
 
@@ -21,7 +23,7 @@ class ConversationManager:
 
     # -------------------------------------------------
 
-    def create(self, title="New Chat"):
+    def create(self, title= "New Chat"):
 
         conversation = Conversation(title=title)
 
@@ -44,7 +46,7 @@ class ConversationManager:
 
     # -------------------------------------------------
 
-    def get_current(self):
+    def get_current(self) -> Conversation | None:
 
         return self.current
 
@@ -80,7 +82,7 @@ class ConversationManager:
         title,
     ):
 
-        conversation = self.set_current(
+        conversation = self.get_by_id(
             conversation_id
         )
 
@@ -111,16 +113,9 @@ class ConversationManager:
 
         ]
 
-        if (
-
-            self.current
-
-            and
-
-            self.current.id == conversation_id
-
-        ):
-
+        if self.conversations:
+            self.current = self.conversations[0]
+        else:
             self.current = None
 
     # -------------------------------------------------
@@ -130,7 +125,7 @@ class ConversationManager:
         conversation_id,
     ):
 
-        conversation = self.set_current(
+        conversation = self.get_by_id(
             conversation_id
         )
 
@@ -147,7 +142,7 @@ class ConversationManager:
         conversation_id,
     ):
 
-        conversation = self.set_current(
+        conversation = self.get_by_id(
             conversation_id
         )
 
@@ -172,6 +167,12 @@ class ConversationManager:
 
             for conversation in self.conversations
 
-            if text in conversation.title.lower()
+            if text in (conversation.title or "").lower()
 
         ]
+
+    def get_by_id(self, conversation_id):
+        for conversation in self.conversations:
+            if conversation.id == conversation_id:
+                return conversation
+        return None

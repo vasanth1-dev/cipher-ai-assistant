@@ -17,7 +17,6 @@ WAKE_WORDS = [
     "cypher",
     "hey safer",
     "safer",
-    "hey stop",
 ]
 # ========================
 WAKEWORD_MODEL = None
@@ -60,6 +59,7 @@ MODEL_NAME = "qwen2.5:1.5b"
 GOOGLE_URL = "https://www.google.com"
 YOUTUBE_URL = "https://www.youtube.com"
 GITHUB_URL = "https://github.com"
+STACKOVERFLOW_URL = "https://stackoverflow.com"
 
 GOOGLE_SEARCH = "https://www.google.com/search?q={}"
 YOUTUBE_SEARCH = "https://www.youtube.com/results?search_query={}"
@@ -70,14 +70,39 @@ YOUTUBE_SEARCH = "https://www.youtube.com/results?search_query={}"
 
 APPLICATIONS = {
     "firefox": "firefox",
+    "browser": "firefox",
+    "internet": "firefox",
+    "web browser": "firefox",
+
+
     "chrome": "google-chrome",
+    "google chrome": "google-chrome",
+
+
     "terminal": "gnome-terminal",
+    "gnome terminal": "gnome-terminal",
+
+
     "files": "nautilus",
+    "file manager": "nautilus",
+
+
     "calculator": "gnome-calculator",
+
+    "whatsapp": "whatsapp",
+
+
     "settings": "gnome-control-center",
+
+
     "text editor": "gedit",
+    "gedit": "gedit",
+
+
     "vscode": "code",
     "vs code": "code",
+    "visual studio code": "code",
+    "code": "code",
 }
 
 # ------------------------------------------
@@ -85,7 +110,7 @@ APPLICATIONS = {
 # ------------------------------------------
 
 SESSION_TIMEOUT = 300
-REQUEST_TIMEOUT =300
+REQUEST_TIMEOUT = 300
 MIC_TIMEOUT = 5
 PHRASE_TIMEOUT = 6
 
@@ -99,8 +124,6 @@ LOG_LEVEL = "INFO"
 # ==========================
 # AI Personality
 # ==========================
-
-AI_NAME = "Cipher"
 
 AI_PERSONALITY = """
 You are Cipher, an intelligent personal voice assistant.
@@ -128,4 +151,9 @@ EXIT_COMMANDS = [
     "quit",
     "goodbye",
     "stop",
+    "close",
+    "bye",
+    "shutdown cipher",
+    "exit cipher",
+    "close xipher",
     ]

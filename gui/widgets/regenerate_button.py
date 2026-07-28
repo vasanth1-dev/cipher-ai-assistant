@@ -6,7 +6,9 @@ class RegenerateButton(QPushButton):
 
     regenerateRequested = pyqtSignal()
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         super().__init__("↻ Regenerate")
 
         self.setMinimumHeight(34)

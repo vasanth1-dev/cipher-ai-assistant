@@ -25,7 +25,9 @@ class ChatSessionService:
     chat_history_service.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._sessions: dict[str, ChatSession] = {}
 

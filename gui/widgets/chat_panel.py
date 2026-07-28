@@ -1,13 +1,15 @@
-from PyQt6.QtCore import QTimer
+from PyQt6.QtCore import (
+    QTimer,
+    pyqtSignal,
+)
 from PyQt6.QtWidgets import (
     QSizePolicy,
     QVBoxLayout,
     QWidget,
 )
-from PyQt6.QtCore import pyqtSignal
 from gui.widgets.chat_container import ChatContainer
 from gui.widgets.welcome_widget import WelcomeWidget
-from gui.theme import(
+from gui.theme import (
     SPACING_SMALL,
 )
 
@@ -15,8 +17,11 @@ class ChatPanel(QWidget):
     
     promptSelected = pyqtSignal(str)
 
-    def __init__(self):
-        super().__init__()
+    def __init__(
+       self,
+       parent: QWidget | None = None,
+    ) -> None:
+        super().__init__(parent)
 
         self.welcome = WelcomeWidget()
 
@@ -37,7 +42,9 @@ class ChatPanel(QWidget):
     # UI
     # --------------------------------------------------
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         layout = QVBoxLayout(self)
 
@@ -70,7 +77,9 @@ class ChatPanel(QWidget):
     # --------------------------------------------------
     # Messages
     # --------------------------------------------------
-    def _show_chat(self):
+    def _show_chat(
+        self,
+    ) -> None:
 
         if self.welcome.isVisible():
             self.welcome.hide()
@@ -80,7 +89,12 @@ class ChatPanel(QWidget):
     def add_user_message(
         self,
         text: str,
-    ):
+    ) -> None:
+        
+        text = str(text).strip()
+
+        if not text:
+            return
         
         self._show_chat()
 
@@ -94,7 +108,12 @@ class ChatPanel(QWidget):
     def add_assistant_message(
         self,
         text: str,
-    ):
+    ) -> None:
+        
+        text = str(text).strip()
+
+        if not text:
+            return
         
         self._show_chat()
 
@@ -108,7 +127,7 @@ class ChatPanel(QWidget):
     def add_system_message(
         self,
         text: str,
-    ):
+    ) -> None:
         
         self._show_chat()
 
@@ -123,14 +142,18 @@ class ChatPanel(QWidget):
     # Typing Indicator
     # --------------------------------------------------
 
-    def show_typing(self):
+    def show_typing(
+        self,
+    ) -> None:
 
         if self._streaming:
             return
 
         self.container.show_typing_indicator()
 
-    def hide_typing(self):
+    def hide_typing(
+        self,
+    ) -> None:
 
         self.container.hide_typing_indicator()
 
@@ -138,7 +161,9 @@ class ChatPanel(QWidget):
     # Streaming
     # --------------------------------------------------
 
-    def start_stream(self):
+    def start_stream(
+        self,
+    ) -> None:
 
         if self._streaming:
             return
@@ -157,7 +182,7 @@ class ChatPanel(QWidget):
     def append_stream(
         self,
         text: str,
-    ):
+    ) -> None:
 
         if not self._streaming:
 
@@ -169,7 +194,12 @@ class ChatPanel(QWidget):
 
         self._schedule_scroll()
 
-    def finish_stream(self):
+    def finish_stream(
+        self,
+    ) -> None:
+
+        if not self._streaming:
+            return
 
         self._streaming = False
 
@@ -177,7 +207,9 @@ class ChatPanel(QWidget):
 
     # --------------------------------------------------
 
-    def clear_chat(self):
+    def clear_chat(
+        self,
+    ) -> None:
 
         self._streaming = False
 
@@ -194,7 +226,10 @@ class ChatPanel(QWidget):
     # Load Conversation
     # --------------------------------------------------
 
-    def load_conversation(self, conversation):
+    def load_conversation(
+        self, 
+        conversation,
+    ) -> None:
 
         self.clear_chat()
 
@@ -227,12 +262,14 @@ class ChatPanel(QWidget):
 
     def enable_auto_scroll(
         self,
-        enabled=True,
-    ):
+        enabled: bool = True,
+    ) -> None:
 
         self._auto_scroll = enabled
 
-    def _schedule_scroll(self):
+    def _schedule_scroll(
+        self,
+    ) -> None:
 
         if not self._auto_scroll:
             return
@@ -242,6 +279,8 @@ class ChatPanel(QWidget):
             self._scroll_bottom,
         )
 
-    def _scroll_bottom(self):
+    def _scroll_bottom(
+        self,
+    ) -> None:
 
         self.container.scroll_to_bottom()

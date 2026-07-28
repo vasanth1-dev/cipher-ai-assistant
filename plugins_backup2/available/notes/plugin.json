@@ -1,0 +1,34 @@
+{
+    "id": "notes",
+    "name": "Notes",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in notes plugin for creating, viewing, opening, and deleting notes.",
+    "category": "Productivity",
+    "entry_point": "notes_plugin.NotesPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 70,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "filesystem"
+    ],
+    "keywords": [
+        "notes",
+        "note",
+        "memo",
+        "notepad"
+    ],
+    "commands": [
+        "take note",
+        "create note",
+        "add note",
+        "show notes",
+        "list notes",
+        "my notes",
+        "open note",
+        "delete note"
+    ],
+    "min_cipher_version": "2.0.0"
+}

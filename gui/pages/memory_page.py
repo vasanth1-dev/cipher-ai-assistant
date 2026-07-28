@@ -1,24 +1,22 @@
-from PyQt6.QtCore import Qt, pyqtSignal
+from PyQt6.QtCore import pyqtSignal
 from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QHBoxLayout,
-    QLabel,
-    QLineEdit,
-    QPushButton,
     QListWidget,
     QListWidgetItem,
     QMessageBox,
 )
 
+from gui.widgets.ui.page_header import PageHeader
+from gui.widgets.ui.search_box import SearchBox
+from gui.widgets.ui.icon_button import IconButton
+from gui.widgets.ui.card import Card
+from gui.widgets.ui.empty_state import EmptyState
+from gui.widgets.ui.section import Section
+
 from gui.theme import (
     BACKGROUND,
-    SURFACE,
-    BORDER,
-    PRIMARY,
-    PRIMARY_HOVER,
-    TEXT,
-    TEXT_MUTED,
 )
 
 
@@ -38,57 +36,22 @@ class MemoryPage(QWidget):
     clearClicked = pyqtSignal()
     deleteClicked = pyqtSignal(str)
 
-    def __init__(self):
+    def __init__(
+        self,
+    ) -> None:
         super().__init__()
 
         self._build_ui()
 
     # --------------------------------------------------
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         self.setStyleSheet(f"""
         QWidget{{
             background:{BACKGROUND};
-            color:{TEXT};
-        }}
-
-        QLineEdit{{
-            background:{SURFACE};
-            color:{TEXT};
-            border:1px solid {BORDER};
-            border-radius:10px;
-            padding:10px;
-        }}
-
-        QListWidget{{
-            background:{SURFACE};
-            border:1px solid {BORDER};
-            border-radius:12px;
-            outline:none;
-        }}
-
-        QListWidget::item{{
-            padding:12px;
-            border-bottom:1px solid {BORDER};
-        }}
-
-        QListWidget::item:selected{{
-            background:{PRIMARY};
-            color:white;
-        }}
-
-        QPushButton{{
-            background:{PRIMARY};
-            color:white;
-            border:none;
-            border-radius:10px;
-            padding:10px 18px;
-            font-weight:bold;
-        }}
-
-        QPushButton:hover{{
-            background:{PRIMARY_HOVER};
         }}
         """)
 
@@ -96,25 +59,16 @@ class MemoryPage(QWidget):
         root.setContentsMargins(20, 20, 20, 20)
         root.setSpacing(15)
 
-        title = QLabel("🧠 Memory Center")
-        title.setStyleSheet("""
-        font-size:24px;
-        font-weight:bold;
-        """)
-
-        subtitle = QLabel(
-            "Manage everything Cipher remembers."
+        header = PageHeader(
+            "🧠 Memory"
+            "Manage everything Cipher remebers.",
         )
 
-        subtitle.setStyleSheet(f"""
-        color:{TEXT_MUTED};
-        font-size:10pt;
-        """)
+        root.addWidget(header)
 
-        root.addWidget(title)
-        root.addWidget(subtitle)
-
-        self.search = QLineEdit()
+        self.search = SearchBox(
+            "Search memories..."
+        )
         self.search.setPlaceholderText(
             "Search memories..."
         )
@@ -126,17 +80,38 @@ class MemoryPage(QWidget):
 
         self.memory_list = QListWidget()
 
+        memory_card = Card()
+
+        card_layout = QVBoxLayout(memory_card)
+
+        section = Section("Stored Memories")
+
+        card_layout.addWidget(section)
+
+        card_layout.addWidget(
+            self.memory_list
+        )
+
         root.addWidget(
-            self.memory_list,
+            memory_card,
             1,
         )
 
+        self.empty_state = EmptyState(
+            "🧠",
+            "No memories stored",
+            "Cipher hasn't saved anything yet."
+        )
+
+        root.addWidget(self.empty_state)
+
+
         buttons = QHBoxLayout()
 
-        self.import_button = QPushButton("Import")
-        self.export_button = QPushButton("Export")
-        self.delete_button = QPushButton("Delete")
-        self.clear_button = QPushButton("Clear All")
+        self.import_button = IconButton("📥", "Import")
+        self.export_button = IconButton("📤", "Export")
+        self.delete_button = IconButton("🗑", "Delete")
+        self.clear_button = IconButton("❌", "Clear")
 
         self.import_button.clicked.connect(
             self.importClicked.emit
@@ -177,15 +152,26 @@ class MemoryPage(QWidget):
                 QListWidgetItem(str(memory))
             )
 
+        self.empty_state.setVisible(len(memories) == 0)
+        self.memory_list.setVisible(len(memories) > 0)
+
     def add_memory(self, memory):
 
         self.memory_list.addItem(
             QListWidgetItem(str(memory))
         )
 
-    def clear_memories(self):
+        self.empty_state.hide()
 
+        self.memory_list.show()
+
+
+    def clear_memories(self):
         self.memory_list.clear()
+
+        self.memory_list.hide()
+
+        self.empty_state.show()
 
     # --------------------------------------------------
     # Internal

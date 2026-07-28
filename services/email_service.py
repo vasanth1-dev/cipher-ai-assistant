@@ -5,7 +5,9 @@ import os
 
 class EmailService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.sender = os.getenv("EMAIL_ADDRESS")
         self.password = os.getenv("EMAIL_PASSWORD")

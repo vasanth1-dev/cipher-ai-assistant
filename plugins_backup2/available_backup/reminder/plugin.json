@@ -1,0 +1,33 @@
+{
+    "id": "reminder",
+    "name": "Reminder",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in reminder plugin for creating, listing, completing, and deleting reminders.",
+    "category": "Productivity",
+    "entry_point": "reminder_plugin.ReminderPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 90,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [],
+    "keywords": [
+        "reminder",
+        "remind",
+        "task",
+        "alarm",
+        "schedule"
+    ],
+    "commands": [
+        "remind me",
+        "set reminder",
+        "add reminder",
+        "show reminders",
+        "list reminders",
+        "my reminders",
+        "complete reminder",
+        "delete reminder"
+    ],
+    "min_cipher_version": "2.0.0"
+}

@@ -23,7 +23,9 @@ class ModelDiscoveryService:
     external API. It only scans configured directories.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._directories: list[Path] = []
 

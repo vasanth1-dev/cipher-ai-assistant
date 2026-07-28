@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
+from plugins.plugin_manifest import PluginManifest
 
 
 class BasePlugin(ABC):
@@ -15,23 +16,35 @@ class BasePlugin(ABC):
     author = "Unknown"
     description = ""
 
-    # --------------------------------------------------
+    def __init__(
+       self,
+    ) -> None:
 
-    @abstractmethod
+        self.enabled = True
+
+        self.manifest = PluginManifest(
+            id=self.name.lower().replace(" ", "_"),
+            name=self.name,
+            version=self.version,
+            author=self.author,
+            description=self.description,
+        )
+
+    # --------------------------------------------------
     def on_load(self):
         """
         Called when the plugin is loaded.
+        Override if needed.
         """
-        raise NotImplementedError
+        pass
 
     # --------------------------------------------------
-
-    @abstractmethod
     def on_unload(self):
         """
         Called before the plugin is unloaded.
+        Override if needed.
         """
-        raise NotImplementedError
+        pass
 
     # --------------------------------------------------
 
@@ -104,3 +117,6 @@ class BasePlugin(ABC):
             f"{self.name} "
             f"v{self.version}>"
         )
+    
+# Backward compatibility
+Plugin = BasePlugin

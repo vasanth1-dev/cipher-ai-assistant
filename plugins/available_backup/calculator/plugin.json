@@ -1,0 +1,27 @@
+{
+    "id": "calculator",
+    "name": "Calculator",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in calculator plugin for evaluating safe mathematical expressions.",
+    "category": "Utilities",
+    "entry_point": "calculator_plugin.CalculatorPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 100,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [],
+    "keywords": [
+        "calculator",
+        "math",
+        "arithmetic",
+        "calculate"
+    ],
+    "commands": [
+        "calculate",
+        "calc",
+        "math"
+    ],
+    "min_cipher_version": "2.0.0"
+}

@@ -1,5 +1,6 @@
 import requests
 
+from core.logger import logger
 from config import OLLAMA_URL, MODEL_NAME
 
 
@@ -7,7 +8,7 @@ def preload():
 
     try:
 
-        requests.post(
+        response = requests.post(
             OLLAMA_URL,
             json={
                 "model": MODEL_NAME,
@@ -18,8 +19,10 @@ def preload():
             timeout=30,
         )
 
-        print("✅ Ollama model preloaded.")
+        response.raise_for_status()
+
+        logger.info("✅ Ollama model preloaded.")
 
     except Exception as e:
 
-        print("Preload Error:", e)
+        logger.exception(e)

@@ -22,7 +22,9 @@ class ChatSidebar(QFrame):
     newChatClicked = pyqtSignal()
     chatSelected = pyqtSignal(str)
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
         self.setFixedWidth(260)

@@ -40,6 +40,16 @@ def handle(command: str):
         index = lower_text.find(" is ")
 
         key = text[:index].strip()
+
+        if key.lower().startswith("my "):
+            key = key[3:].strip()
+
+        elif key.lower().startswith("the "):
+            key = key[4:].strip()
+
+        elif key.lower().startswith("our "):
+            key = key[4:].strip()
+
         value = text[index + 4:].strip()
 
         if not key or not value:
@@ -50,7 +60,7 @@ def handle(command: str):
 
         memory_service.remember(key, value)
 
-        return f"I'll remember your {key}."
+        return f"Okay, I'll remember your {key} is {value}."
 
     # -------------------------------------------------
     # Recall
@@ -100,10 +110,10 @@ def handle(command: str):
         elif key.lower().startswith("our "):
             key = key[4:].strip()
 
-        elif not key:
+        if not key:
             return "What should I forget?"
 
-        elif memory_service.forget(key):
+        if memory_service.forget(key):
             return f"I forgot your {key}."
 
         return f"I don't know your {key}."

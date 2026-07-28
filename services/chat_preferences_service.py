@@ -23,7 +23,9 @@ class ChatPreferencesService:
         "font_size": 14,
     }
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/chat_preferences.json")
         self._file.parent.mkdir(

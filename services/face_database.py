@@ -4,7 +4,9 @@ from pathlib import Path
 
 class FaceDatabase:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.file = Path("data/faces/faces.pkl")
 

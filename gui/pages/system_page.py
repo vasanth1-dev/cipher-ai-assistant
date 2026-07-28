@@ -1,104 +1,73 @@
-from PyQt6.QtCore import Qt
 from PyQt6.QtWidgets import (
     QWidget,
     QVBoxLayout,
     QGridLayout,
-    QLabel,
-    QFrame,
 )
 
 from gui.theme import (
     BACKGROUND,
-    SURFACE,
-    BORDER,
-    TEXT,
-    TEXT_MUTED,
+    CARD_PADDING,
+    SPACING,
 )
 
-
-class SystemCard(QFrame):
-
-    def __init__(self, title: str):
-        super().__init__()
-
-        self.setStyleSheet(f"""
-        QFrame{{
-            background:{SURFACE};
-            border:1px solid {BORDER};
-            border-radius:12px;
-        }}
-        """)
-
-        layout = QVBoxLayout(self)
-        layout.setContentsMargins(18, 18, 18, 18)
-        layout.setSpacing(8)
-
-        self.title = QLabel(title)
-        self.title.setStyleSheet(f"""
-        color:{TEXT_MUTED};
-        font-size:10pt;
-        """)
-
-        self.value = QLabel("--")
-        self.value.setStyleSheet(f"""
-        color:{TEXT};
-        font-size:22px;
-        font-weight:bold;
-        """)
-
-        layout.addWidget(self.title)
-        layout.addWidget(self.value)
-        layout.addStretch()
-
-    def set_value(self, value):
-        self.value.setText(str(value))
+from gui.widgets.ui.page_header import PageHeader
+from gui.widgets.ui.section import Section
+from gui.widgets.ui.stat_card import StatCard
 
 
 class SystemPage(QWidget):
+    """
+    Cipher v2 - System Monitor
+    """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
         super().__init__()
-
         self._build_ui()
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         self.setStyleSheet(f"""
-        QWidget{{
+        QWidget {{
             background:{BACKGROUND};
-            color:{TEXT};
         }}
         """)
 
         root = QVBoxLayout(self)
-        root.setContentsMargins(20, 20, 20, 20)
-        root.setSpacing(20)
 
-        title = QLabel("🖥 System Monitor")
-        title.setStyleSheet("""
-        font-size:24px;
-        font-weight:bold;
-        """)
+        root.setContentsMargins(
+            CARD_PADDING,
+            CARD_PADDING,
+            CARD_PADDING,
+            CARD_PADDING,
+        )
 
-        subtitle = QLabel("Live system information")
+        root.setSpacing(SPACING)
 
-        subtitle.setStyleSheet(f"""
-        color:{TEXT_MUTED};
-        font-size:10pt;
-        """)
+        header = PageHeader(
+            "🖥 System Monitor",
+            "Live system information"
+        )
 
-        root.addWidget(title)
-        root.addWidget(subtitle)
+        root.addWidget(header)
+
+        section = Section("System Statistics")
+
+        root.addWidget(section)
 
         grid = QGridLayout()
-        grid.setSpacing(15)
 
-        self.cpu = SystemCard("CPU")
-        self.ram = SystemCard("RAM")
-        self.disk = SystemCard("Disk")
-        self.network = SystemCard("Network")
-        self.battery = SystemCard("Battery")
-        self.uptime = SystemCard("Uptime")
+        grid.setSpacing(SPACING)
+
+        self.cpu = StatCard("CPU", "--")
+        self.ram = StatCard("RAM", "--")
+        self.disk = StatCard("Disk", "--")
+        self.network = StatCard("Network", "--")
+        self.battery = StatCard("Battery", "--")
+        self.uptime = StatCard("Uptime", "--")
 
         grid.addWidget(self.cpu, 0, 0)
         grid.addWidget(self.ram, 0, 1)
@@ -108,23 +77,50 @@ class SystemPage(QWidget):
         grid.addWidget(self.battery, 1, 1)
         grid.addWidget(self.uptime, 1, 2)
 
+        grid.setColumnStretch(0, 1)
+        grid.setColumnStretch(1, 1)
+        grid.setColumnStretch(2, 1)
+
         root.addLayout(grid)
+
         root.addStretch()
 
-    def set_cpu(self, value):
+    # --------------------------------------------------
+    # Public API
+    # --------------------------------------------------
+
+    def set_cpu(
+        self, 
+        value: str,
+    ) -> None:
         self.cpu.set_value(value)
 
-    def set_ram(self, value):
+    def set_ram(
+        self, 
+        value: str,
+    ) -> None:
         self.ram.set_value(value)
 
-    def set_disk(self, value):
+    def set_disk(
+        self, 
+        value: str,
+    ) -> None:
         self.disk.set_value(value)
 
-    def set_network(self, value):
+    def set_network(
+        self, 
+        value: str,
+    ) -> None:
         self.network.set_value(value)
 
-    def set_battery(self, value):
+    def set_battery(
+        self, 
+        value: str,
+    ) -> None:
         self.battery.set_value(value)
 
-    def set_uptime(self, value):
+    def set_uptime(
+        self, 
+        value: str,
+    ) -> None:
         self.uptime.set_value(value)

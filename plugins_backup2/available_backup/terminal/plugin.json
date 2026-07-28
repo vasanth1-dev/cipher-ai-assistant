@@ -1,0 +1,35 @@
+{
+    "id": "terminal",
+    "name": "Terminal",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in terminal plugin for executing shell commands through Cipher's TerminalService.",
+    "category": "Developer Tools",
+    "entry_point": "terminal_plugin.TerminalPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 95,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "shell",
+        "system"
+    ],
+    "keywords": [
+        "terminal",
+        "shell",
+        "bash",
+        "command",
+        "execute",
+        "linux"
+    ],
+    "commands": [
+        "terminal",
+        "run command",
+        "execute",
+        "execute command",
+        "shell",
+        "bash"
+    ],
+    "min_cipher_version": "2.0.0"
+}

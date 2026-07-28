@@ -3,37 +3,65 @@ from config import WAKE_WORDS
 
 class WakeWord:
 
-    def __init__(self):
-        self.wake_words = [w.lower().strip() for w in WAKE_WORDS]
+    CORRECTIONS = {
+        "cypher": "cipher",
+        "cifer": "cipher",
+        "sifer": "cipher",
+        "safer": "cipher",
+        "safe her": "cipher",
+        "sai": "cipher",
+        "sire": "cipher",
+        "cyper": "cipher",
+        "cipher": "cipher",
+        "zipper": "cipher",
+        "super": "cipher",
+        "cycle": "cipher",
+    }
 
-    def normalize(self, text: str):
+
+    def __init__(
+       self,
+    ) -> None:
+        self.wake_words = sorted(
+            [w.lower().strip() for w in WAKE_WORDS],
+            key=len,
+            reverse=True,
+        )
+
+    def normalize(
+        self, 
+        text: str,
+    ) -> str:
 
         if not text:
-            return 
+            return ""
 
         text = text.lower().strip()
 
-        corrections = {
-            "cypher": "cipher",
-            "cifer": "cipher",
-            "sifer": "cipher",
-            "safer": "cipher",
-            "safe her": "cipher",
-            "sai": "cipher",
-            "sire": "cipher",
-            "cyper": "cipher",
-            "cipher": "cipher",
-            "zipper": "cipher",
-            "super": "cipher",
-            "cycle": "cipher",
-        }
+        for wrong, correct in self.CORRECTIONS.items():
+            text = text.replace(
+                wrong,
+                correct,
+            )
 
-        for wrong, correct in corrections.items():
-            text = text.replace(wrong, correct)
+        return " ".join(text.split())
+    
+    def _matches(
+        self,
+        text: str,
+        wake_word: str,
+    ) -> bool:
 
-        return text
+        return (
+            text == wake_word
+            or text.startswith(wake_word + " ")
+            or f" {wake_word} " in f" {text} "
+        )
 
-    def detect(self, text: str):
+    def detect(
+        self, 
+        text: str,
+    ) -> bool:
 
         if not text:
             return False
@@ -42,10 +70,9 @@ class WakeWord:
 
         for wake_word in self.wake_words:
 
-            if (
-                text == wake_word
-                or text.startswith(wake_word + " ")
-                or wake_word in text
+            if self._matches(
+                text,
+                wake_word,
             ):
                 return True
             
@@ -53,7 +80,10 @@ class WakeWord:
 
             
 
-    def remove(self, text: str):
+    def remove(
+        self, 
+        text: str,
+    ) -> str:
 
         if not text:
             return ""
@@ -61,7 +91,12 @@ class WakeWord:
         text = self.normalize(text)
 
         for word in self.wake_words:
-            if text.startswith(word):
+
+            if self._matches(
+                text,
+                word,
+            ) and text.startswith(word):
+
                 return text[len(word):].strip()
 
         return text

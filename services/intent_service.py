@@ -3,38 +3,28 @@ from core.logger import logger
 
 class IntentService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
-        self.intents = {}
+        self.intents = (
 
-        self.__load_builtin_intents()
-
-            
-        self._sorted = []
-
-        for intent, phrases in self.intents.items():
-
-            for phrase in phrases:
-
-                self._sorted.append(
-                    (
-                        phrase.lower().strip(),
-                        intent,
-                    )
-                )
-
-        self._sorted.sort(
-            key=lambda item: len(item[0]),
-            reverse=True,
+            self.__load_default_intents()
         )
-    def __load_builtin_intents(self):
 
-        self.intents = {
+        self._build_sorted_phrases()
 
+
+    def __load_default_intents(
+        self
+    ) -> dict[str, list[str]]:
+
+        return {
             "open_app": [
                 "open",
                 "launch",
                 "start",
+                "run",
             ],
 
             "close_app": [
@@ -69,6 +59,9 @@ class IntentService:
                 "remember",
                 "forget",
                 "what is my",
+                "show memory",
+                "show memories",
+                "what do you remember",
             ],
 
             "system": [
@@ -81,6 +74,54 @@ class IntentService:
                 "current time",
                 "date",
                 "today",
+                "volume",
+                "volume up",
+                "volume down",
+                "increase volume",
+                "decrease volume",
+                "mute",
+                "unmute",
+                "brightness",
+                "brightness up",
+                "brightness down",
+                "increase brightness",
+                "decrease brightness",
+                "maximum brightness",
+                "minimum brightness",
+                "screenshot",
+                "take screenshot",
+                "capture screen",
+                "capture screenshot",
+                "screen capture",
+                "lock",
+                "lock screen",
+                "lock computer",
+                "lock my computer",
+                "wifi",
+                "wi-fi",
+                "wifi on",
+                "wifi off",
+                "turn on wifi",
+                "turn off wifi",
+                "enable wifi",
+                "disable wifi",
+                "bluetooth",
+                "bluetooth on",
+                "bluetooth off",
+                "turn on bluetooth",
+                "turn off bluetooth",
+                "enable bluetooth",
+                "disable bluetooth",
+                "sleep",
+                "suspend",
+                "hibernate",
+                "put computer to sleep",
+                "sleep computer",
+                "hibernate computer",
+                "notification",
+                "notify",
+                "show notification",
+                "send notification",
             ],
 
             "vision": [
@@ -94,13 +135,27 @@ class IntentService:
             ],
 
             "todo": [
+                "todo",
+                "add todo",
+                "add a todo",
+                "create todo",
+                "create a todo",
                 "add task",
-                "show task",
+                "create task",
+                "show todo",
+                "show todos",
+                "show my todos",
+                "list todos",
+                "list my todos",
                 "list tasks",
                 "my tasks",
-                "todo",
                 "complete task",
+                "mark task",
+                "mark completed",
+                "mark as completed",
                 "delete task",
+                "delete todo",
+                "remove todo",
             ],
 
             "reminder": [
@@ -124,7 +179,10 @@ class IntentService:
             ],
 
             "whatsapp": [
+                "open whatsapp",
                 "send whatsapp",
+                "send whatsapp message",
+                "whatsapp",
             ],
 
             "contact": [
@@ -161,28 +219,95 @@ class IntentService:
                 "change model",
                 "enable gemini",
                 "disable gemini",
+                "change theme",
+                "dark mode",
+                "light mode",
             ],
         }
-            
+
+
+    def _build_sorted_phrases(
+        self,
+    ) -> None:
+        """
+        Build the phrase lookup table.
+        """
+
+        self._sorted = []
+
+        for intent, phrases in self.intents.items():
+
+            for phrase in phrases:
+
+                self._sorted.append(
+
+                    (
+                        self._normalize_command(
+                            phrase,
+                        ),
+                        intent,
+                    )
+
+                )
+
+        self._sorted.sort(
+
+            key=lambda item: len(item[0]),
+
+            reverse=True,
+
+        )
+
+    def _normalize_command(
+        self,
+        text: str,
+    ) -> str:
+        """
+        Normalize commands and phrases for matching.
+        """
+
+        return " ".join(
+            text.lower().strip().split()
+        )
+    
+    def _matches_phrase(
+        self,
+        command: str,
+        phrase: str,
+    ) -> bool:
+        """
+        Check whether a command matches a phrase.
+        """
+
+        return (
+            command == phrase
+            or command.startswith(
+                phrase + " "
+            )
+            or f" {phrase} " in f" {command} "
+        )
+                    
              
 
     # ------------------------------------------------ #
 
-    def detect(self, command: str):
+    def detect(
+        self, 
+        command: str,
+    ) -> str:
 
         if not command:
             return "ai"
 
-        command = " ".join(
-            command.lower().strip().split()
+        command = self._normalize_command(
+            command,
         )
 
         for phrase, intent in self._sorted:
 
-            if (
-                command == phrase
-                or command.startswith(phrase + " ")
-                or phrase in command
+            if self._matches_phrase(
+                command,
+                phrase,
             ):
 
                 logger.info(
@@ -197,7 +322,11 @@ class IntentService:
 
     # ------------------------------------------------ #
 
-    def register(self, intent, phrases):
+    def register(
+        self, 
+        intent, 
+        phrases: str | list[str],
+    ) -> None:
 
         if isinstance(phrases, str):
             phrases = [phrases]
@@ -205,13 +334,17 @@ class IntentService:
         if intent not in self.intents:
             self.intents[intent] = []
 
-        self.intents[intent].extend(phrases)
+        self.intents[intent].extend(
+            phrases
+        )
 
-        self.__init__()
+        self._build_sorted_phrases()
 
     # ------------------------------------------------ #
 
-    def available(self):
+    def available(
+        self
+    ) -> list[str]:
 
         return sorted(self.intents.keys())
 

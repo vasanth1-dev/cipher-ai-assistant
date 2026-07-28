@@ -6,7 +6,9 @@ from core.logger import logger
 
 class CalendarService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.file = "data/calendar.json"
 
@@ -69,6 +71,15 @@ class CalendarService:
 
         events = self.load()
 
+        for event in events:
+
+            if (
+                event["title"].lower() == title.lower()
+                and event["datetime"] == date_time
+            ):
+
+                return "This event already exists."
+
         events.append(
             {
                 "title": title,
@@ -85,11 +96,16 @@ class CalendarService:
             f"[CALENDAR] Added event: {title}"
         )
 
-        return "Event added successfully. "
+        return (
+            f"Event '{title}' added successfully."
+        )
 
     def list(self):
 
         events = self.load()
+
+        if not isinstance(events, list):
+            events = []
 
         events.sort(
             key = lambda event: event["datetime"]

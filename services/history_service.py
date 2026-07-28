@@ -1,6 +1,6 @@
 import json
-import os
 
+from pathlib import Path
 from collections import deque
 from datetime import datetime
 
@@ -13,9 +13,14 @@ class HistoryService:
 
         self.limit = limit
 
-        self.file = "data/history.json"
+        self.file = Path(
+            "data/history.json"
+        )
 
-        os.makedirs("data", exist_ok=True)
+        self.file.parent.mkdir(
+            parents=True,
+            exist_ok=True,
+        )
 
         self.history = deque(
             maxlen=self.limit,
@@ -29,9 +34,9 @@ class HistoryService:
 
     def _load(self):
 
-        if not os.path.exists(self.file):
+        if not self.file.exists():
 
-            self._save()
+            self._commit()
 
             return
 
@@ -47,13 +52,25 @@ class HistoryService:
 
                 if isinstance(data, list):
 
-                    self.history.extend(
-                        data[-self.limit:]
-                    )
+                    for item in data[-self.limit:]:
+
+                        if (
+                            isinstance(item, dict)
+                            and "command" in item
+                            and "response" in item
+                        ):
+
+                            self.history.append(item)
+
+                            logger.info(
+                                f"[HISTORY] Loaded {len(self.history)}"
+                            )
 
         except Exception as e:
 
-            logger.exception(e)
+            logger.exception(
+                f"[HISTORY] Failed to load history: {e}"
+            )
 
     def _save(self):
 
@@ -72,27 +89,71 @@ class HistoryService:
                     ensure_ascii=False,
                 )
 
+                logger.debug(
+                    "[HISTORY] Saved successfully."
+                )
+
         except Exception as e:
 
-            logger.exception(e)
+            logger.exception(
+                f"[HISTORY] Failed to save history: {e}"
+            )
+
+    def _normalize_text(
+        self,
+        text: str,
+    ) -> str:
+        return str(text).strip()
+    
+    def _commit(
+        self,
+    ) -> None:
+
+        self._save()
+    
+    def _create_history_item(
+        self,
+        command: str,
+        response: str,
+    ) -> dict:
+
+        return {
+
+            "timestamp": datetime.now().isoformat(
+                timespec="seconds",
+            ),
+
+            "command": command,
+
+            "response": response,
+
+        }
 
     # ------------------------------------------------ #
     # Add Conversation
     # ------------------------------------------------ #
 
-    def add(self, command, response):
+    def add(
+        self, 
+        command: str, 
+        response: str,
+    ) -> None:
 
-        item = {
-            "timestamp": datetime.now().isoformat(
-                timespec="seconds"
-            ),
-            "command": command,
-            "response": response,
-        }
+        command = self._normalize_text(command)
+        response = self._normalize_text(response)
+
+        if not command or not response:
+            return
+
+        item = self._create_history_item(
+            command,
+            response,
+        )
+
 
         self.history.append(item)
 
-        self._save()
+        self._commit()
 
         logger.info("[HISTORY] Conversation saved.")
 
@@ -100,7 +161,9 @@ class HistoryService:
     # Get History
     # ------------------------------------------------ #
 
-    def last(self):
+    def last(
+        self,
+    ) -> dict | None:
 
         if not self.history:
             return None
@@ -111,7 +174,10 @@ class HistoryService:
 
         return list(self.history)
 
-    def recent(self, count=10):
+    def recent(
+        self, 
+        count: int = 10,
+    ) -> list[dict]:
 
         if count <= 0:
             return []
@@ -124,7 +190,10 @@ class HistoryService:
 
     def search(self, keyword):
 
-        keyword = keyword.lower()
+        keyword = self._normalize_text(keyword).lower()
+
+        if not keyword:
+            return []
 
         return [
 
@@ -149,9 +218,24 @@ class HistoryService:
 
         self.history.clear()
 
-        self._save()
+        self._commit()
 
         logger.info("[HISTORY] Cleared.")
+
+    def delete_last(self):
+
+        if not self.history:
+            return False
+
+        self.history.pop()
+
+        self._commit()
+
+        logger.info(
+            "[HISTORY] Last conversation deleted."
+        )
+
+        return True
 
     def is_empty(self):
 

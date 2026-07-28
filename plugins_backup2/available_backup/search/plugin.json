@@ -1,0 +1,33 @@
+{
+    "id": "search",
+    "name": "Search",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in search plugin for searching the web and local resources.",
+    "category": "Information",
+    "entry_point": "search_plugin.SearchPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 75,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "network"
+    ],
+    "keywords": [
+        "search",
+        "find",
+        "lookup",
+        "google",
+        "web"
+    ],
+    "commands": [
+        "search",
+        "search for",
+        "find",
+        "look up",
+        "lookup",
+        "google"
+    ],
+    "min_cipher_version": "2.0.0"
+}

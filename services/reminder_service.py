@@ -6,7 +6,9 @@ from threading import Lock
 
 class ReminderService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.file = "data/reminders.json"
         self.lock = Lock()
@@ -29,8 +31,14 @@ class ReminderService:
                 if isinstance(data, list):
                     return data
 
-        except (json.JSONDecodeError, FileNotFoundError):
-            pass
+        except (json.JSONDecodeError, FileNotFoundError) as e:
+
+            from core.logger import logger
+
+            logger.exception(
+                f"[REMINDER] Failed to load reminder: {e} "
+            )
+            
 
         self._write([])
         return []
@@ -61,6 +69,12 @@ class ReminderService:
 
     def add(self, reminder, remind_at):
 
+        reminder = str(reminder).strip()
+        remind_at = str(remind_at).strip()
+
+        if not reminder:
+            return "Reminder cannot be empty."
+
         with self.lock:
 
             reminders = self._read()
@@ -74,7 +88,17 @@ class ReminderService:
                 }
             )
 
-            reminders.sort(key=lambda r: r["time"])
+            try:
+
+                reminders.sort(
+                    key=lambda r: datetime.fromisoformat(r["time"])
+                )
+
+            except ValueError:
+
+                reminders.sort(
+                    key=lambda r: r["time"]
+                )
 
             self._write(reminders)
 
@@ -172,7 +196,13 @@ class ReminderService:
 
                 try:
                     remind_time = datetime.fromisoformat(reminder["time"])
-                except ValueError:
+                except ValueError as e:
+                    from core.logger import logger
+
+                    logger.warning(
+                        f"[REMINDER] Invalid reminder time: {e}"
+                    )
+
                     continue
 
                 if remind_time <= now:

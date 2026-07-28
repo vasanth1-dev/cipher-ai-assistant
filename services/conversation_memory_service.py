@@ -14,7 +14,9 @@ class ConversationMemoryService:
     and retrieves memory items.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/conversation_memory.json")
         self._file.parent.mkdir(

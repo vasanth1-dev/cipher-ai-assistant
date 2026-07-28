@@ -6,7 +6,9 @@ from config import APPLICATIONS
 
 class AppService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self.apps = APPLICATIONS
 
     def open(self, app_name: str):
@@ -19,7 +21,7 @@ class AppService:
         if app_name not in self.apps:
             return None
 
-        program = self.apps[app_name]
+        program = self.apps[app_name].strip()
 
         executable = shutil.which(program)
 
@@ -33,9 +35,10 @@ class AppService:
                 stdout=subprocess.DEVNULL,
                 stderr=subprocess.DEVNULL,
                 start_new_session=True,
+                cwd=None,
             )
 
-            return f"Opening {app_name}."
+            return f"Opening {app_name.title()}."
 
         except Exception as e:
             return f"Failed to open {app_name}: {e}"
@@ -60,7 +63,7 @@ class AppService:
                 stderr=subprocess.DEVNULL,
             )
 
-            return f"Closing {app_name}."
+            return f"Closing {app_name.title()}."
 
         except Exception as e:
             return f"Failed to close {app_name}: {e}"

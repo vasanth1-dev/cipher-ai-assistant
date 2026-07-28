@@ -7,7 +7,9 @@ from services.face_database import face_database
 
 class FaceService:
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self.app = FaceAnalysis(
             name="buffalo_l",

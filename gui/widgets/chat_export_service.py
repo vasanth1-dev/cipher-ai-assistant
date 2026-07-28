@@ -1,10 +1,18 @@
 from datetime import datetime
 from pathlib import Path
+from os import PathLike
+from typing import Any
 
 
 class ChatExportService:
 
-    def export_txt(self, messages, filename=None):
+    """Service for exporting chat conversations to text files."""
+
+    def export_txt(
+        self,
+        messages: list[dict[str, Any]],
+        filename: str | PathLike[str] | None = None,
+    ) -> str:
 
         if filename is None:
 
@@ -19,14 +27,14 @@ class ChatExportService:
         with path.open(
             "w",
             encoding="utf-8",
-        ) as file:
+        ) as output_file:
 
-            file.write(
+            output_file.write(
                 "Cipher Conversation Export\n"
             )
 
-            file.write("=" * 40)
-            file.write("\n\n")
+            output_file.write("=" * 40)
+            output_file.write("\n\n")
 
             for message in messages:
 
@@ -40,13 +48,13 @@ class ChatExportService:
                     "",
                 )
 
-                file.write(
+                output_file.write(
                     f"{sender}:\n"
                 )
 
-                file.write(text)
+                output_file.write(text)
 
-                file.write("\n\n")
+                output_file.write("\n\n")
 
         return str(path)
 

@@ -96,8 +96,12 @@ def handle(command: str):
 
         name, url = websites[command]
 
+        logger.info(f"[BROWSER] Opening {name}")
+
         if open_url(url):
             return f"Opening {name}."
+        
+        logger.error(f"[BROWSER] Failed to open {name}")
 
         return "Unable to open the browser."
 

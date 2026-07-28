@@ -28,8 +28,8 @@ class ChatComposer(QObject):
         input_bar: ChatInputBar,
         attachment_button: ChatAttachmentButton,
         suggestions: ChatSuggestions,
-        parent=None,
-    ):
+        parent: QObject | None = None,
+    ) -> None:
         super().__init__(parent)
 
         self.input_bar = input_bar
@@ -50,20 +50,30 @@ class ChatComposer(QObject):
 
     # ---------------------------------------------------------
 
-    def _use_suggestion(self, text: str):
-        self.input_bar.setText(text)
+    def _use_suggestion(
+        self, 
+        text: str,
+    ) -> None:
+        self.input_bar.set_text(text)
         self.input_bar.focus()
 
     # ---------------------------------------------------------
 
-    def clear(self):
+    def clear(
+        self,
+    ) -> None:
         self.input_bar.clear()
 
-    def setSending(self, sending: bool):
-        self.input_bar.setSending(sending)
+    def setSending(
+        self, 
+        sending: bool,
+    ) -> None:
+        self.input_bar.set_sending(sending)
 
     def text(self) -> str:
         return self.input_bar.text()
 
-    def focus(self):
+    def focus(
+        self,
+    ) -> None:
         self.input_bar.focus()

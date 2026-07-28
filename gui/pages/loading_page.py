@@ -16,12 +16,16 @@ from gui.theme import (
 
 class LoadingPage(QWidget):
 
-    def __init__(self):
+    def __init__(
+        self,
+    ) -> None:
         super().__init__()
 
         self._build_ui()
 
-    def _build_ui(self):
+    def _build_ui(
+        self,
+    ) -> None:
 
         self.setStyleSheet(f"""
         QWidget {{
@@ -84,8 +88,14 @@ class LoadingPage(QWidget):
 
     # --------------------------------------------------
 
-    def set_progress(self, value: int):
+    def set_progress(
+        self, 
+        value: int,
+    ) -> None:
         self.progress.setValue(max(0, min(100, value)))
 
-    def set_status(self, text: str):
+    def set_status(
+        self, 
+        text: str,
+    ) -> None:
         self.status.setText(text)

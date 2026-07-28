@@ -13,7 +13,9 @@ class ChatMetadataService:
     itself so it can evolve independently.
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self._directory = Path("data/chat_metadata")
         self._directory.mkdir(

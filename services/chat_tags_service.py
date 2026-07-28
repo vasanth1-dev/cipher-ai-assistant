@@ -12,7 +12,9 @@ class ChatTagsService:
         session_001 -> ["python", "ollama", "linux"]
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._path = Path("data/chat_tags.json")
         self._path.parent.mkdir(parents=True, exist_ok=True)

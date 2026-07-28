@@ -30,7 +30,9 @@ class EventBus:
 
     WILDCARD = "*"
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self._subscribers: dict[str, list[Callable]] = defaultdict(list)
         self._lock = threading.RLock()
 

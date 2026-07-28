@@ -26,7 +26,9 @@ class ChatSession:
     LLM logic. It only manages conversation state.
     """
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         self.clear()
 
     # ---------------------------------------------------------

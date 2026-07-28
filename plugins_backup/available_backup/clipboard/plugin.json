@@ -1,0 +1,31 @@
+{
+    "id": "clipboard",
+    "name": "Clipboard",
+    "version": "1.0.0",
+    "author": "Cipher",
+    "description": "Built-in clipboard plugin for copying, pasting, clearing, and viewing clipboard history.",
+    "category": "Productivity",
+    "entry_point": "clipboard_plugin.ClipboardPlugin",
+    "enabled": true,
+    "builtin": true,
+    "priority": 85,
+    "dependencies": [],
+    "optional_dependencies": [],
+    "permissions": [
+        "clipboard"
+    ],
+    "keywords": [
+        "clipboard",
+        "copy",
+        "paste",
+        "history"
+    ],
+    "commands": [
+        "copy",
+        "paste",
+        "clipboard",
+        "clear clipboard",
+        "clipboard history"
+    ],
+    "min_cipher_version": "2.0.0"
+}

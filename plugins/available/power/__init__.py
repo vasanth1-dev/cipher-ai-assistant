@@ -2,7 +2,7 @@
 Cipher Power Plugin
 """
 
-from .power_plugin import PowerPlugin
+from .plugin import PowerPlugin
 
 __all__ = [
     "PowerPlugin",

@@ -4,7 +4,9 @@ from PyQt6.QtWidgets import QLabel
 
 class ThinkingIndicator(QLabel):
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
         self._frame = 0

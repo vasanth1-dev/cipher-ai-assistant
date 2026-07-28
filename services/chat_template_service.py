@@ -24,7 +24,9 @@ class ChatTemplateService:
         "SQL": "Write an SQL query for the following requirement:\n\n{input}",
     }
 
-    def __init__(self):
+    def __init__(
+       self,
+    ) -> None:
 
         self._file = Path("data/chat_templates.json")
         self._file.parent.mkdir(

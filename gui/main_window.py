@@ -1,30 +1,53 @@
 from pathlib import Path
 import subprocess
 
-from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import (
+    QFrame,
+    QScrollArea,
+)
+
+from PyQt6.QtGui import (
+    QGuiApplication,
+    QIcon,
+)
+from PyQt6.QtGui import QAction
+from PyQt6.QtWidgets import QMenu
+
+from PyQt6.QtWidgets import (
+    QFrame,
+    QFileDialog,
     QHBoxLayout,
+    QInputDialog,
     QMainWindow,
+    QMessageBox,
+    QScrollArea,
     QStackedWidget,
     QStatusBar,
+    QSystemTrayIcon,
     QVBoxLayout,
     QWidget,
-    QInputDialog,
-    QMessageBox,
 )
+from core.listener import (
+    pause_listening,
+    resume_listening,
+)
+
 from gui.theme import (
     BACKGROUND,
     TEXT,
-    PRIMARY,
-    PRIMARY_HOVER,
-    BORDER,
-    SURFACE,
+    INPUT_DIALOG_STYLE,
+    MESSAGE_BOX_STYLE,
 )
 
-from gui.dashboard_widget import DashboardWidget
-from gui.widgets.chat_panel import ChatPanel
+from core.logger import logger
+from gui.widgets.dashboard_widget import DashboardWidget
+from gui.widgets.chat.chat_widget import ChatWidget
+from gui.widgets.memory.memory_widget import MemoryWidget
+from gui.files_widget import FilesWidget
+from gui.widgets.system_widget import SystemWidget
+from gui.settings_widget import SettingsWidget
+from gui.system_tray import CipherTray
 from gui.widgets.header import Header
-from gui.widgets.input_panel import InputPanel
 from gui.widgets.sidebar import Sidebar
 from core.conversation.conversation_service import (
     conversation_service,
@@ -33,20 +56,48 @@ from core.conversation.conversation_service import (
 
 class MainWindow(QMainWindow):
 
-    def __init__(self):
+
+    DASHBOARD_PAGE = 0
+    CHAT_PAGE = 1
+    MEMORY_PAGE = 2
+    FILES_PAGE = 3
+    SYSTEM_PAGE = 4
+    SETTINGS_PAGE = 5
+
+    PAGE_INDEX = {
+        "dashboard": DASHBOARD_PAGE,
+        "chat": CHAT_PAGE,
+        "memory": MEMORY_PAGE,
+        "files": FILES_PAGE,
+        "system": SYSTEM_PAGE,
+        "settings": SETTINGS_PAGE,
+}
+
+    def __init__(
+       self,
+    ) -> None:
         super().__init__()
 
+        self.listening = True
 
-        self.setWindowTitle("" \
-        "Cipher v2 - Ubuntu AI Assistant"
+        self.setWindowTitle(
+            "Cipher v2 - Ubuntu AI Assistant"
         )
-        DEFAULT_WIDTH = 1280
-        DEFAULT_HEIGHT = 760
+
+        screen = QGuiApplication.primaryScreen()
+        geometry = screen.availableGeometry()
 
         self.resize(
-            DEFAULT_WIDTH,
-            DEFAULT_HEIGHT,
+            int(geometry.width() * 0.85),
+            int(geometry.height() * 0.85),
         )
+
+        self.move(
+            (geometry.width() - self.width()) // 2,
+            (geometry.height() - self.height()) // 2,
+        )
+
+        self.setMinimumSize(1000, 650)
 
         icon = Path(__file__).parent / "resources" / "cipher.png"
 
@@ -54,11 +105,63 @@ class MainWindow(QMainWindow):
             self.setWindowIcon(QIcon(str(icon)))
 
         self._apply_theme()
+
         self._build_ui()
+
         self._connect_signals()
 
         self.set_status("🟢 Ready")
+
         self.set_online()
+
+        self.tray = CipherTray(self)
+
+        self.tray.pauseRequested.connect(
+            self.on_stop_clicked
+        )
+
+        self.tray.resumeRequested.connect(
+            self.on_mic_clicked
+        )
+
+        tray_menu = QMenu()
+
+        show_action = QAction("Show Cipher", self)
+        hide_action = QAction("Hide Cipher", self)
+        exit_action = QAction("Exit", self)
+
+        show_action.triggered.connect(self.showNormal)
+        hide_action.triggered.connect(self.hide)
+        exit_action.triggered.connect(self.exit_application)
+
+        tray_menu.addAction(show_action)
+        tray_menu.addAction(hide_action)
+        tray_menu.addSeparator()
+        tray_menu.addAction(exit_action)
+
+        self.tray.setContextMenu(tray_menu)
+
+        self.tray.settingsRequested.connect(
+            lambda: self.on_page_changed("settings")
+        )
+
+        self._force_exit = False
+
+        self.tray.show()
+
+        self.tray.activated.connect(self.on_tray_activated)
+
+    def on_conversation_search(self, text: str):
+        """
+        Live conversation search.
+        """
+
+        self.sidebar.conversation_list.filter_conversations(text)
+
+        if text.strip():
+            self.set_status(f"Searching: {text}")
+        else:
+            self.set_status("Ready")
 
     # --------------------------------------------------
 
@@ -81,12 +184,13 @@ class MainWindow(QMainWindow):
     def _build_ui(self):
 
         central = QWidget()
-
         self.setCentralWidget(central)
 
         root = QHBoxLayout(central)
-        root.setContentsMargins(15, 15, 15, 15)
-        root.setSpacing(15)
+        root.setContentsMargins(10, 10, 10, 10)
+        root.setSpacing(10)
+
+        # ---------------- Sidebar ----------------
 
         self.sidebar = Sidebar()
 
@@ -94,127 +198,248 @@ class MainWindow(QMainWindow):
             conversation_service.get_all()
         )
 
+        # ---------------- Right Panel ----------------
+
         right = QVBoxLayout()
         right.setSpacing(15)
 
         self.header = Header()
 
+        # ---------------- Pages ----------------
+
         self.stack = QStackedWidget()
+
+        self._build_pages()
+
+        right.addWidget(self.header, 0)
+        right.addWidget(self.stack, 1)
+
+        root.addWidget(self.sidebar, 1)
+        root.addLayout(right, 4)
+
+    # ---------------- Status Bar ----------------
+
+        self._create_statusbar()
+
+    def _build_pages(self):
 
         # ---------------- Dashboard ----------------
 
         self.dashboard = DashboardWidget()
 
+        dashboard_scroll = QScrollArea()
+
+        dashboard_scroll.setWidgetResizable(True)
+
+        dashboard_scroll.setFrameShape(
+            QFrame.Shape.NoFrame
+        )
+
+        dashboard_scroll.setWidget(
+            self.dashboard
+        )
+
+        self.stack.addWidget(
+            dashboard_scroll
+        )
+
         # ---------------- Chat ----------------
 
-        chat_page = QWidget()
+        self.chat = ChatWidget()
 
-        chat_layout = QVBoxLayout(chat_page)
-        chat_layout.setContentsMargins(0, 0, 0, 0)
-        chat_layout.setSpacing(10)
+        self.stack.addWidget(
+            self.chat
+        )
 
-        self.chat = ChatPanel()
-        self.input_panel = InputPanel()
+        # ---------------- Memory ----------------
 
-        chat_layout.addWidget(self.chat, 1)
-        chat_layout.addWidget(self.input_panel, 0)
+        self.memory = MemoryWidget()
 
-        self.stack.addWidget(self.dashboard)
-        self.stack.addWidget(chat_page)
+        self.stack.addWidget(
+            self.memory
+        )
 
-        right.addWidget(self.header, 0)
-        right.addWidget(self.stack, 1)
+        # ---------------- Files ----------------
 
-        root.addWidget(self.sidebar)
-        root.addLayout(right)
+        self.files = FilesWidget()
+
+        self.stack.addWidget(
+            self.files
+        )
+
+        # ---------------- System ----------------
+
+        self.system = SystemWidget()
+
+        self.stack.addWidget(
+            self.system
+        )
+
+        # ---------------- Settings ----------------
+
+        self.settings = SettingsWidget()
+
+        self.stack.addWidget(
+            self.settings
+        )
+    
+    def _create_statusbar(self):
 
         self.statusbar = QStatusBar()
 
-        self.setStatusBar(self.statusbar)
+        self.statusbar.setFixedHeight(
+            24
+        )
 
+        self.setStatusBar(
+            self.statusbar
+        )
+
+   
     # --------------------------------------------------
 
     def _connect_signals(self):
 
+        self._connect_sidebar_signals()
+
+        self._connect_dashboard_signals()
+
+        self._connect_header_signals()
+
+        self._connect_conversation_signals()
+
+        # ChatWidget
+
+        # ---------------- Chat ----------------
+
+        self.chat.messageSent.connect(
+            self.on_send_clicked
+        )
+
+        self.chat.micClicked.connect(
+            self.on_mic_clicked
+        )
+
+        self.chat.header.newChatClicked.connect(
+            self.create_new_chat
+        )
+
+        self.chat.header.clearChatClicked.connect(
+            self.clear_chat
+        )
+
+        self.chat.header.exportChatClicked.connect(
+            self.export_chat
+        )
+
+        self.stack.setCurrentIndex(
+            self.DASHBOARD_PAGE
+        )
+
+    
+    def _connect_dashboard_signals(self):
+
+        actions = self.dashboard.quick_actions
+
+        actions.chatClicked.connect(
+            lambda: self.on_page_changed("chat")
+        )
+
+        actions.filesClicked.connect(
+            lambda: self.on_page_changed("files")
+        )
+
+        actions.memoryClicked.connect(
+            lambda: self.on_page_changed("memory")
+        )
+
+        actions.systemClicked.connect(
+            lambda: self.on_page_changed("system")
+        )
+
+        actions.settingsClicked.connect(
+            lambda: self.on_page_changed("settings")
+        )
+
+    def _connect_header_signals(self):
+
+        self.header.settingsClicked.connect(
+            lambda: self.on_page_changed(
+                "settings"
+            )
+        )
+
+    def _connect_conversation_signals(self):
+
+        conversation_list = self.sidebar.conversation_list
+
+        conversation_list.conversationSelected.connect(
+            self.load_conversation
+        )
+
+        conversation_list.renameRequested.connect(
+            self.rename_conversation
+        )
+
+        conversation_list.deleteRequested.connect(
+            self.delete_conversation
+        )
+
+        conversation_list.pinRequested.connect(
+            self.pin_conversation
+        )
+
+        conversation_list.searchChanged.connect(
+            self.on_conversation_search
+        )
+
+
+    def _connect_sidebar_signals(self):
+        """
+        Connect all sidebar related signals.
+        """
+
+        # Navigation
         self.sidebar.pageChanged.connect(
             self.on_page_changed
         )
 
+        # New Chat
         self.sidebar.conversation_list.newChatClicked.connect(
             self.create_new_chat
         )
 
-        self.input_panel.sendClicked.connect(
-            self.on_send_clicked
-        )
-
-        self.input_panel.micClicked.connect(
-            self.on_mic_clicked
-        )
-
-        self.input_panel.stopClicked.connect(
-            self.on_stop_clicked
-        )
-
-        self.dashboard.terminal_btn.clicked.connect(
-            self.open_terminal
-        )
-
-        self.dashboard.browser_btn.clicked.connect(
-            self.open_browser
-        )
-
-        self.dashboard.files_btn.clicked.connect(
-            self.open_files
-        )
-
-        self.dashboard.settings_btn.clicked.connect(
-            self.open_settings
-        )
-
-        self.chat.promptSelected.connect(
-            self.on_prompt_selected
-        )
-
-        self.sidebar.conversation_list.conversationSelected.connect(
-            self.load_conversation
-        )
-
-        self.sidebar.conversation_list.renameRequested.connect(
-            self.rename_conversation
-        )
-
-        self.sidebar.conversation_list.deleteRequested.connect(
-            self.delete_conversation
-        )
-
-        self.sidebar.conversation_list.pinRequested.connect (
-            self.pin_conversation
-        )
-
-        self.stack.setCurrentIndex(0)
-
     # --------------------------------------------------
     def on_prompt_selected(self, prompt):
 
-        self.input_panel.input.setText(prompt)
+        self.chat.set_input_text(prompt)
 
-        self.input_panel.focus_input()
+        self.chat.focus_input()
 
-    def on_page_changed(self, page):
+    def on_page_changed(self, page: str):
+        """
+        Centralized page navigation.
+        """
 
-        if page == "dashboard":
+        page = page.lower().strip()
 
-            self.stack.setCurrentIndex(0)
+        index = self.PAGE_INDEX.get(page)
 
-        elif page == "chat":
+        if index is None:
+            logger.warning(f"Unknown page requested: {page}")
+            return
 
-            self.stack.setCurrentIndex(1)
+        # Switch page
+        self.stack.setCurrentIndex(index)
 
-        self.set_status(
-            f"Opened: {page.title()}"
+        # Chat specific behaviour
+        if page == "chat":
+            self.chat.focus_input()
+
+        self._update_status(
+            f"Opened {page.title()}",
+            f"Page changed -> {page}",
         )
-
     # --------------------------------------------------
 
     def on_send_clicked(self, text):
@@ -227,9 +452,29 @@ class MainWindow(QMainWindow):
 
     def on_mic_clicked(self):
 
-        self.set_status("🎤 Listening...")
+        if self.listening:
 
-        self.header.set_listening()
+            pause_listening()
+
+            self.listening = False
+
+            self.set_status("⏸ Listening Paused")
+
+            self.header.set_ready()
+
+            self.tray.set_listening(False)
+
+        else:
+
+            resume_listening()
+
+            self.listening = True
+
+            self.set_status("🎤 Listening")
+
+            self.header.set_listening()
+
+            self.tray.set_listening(True)
 
 
     def on_stop_clicked(self):
@@ -247,10 +492,12 @@ class MainWindow(QMainWindow):
 
         self.header.set_ready()
 
-        self.dashboard.set_voice_status(
+        self.dashboard.set_voice(
             "Paused",
             "Microphone paused",
         )
+
+        self.tray.set_listening(False)
 
     # --------------------------------------------------
 
@@ -272,16 +519,7 @@ class MainWindow(QMainWindow):
 
     def load_conversation(self, conversation_id):
 
-        conversations = conversation_service.get_all()
-
-        conversation = next(
-            (
-                c
-                for c in conversations
-                if c.id == conversation_id
-            ),
-            None,
-        )
+        conversation = self._find_conversation(conversation_id)
 
         if conversation is None:
             return
@@ -300,14 +538,7 @@ class MainWindow(QMainWindow):
 
     def rename_conversation(self, conversation_id):
 
-        conversation = next(
-            (
-                c
-                for c in conversation_service.get_all()
-                if c.id == conversation_id
-            ),
-            None,
-        )
+        conversation = self._find_conversation(conversation_id)
 
         if conversation is None:
             return
@@ -318,34 +549,9 @@ class MainWindow(QMainWindow):
         dialog.setLabelText("New title:")
         dialog.setTextValue(conversation.title)
 
-        dialog.setStyleSheet(f"""
-        QInputDialog {{
-            background: {BACKGROUND};
-        }}
-
-        QLabel {{
-            color: {TEXT};
-        }}
-
-        QLineEdit {{
-            background: {SURFACE};
-            color: {TEXT};
-            border: 1px solid {BORDER};
-            border-radius: 6px;
-            padding: 6px;
-        }}
-
-        QPushButton {{
-            background: {PRIMARY};
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-        }}
-
-        QPushButton:hover {{
-            background: {PRIMARY_HOVER};
-        }}
-        """)
+        dialog.setStyleSheet(
+            INPUT_DIALOG_STYLE
+        )
 
         ok = dialog.exec()
 
@@ -375,14 +581,7 @@ class MainWindow(QMainWindow):
 
     def delete_conversation(self, conversation_id):
 
-        conversation = next(
-            (
-                c
-                for c in conversation_service.get_all()
-                if c.id == conversation_id
-            ),
-            None,
-        )
+        conversation = self._find_conversation(conversation_id)
 
         if conversation is None:
             return
@@ -397,33 +596,9 @@ class MainWindow(QMainWindow):
             QMessageBox.StandardButton.No
         )
 
-        msg.setStyleSheet(f"""
-        QMessageBox {{
-            background-color: {BACKGROUND}
-        }}
-
-        QLabel {{
-            color: {TEXT};
-            font-size: 11pt;
-        }}
-
-        QPushButton {{
-            background-color: {PRIMARY};
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 6px 16px;
-            min-width: 80px;
-        }}
-
-        QPushButton {{
-            background-color: {PRIMARY_HOVER};
-        }}
-
-        QPushButton:pressed {{
-            background-color: {PRIMARY_HOVER}
-        }}
-        """)
+        msg.setStyleSheet(
+            MESSAGE_BOX_STYLE
+        )
 
         reply = msg.exec()
 
@@ -442,20 +617,13 @@ class MainWindow(QMainWindow):
 
             self.chat.clear_chat()
 
-        self.set_status(
+        logger.info(
             "Conversation deleted."
         )
 
     def pin_conversation(self, conversation_id):
 
-        conversation = next(
-            (
-                c
-                for c in conversation_service.get_all()
-                if c.id == conversation_id
-            ),
-            None,
-        )
+        conversation = self._find_conversation(conversation_id)
 
         if conversation is None:
             return
@@ -482,6 +650,17 @@ class MainWindow(QMainWindow):
 
         self.sidebar.conversation_list.load(
             conversation_service.get_all()
+        )
+
+    def _find_conversation(self, conversation_id):
+
+        return next(
+            (
+                conversation
+                for conversation in conversation_service.get_all()
+                if conversation.id == conversation_id
+            ),
+            None,
         )
 
     def refresh_current_conversation_title(self):
@@ -518,6 +697,46 @@ class MainWindow(QMainWindow):
 
         self.chat.clear_chat()
 
+    def export_chat(self) -> None:
+
+        history = self.chat.get_chat_history()
+
+        if not history:
+            self.set_status("No messages to export.")
+            return
+
+        filename, _ = QFileDialog.getSaveFileName(
+            self,
+            "Export Chat",
+            "cipher_chat.txt",
+            "Text Files (*.txt)",
+        )
+
+        if not filename:
+            return
+
+        with open(filename, "w", encoding="utf-8") as file:
+
+            for message in history:
+
+                file.write(
+                    f"[{message['sender']}] {message['text']}\n\n"
+                )
+
+        self.set_status("Chat exported successfully.")
+
+    def _update_status(
+        self,
+        status: str,
+        log: str | None = None,
+    ):
+
+        self.set_status(status)
+
+        if log:
+
+            logger.info(log)
+
     # --------------------------------------------------
 
     def set_status(self, text):
@@ -526,29 +745,50 @@ class MainWindow(QMainWindow):
 
     # --------------------------------------------------
     def create_new_chat(self):
+        """
+        Create a new conversation and switch the UI
+        to the chat page.
+        """
 
+        # Create conversation
         conversation = conversation_service.new_chat()
 
+        # Make it the active conversation
+        conversation_service.set_current(conversation.id)
+
+        # Refresh sidebar
         self.sidebar.conversation_list.add_conversation(
             conversation.id,
             conversation.title,
         )
 
+        # Clear current chat
         self.chat.clear_chat()
 
-        self.set_status("New conversation created.")
+        # Navigate to chat page
+        self.on_page_changed("chat")
+
+        # Prepare input
+        self.chat.clear_input()
+        self.chat.focus_input()
+
+        # Update status
+        self.set_status("💬 New conversation created.")
 
         
     def set_online(self):
 
         self.header.set_online()
 
-        self.dashboard.set_ai_status(
-            True,
-            "qwen2.5",
+        self._set_dashboard_ready()
+
+    def _set_dashboard_ready(self):
+
+        self.dashboard.set_model(
+            "qwen2.5"
         )
 
-        self.dashboard.set_voice_status(
+        self.dashboard.set_voice(
             "Ready",
             "Waiting for command",
         )
@@ -559,35 +799,97 @@ class MainWindow(QMainWindow):
 
         self.header.status.set_offline()
 
-        self.dashboard.set_ai_status(
-            False,
-        )
-
-    def closeEvent(self, event):
-
-        from core.speaker import speaker
-
-        speaker.stop()
-
-        event.accept()
+        self.dashboard.set_model("Offline")
 
 
 
     def open_terminal(self):
 
-        subprocess.Popen(["gnome-terminal"])
+        self._launch(
+            ["gnome-terminal"],
+            "Terminal",
+        )
 
 
     def open_browser(self):
 
-        subprocess.Popen(["firefox"])
+        self._launch(
+            ["firefox"],
+            "Browser",
+        )
 
 
     def open_files(self):
+        
+        self._launch(
+            ["nautilus"],
+            "Files",
+        )
 
-        subprocess.Popen(["nautilus"])
 
 
     def open_settings(self):
 
-        subprocess.Popen(["gnome-control-center"])
+
+        self._launch(
+            ["gnome-control-center"],
+            "Settings",
+        )
+
+
+    def _launch(self, command, name):
+
+        try:
+            subprocess.Popen(command)
+
+        except Exception as e:
+
+            logger.exception(e)
+
+            self.set_status(
+                f"Failed to open {name}."
+            )
+
+    def closeEvent(self, event):
+
+        if self._force_exit:
+
+            super().closeEvent(event)
+
+            return
+
+        settings = self.settings_service.load()
+
+        if settings.get("tray", True) and self.tray.isVisible():
+
+            self.hide()
+
+            self.tray.showMessage(
+                "Cipher",
+                "Cipher is still running in the system tray.",
+            )
+
+            event.ignore()
+
+            return
+
+        super().closeEvent(event)
+
+    def exit_application(self):
+
+        self._force_exit = True
+
+        self.tray.hide()
+
+        self.close()
+
+    def on_tray_activated(self, reason):
+
+        if reason != QSystemTrayIcon.ActivationReason.DoubleClick:
+            return
+
+        self.showNormal()
+
+        self.raise_()
+
+        self.activateWindow()

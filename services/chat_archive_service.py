@@ -13,7 +13,9 @@ class ChatArchiveService:
     active chat history.
     """
 
-    def __init__(self):
+     def __init__(
+       self,
+    ) -> None:
 
         self.archive_dir = Path("data/archive")
         self.archive_dir.mkdir(

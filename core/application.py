@@ -74,6 +74,7 @@ class CipherApplication:
 
         self.bootstrap.shutdown()
 
+        self.runtime = None
         self.initialized = False
 
     # --------------------------------------------------
@@ -85,7 +86,7 @@ class CipherApplication:
         text: str,
         *,
         speak: bool = True,
-    ):
+    ) -> object:
         """
         Execute a command through the runtime pipeline.
         """
@@ -94,7 +95,12 @@ class CipherApplication:
                 "CipherApplication has not been initialized."
             )
 
-        pipeline = self.runtime["command_pipeline"]
+        try:
+            pipeline = self.runtime["command_pipeline"]
+        except KeyError:
+            raise RuntimeError(
+                "Command pipeline is unavailable."
+            ) from None
 
         return pipeline.execute(
             text,
