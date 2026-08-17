@@ -1,115 +1,45 @@
-# 🚀 Cipher v2
 
-> A professional offline-first AI voice assistant for Ubuntu built with Python, Whisper, Ollama, and PyQt6.
-
-![Python](https://img.shields.io/badge/Python-3.12+-blue.svg)
-![Platform](https://img.shields.io/badge/Platform-Ubuntu%2024.04-orange.svg)
-![License](https://img.shields.io/badge/License-MIT-green.svg)
-![Version](https://img.shields.io/badge/Version-v2.0.0-blue.svg)
-
----
-
-# 📖 Overview
-
-Cipher v2 is a modular AI voice assistant designed for Ubuntu.
-
-It combines offline AI, speech recognition, text-to-speech, plugin support, and a modern desktop interface into a single application.
-
-The project follows a service-oriented architecture with a plugin framework, making it easy to extend and maintain.
-
----
-
-# ✨ Features
-
-## 🤖 AI
-
-- Offline AI using Ollama
-- Local LLM support
-- AI conversation mode
-- Context-aware responses
-
----
-
-## 🎤 Voice
-
-- Wake word support
-- Google Speech Recognition
-- Faster-Whisper fallback
-- Edge TTS voice synthesis
-- Natural voice responses
-
----
-
-## 🖥 GUI
-
-- Modern PyQt6 interface
-- Chat window
-- Status indicators
-- Microphone controls
-- System tray integration
-
----
-
-## 🧠 Memory
-
-- Remember information
-- Recall saved information
-- Forget stored memories
-- Persistent memory storage
-
----
-
-## 📅 Productivity
-
-- Todo List
-- Reminder System
-- Calendar Events
-- Contacts
-
----
-
-## 💻 Ubuntu Integration
-
-- Launch applications
-- Close applications
-- Open folders
-- Browser control
-- Notifications
-
----
-
-## 🔌 Plugin System
-
-- Dynamic plugin discovery
-- Plugin lifecycle management
-- Plugin manifests
-- Extensible architecture
-
----
-
-## 🛠 Architecture
-
-- Modular design
-- Service Layer
-- Runtime Container
-- Command Pipeline
-- Intent Routing
-- Event Bus
-
----
 
 # 📁 Project Structure
 
 ```
-Cipher/
+cipher-ai-assistant/
 │
 ├── core/
+│   ├── assistant.py
+│   ├── listener.py
+│   ├── router.py
+│   ├── speaker.py
+│   ├── registry.py
+│   └── ...
+│
 ├── gui/
+│   ├── app.py
+│   ├── main_window.py
+│   ├── pages/
+│   ├── widgets/
+│   └── ...
+│
 ├── services/
+│   ├── ai_service.py
+│   ├── conversation_service.py
+│   ├── memory_service.py
+│   ├── reminder_service.py
+│   ├── todo_service.py
+│   └── ...
+│
 ├── skills/
+│   ├── ai.py
+│   ├── apps.py
+│   ├── browser.py
+│   ├── memory.py
+│   ├── system.py
+│   └── ...
+│
 ├── plugins/
+│
 ├── data/
-├── logs/
+│
 ├── config.py
 ├── requirements.txt
 ├── run.py
@@ -270,44 +200,22 @@ Show calendar
 
 ---
 
-# 🧩 Technologies Used
+# 🧩 Technologies Stack
 
-- Python
-- PyQt6
-- Ollama
-- Faster Whisper
-- SpeechRecognition
-- Edge TTS
-- OpenWakeWord
-- NumPy
-- OpenCV
-- Requests
+| Category           | Technologies                |
+| ------------------ | --------------------------- |
+| Programming        | Python                      |
+| GUI                | PyQt6                       |
+| AI / LLM           | Ollama                      |
+| Speech Recognition | Faster-Whisper              |
+| Voice              | SpeechRecognition, Edge TTS |
+| Wake Word          | OpenWakeWord                |
+| Data Processing    | NumPy                       |
+| Computer Vision    | OpenCV                      |
+| HTTP / APIs        | Requests, REST APIs         |
+| OS                 | Ubuntu Linux                |
+| Version Control    | Git, GitHub                 |
 
----
-
-# 🏗 Architecture
-
-```
-Wake Word
-      │
-      ▼
-Speech Recognition
-      │
-      ▼
-Intent Detection
-      │
-      ▼
-Skill Router
-      │
-      ▼
-AI / Local Skill
-      │
-      ▼
-Text To Speech
-      │
-      ▼
-GUI
-```
 
 ---
 
